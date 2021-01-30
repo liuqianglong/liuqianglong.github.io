@@ -9,14 +9,14 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
-    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-capable" content="刘强龙的个人博客">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no,email=no,adress=no">
     <meta name="browsermode" content="application">
     <meta name="screen-orientation" content="portrait">
     <meta name="theme-version" content="1.2.3">
     <meta name="root" content="/">
-    <link rel="dns-prefetch" href="http://example.com">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
     <!--SEO-->
 
 <meta name="keywords" content="CCIE,Cisco,思科,AWS,Python,ISE,SSLVPN,WLC,Wireless,Zabbix,ELK" />
@@ -33,10 +33,10 @@
 
 <title>
     
-    LiuQianglong&#39;s Blog
+    刘强龙的个人博客
 </title>
 
-<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="刘强龙的个人博客" type="application/atom+xml">
 
 
 <link rel="icon" href="/favicon.ico">
@@ -56,6 +56,16 @@
     </script>
 </div>
 
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
 
 
 
@@ -92,8 +102,8 @@
                         <span class="sr-only"></span>
                         <i class="fa fa-bars"></i>
                     </span>
-                    <a class="navbar-brand" href="http://example.com">
-                        LiuQianglong&#39;s Blog</a>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        刘强龙的个人博客</a>
                 </div>
                 <div class="collapse navbar-collapse" id="main-menu">
                     <ul class="menu">
@@ -146,7 +156,7 @@
 <article class="post">
     
     <div class="post-media">
-        <a href="/2021/01/30/Markdown%E8%AF%AD%E6%B3%95%E6%B5%8B%E8%AF%95/">
+        <a href="/Markdown%E8%AF%AD%E6%B3%95%E6%B5%8B%E8%AF%95.html">
             <img class="img-ajax" src="/img/loading.gif" data-src="/img/Markdown-TEST/markdown.jpg" alt="Markdown语法测试">
         </a>
     </div>
@@ -154,7 +164,7 @@
     <div class="post-content">
         <div class="post-head home-post-head">
             <h1 class="post-title">
-                <a href="/2021/01/30/Markdown%E8%AF%AD%E6%B3%95%E6%B5%8B%E8%AF%95/">
+                <a href="/Markdown%E8%AF%AD%E6%B3%95%E6%B5%8B%E8%AF%95.html">
                     Markdown语法测试</a>
             </h1>
             <div class="post-meta"> &bull;
@@ -214,7 +224,7 @@
 </div>
         </div>
         <div class="post-permalink">
-            <a href="/2021/01/30/Markdown%E8%AF%AD%E6%B3%95%E6%B5%8B%E8%AF%95/" class="btn btn-default">
+            <a href="/Markdown%E8%AF%AD%E6%B3%95%E6%B5%8B%E8%AF%95.html" class="btn btn-default">
                 阅读全文</a>
         </div>
     </footer>
@@ -225,7 +235,7 @@
 <article class="post">
     
     <div class="post-media">
-        <a href="/2021/01/29/AWS%E4%B8%8A%E9%85%8D%E7%BD%AECisco-ASAv-AnyConnect/">
+        <a href="/AWS%E4%B8%8A%E9%85%8D%E7%BD%AECisco-ASAv-AnyConnect.html">
             <img class="img-ajax" src="/img/loading.gif" data-src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-01.png" alt="AWS上配置Cisco ASAv AnyConnect">
         </a>
     </div>
@@ -233,7 +243,7 @@
     <div class="post-content">
         <div class="post-head home-post-head">
             <h1 class="post-title">
-                <a href="/2021/01/29/AWS%E4%B8%8A%E9%85%8D%E7%BD%AECisco-ASAv-AnyConnect/">
+                <a href="/AWS%E4%B8%8A%E9%85%8D%E7%BD%AECisco-ASAv-AnyConnect.html">
                     AWS上配置Cisco ASAv AnyConnect</a>
             </h1>
             <div class="post-meta"> &bull;
@@ -244,8 +254,10 @@
         </div>
         <p class="brief">
             
-            实验简介在AWS中国区下，对Cisco ASAv进行初始化配置，让用户能通过AnyConnect拨号后通过SSL加密访问私有云网络。注意：如果ASAv未购买License会限速100k并且最大会话100个，做实验足够了但是无法用于生产环境。在中国区如果AWS账号未经过ICP备案则无法使用TCP 443端口，即https默认的443端口需要修改才能拨号成功。
-环境介绍本次实验在VPC内需要使用...
+            1、实验简介最近一直在做思科防火墙的SSLVPN，用于解决员工远程办公的问题。传统上一般使用ASA55XX系列的硬件防火墙，现在开始转向Firepower上配置SSLVPN。这里主要介绍一下在AWS上使用ASAv配置SSLVPN的详细步骤。后续会继续深入SSLVPN上的高级特性。
+如果你有配置ASA SSLVPN的经验，需要注意的是AWS的配置特殊性，下面是整个实验的注意事项：
+
+在中国区如...
             
         </p>
     </div>
@@ -273,7 +285,7 @@
 </div>
         </div>
         <div class="post-permalink">
-            <a href="/2021/01/29/AWS%E4%B8%8A%E9%85%8D%E7%BD%AECisco-ASAv-AnyConnect/" class="btn btn-default">
+            <a href="/AWS%E4%B8%8A%E9%85%8D%E7%BD%AECisco-ASAv-AnyConnect.html" class="btn btn-default">
                 阅读全文</a>
         </div>
     </footer>

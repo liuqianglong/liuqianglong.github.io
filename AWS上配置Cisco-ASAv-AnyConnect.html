@@ -9,20 +9,20 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
-    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-capable" content="刘强龙的个人博客">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no,email=no,adress=no">
     <meta name="browsermode" content="application">
     <meta name="screen-orientation" content="portrait">
     <meta name="theme-version" content="1.2.3">
     <meta name="root" content="/">
-    <link rel="dns-prefetch" href="http://example.com">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
     <!--SEO-->
 
 <meta name="keywords" content="Cisco,AnyConnect,AWS,SSLVPN" />
 
 
-<meta name="description" content="实验简介在AWS中国区下，对Cisco ASAv进行初始化配置，让用户能通过AnyConnect拨号后通过SSL加密访问私有云网络。注意：如果ASAv未购买License会限速100k并且最大会..." />
+<meta name="description" content="1、实验简介最近一直在做思科防火墙的SSLVPN，用于解决员工远程办公的问题。传统上一般使用ASA55XX系列的硬件防火墙，现在开始转向Firepower上配置SSLVPN。这里主要介绍一下在A..." />
 
 
 <meta name="robots" content="all" />
@@ -35,10 +35,10 @@
     
     AWS上配置Cisco ASAv AnyConnect |
     
-    LiuQianglong&#39;s Blog
+    刘强龙的个人博客
 </title>
 
-<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="刘强龙的个人博客" type="application/atom+xml">
 
 
 <link rel="icon" href="/favicon.ico">
@@ -58,6 +58,16 @@
     </script>
 </div>
 
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
 
 
 
@@ -94,8 +104,8 @@
                         <span class="sr-only"></span>
                         <i class="fa fa-bars"></i>
                     </span>
-                    <a class="navbar-brand" href="http://example.com">
-                        LiuQianglong&#39;s Blog</a>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        刘强龙的个人博客</a>
                 </div>
                 <div class="collapse navbar-collapse" id="main-menu">
                     <ul class="menu">
@@ -180,20 +190,26 @@
     </div>
     
     <div class="post-body post-content">
-        <h2 id="实验简介"><a href="#实验简介" class="headerlink" title="实验简介"></a>实验简介</h2><p>在AWS中国区下，对Cisco ASAv进行初始化配置，让用户能通过AnyConnect拨号后通过SSL加密访问私有云网络。注意：如果ASAv未购买License会限速100k并且最大会话100个，做实验足够了但是无法用于生产环境。在中国区如果AWS账号未经过ICP备案则无法使用TCP 443端口，即https默认的443端口需要修改才能拨号成功。</p>
-<h2 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h2><p>本次实验在VPC内需要使用2个子网，一个公共子网用于连接跳板机，用户可以先连接Windows2016之后，在Windows2016通过SSH和ASDM连接ASAv。这里不介绍AWS相关基础知识，例如如何创建VPC、如何创建公有子网、私有子网。</p>
-<p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-01.png" alt="AnyConnect"></p>
-<p>这是实验将会用到的公有子网，默认路由指向了IGW。<img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-02.png" alt="AnyConnect"></p>
-<h2 id="配置跳板机环境"><a href="#配置跳板机环境" class="headerlink" title="配置跳板机环境"></a>配置跳板机环境</h2><p>在公有子网启用一台window2016，用于之后通过SSH和ASDM访问ASAv，<strong>注意实例要选择windows 2016，经过测试windows 2019 无法安装ASDM</strong>。</p>
+        <h2 id="1、实验简介"><a href="#1、实验简介" class="headerlink" title="1、实验简介"></a>1、实验简介</h2><p>最近一直在做思科防火墙的SSLVPN，用于解决员工远程办公的问题。传统上一般使用ASA55XX系列的硬件防火墙，现在开始转向Firepower上配置SSLVPN。这里主要介绍一下在AWS上使用ASAv配置SSLVPN的详细步骤。后续会继续深入SSLVPN上的高级特性。</p>
+<p>如果你有配置ASA SSLVPN的经验，需要注意的是AWS的配置特殊性，下面是整个实验的注意事项：</p>
+<ul>
+<li>在中国区如果AWS账号未经过ICP备案则无法使用TCP 443端口，需要修改默认的443端口号。</li>
+<li>AWS上ASAv为客户端分配的IP地址需要进过NAT转换后才能访问。</li>
+<li>AWS上的Windows2016无法安装ASDM，建议使用Windows2019安装ASDM软件。</li>
+<li>如果ASAv未购买License会限速100k并且最大会话100个，做实验足够了但是无法用于生产环境。</li>
+</ul>
+<h2 id="2、环境介绍"><a href="#2、环境介绍" class="headerlink" title="2、环境介绍"></a>2、环境介绍</h2><p>本次实验在VPC内需要使用2个子网，一个公共子网用于连接跳板机，用户可以先连接Windows2016之后，在Windows2016通过SSH和ASDM连接ASAv。这里不介绍AWS相关基础知识，例如如何创建VPC、如何创<br>建公有子网、私有子网。<br><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-01.png" alt="AnyConnect"></p>
+<p>这是实验将会用到的公有子网，默认路由指向了IGW。<br><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-02.png" alt="AnyConnect"></p>
+<h2 id="3、配置跳板机环境"><a href="#3、配置跳板机环境" class="headerlink" title="3、配置跳板机环境"></a>3、配置跳板机环境</h2><p>在公有子网启用一台window2016，用于之后通过SSH和ASDM访问ASAv，<strong>注意实例要选择windows 2016，经过测试windows 2019 无法安装ASDM</strong>。</p>
 <p>通过AWS的快速启动一台windows 2016，可以通过输入“windows 2016”过滤查找。注意，window 2019环境无法安装Cisco ASDM。</p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-03.png" alt="AnyConnect"></p>
-<p>Window2016放置在公有子网，并且开启分配公有IP功能。<img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-04.png" alt="AnyConnect"></p>
+<p>Window2016放置在公有子网，并且开启分配公有IP功能。<br><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-04.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-05.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-06.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-07.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-08.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-09.png" alt="AnyConnect"></p>
-<h2 id="创建ASAv实例"><a href="#创建ASAv实例" class="headerlink" title="创建ASAv实例"></a>创建ASAv实例</h2><p>在AWS Marketplace搜索asav，选择ami启用即可。需要注意的是，ASAv默认eth0是ciscoasa的管理接口，管理接口只能走网管流量，不能传输数据流量，所以至少需要再添加一个eth1作为outside接口。如果需要添加更多接口，例如inside和dmz接口，可以添加「网络接口」然后附加到实例。其实在AWS环境中一个outside接口就可以运行AnyConnect环境了。<img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-10.png" alt="AnyConnect"></p>
+<h2 id="4、创建ASAv实例"><a href="#4、创建ASAv实例" class="headerlink" title="4、创建ASAv实例"></a>4、创建ASAv实例</h2><p>在AWS Marketplace搜索asav，选择ami启用即可。需要注意的是，ASAv默认eth0是ciscoasa的管理接口，管理接口只能走网管流量，不能传输数据流量，所以至少需要再添加一个eth1作为outside接口。如果需要添加更多接口，<br>例如inside和dmz接口，可以添加「网络接口」然后附加到实例。其实在AWS环境中一个outside接口就可以运行AnyConnect环境了。<img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-10.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-11.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-12.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-13.png" alt="AnyConnect"></p>
@@ -205,7 +221,7 @@
 <p>实例创建成功之后，在AWS环境下需要对实例进行一下配置。<br>因为AWS接口默认会丢弃目的IP不是本接口IP的流量，所以想要ASA转发流量，必须关闭outside接口的源/目标检查。<img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-19.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-20.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-21.png" alt="AnyConnect"></p>
-<p>如果客户端想要访问私有云内的服务器，那么不能直接使用ASAv分配的地址池去访问，否则服务器没有回包路由。解决方法是在ASAv做源NAT，将客户端的源IP地址转换成outside上的一个辅助IP地址（无法转换成outside接口地址）。<img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-22.png" alt="AnyConnect"></p>
+<p>如果客户端想要访问私有云内的服务器，那么不能直接使用ASAv分配的地址池去访问，否则服务器没有回包路由。解决方法是在ASAv做源NAT，将客户端的源IP地址转换成outside上的一个辅助IP地址（无法转换成outside接口地<br>址）。<img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-22.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-23.png" alt="AnyConnect"></p>
 <p>防火墙outside需要公网能直接访问，所以需要一个公网地址。<img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-24.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-25.png" alt="AnyConnect"></p>
@@ -213,7 +229,7 @@
 <p>公网地址关联上防火墙的outside接口。<img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-27.png" alt="AnyConnect"></p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-28.png" alt="AnyConnect"></p>
 <p>启动之后，eth0是管理接口，首次连接时只能连接这个管理接口，如果想要连接其他接口可以连接之后配置。<img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-29.png" alt="AnyConnect"></p>
-<h2 id="ASAv基础配置"><a href="#ASAv基础配置" class="headerlink" title="ASAv基础配置"></a>ASAv基础配置</h2><p>首先通过SSH连接到ASAv的管理口进行一些基础配置，这里我使用MobaXterm作为SSH客户端，下载地址会放在最后。在AWS上启动的ASAv默认用户名是admin，使用对应的密钥登录即可。</p>
+<h2 id="5、ASAv基础配置"><a href="#5、ASAv基础配置" class="headerlink" title="5、ASAv基础配置"></a>5、ASAv基础配置</h2><p>首先通过SSH连接到ASAv的管理口进行一些基础配置，这里我使用MobaXterm作为SSH客户端，下载地址会放在最后。在AWS上启动的ASAv默认用户名是admin，使用对应的密钥登录即可。</p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-30.png" alt="AnyConnect"></p>
 <p>首先需要设置enable密码</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ciscoasa&gt; enable</span><br><span class="line">The enable password is not set.  Please set it now.</span><br><span class="line">Enter  Password: ****</span><br><span class="line">Repeat Password: ****</span><br><span class="line">Note: Save your configuration so that the password persists across reboots</span><br><span class="line">(&quot;write memory&quot; or &quot;copy running-config startup-config&quot;).</span><br></pre></td></tr></table></figure>
@@ -224,12 +240,12 @@
 
 
 <p>开启eth1，配置名称为outside</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">interface TenGigabitEthernet0&#x2F;0 </span><br><span class="line"> no shutdown</span><br><span class="line"> nameif outside</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">interface TenGigabitEthernet0&#x2F;0</span><br><span class="line"> no shutdown</span><br><span class="line"> nameif outside</span><br></pre></td></tr></table></figure>
 
 
 
 
-<p>想要通过ASDM连接ASAv，需要开启http服务器，并且允许http流量从管理口进入，0 0 表示不限制IP地址段，如果要限制只允许192.168.1.0/24网段的http连接可以这么配置http 192.168.1.0 255.255.255.0。配置http的认证方式是本地认证，配置一个本地15级权限的用户名密码。</p>
+<p>想要通过ASDM连接ASAv，需要开启http服务器，并且允许http流量从管理口进入，0 0 表示不限制IP地址段，如果要限制只允许192.168.1.0/24网段的http连接可以这么配置http 192.168.1.0 255.255.255.0。配置http的认证<br>方式是本地认证，配置一个本地15级权限的用户名密码。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http server enable</span><br><span class="line">http 0 0 management</span><br><span class="line">aaa authentication http console LOCAL</span><br><span class="line">username cisco password ciscoasa privilege 15</span><br></pre></td></tr></table></figure>
 
 
@@ -250,7 +266,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ciscoasa# dir</span><br><span class="line">Directory of disk0:&#x2F;</span><br><span class="line">86     -rwx  41077110     08:00:10 Jan 12 2021  anyconnect-win-4.6.00362-webdeploy-k9.pkg</span><br></pre></td></tr></table></figure>
 
 
-<h2 id="ASAv配置SSLVPN（AnyConnect）"><a href="#ASAv配置SSLVPN（AnyConnect）" class="headerlink" title="ASAv配置SSLVPN（AnyConnect）"></a>ASAv配置SSLVPN（AnyConnect）</h2><p>下面是在AWS上配置ASAv几乎最小化配置了，这里对AnyConnect高级功能不做讨论。按照配置思路描述一下下面命令的含义：当客户端访问其他任何地址时，源地址转换为172.30.1.5。</p>
+<h2 id="6、ASAv配置SSLVPN（AnyConnect）"><a href="#6、ASAv配置SSLVPN（AnyConnect）" class="headerlink" title="6、ASAv配置SSLVPN（AnyConnect）"></a>6、ASAv配置SSLVPN（AnyConnect）</h2><p>下面是在AWS上配置ASAv几乎最小化配置了，这里对AnyConnect高级功能不做讨论。按照配置思路描述一下下面命令的含义：当客户端访问其他任何地址时，源地址转换为172.30.1.5。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">object network asa_outside_address</span><br><span class="line"> host 172.30.1.5</span><br><span class="line">object network anyconnect_pool_object</span><br><span class="line"> subnet 192.168.1.0 255.255.255.0</span><br><span class="line">nat (outside,outside) source dynamic anyconnect_pool_object pat-pool asa_outside_address</span><br></pre></td></tr></table></figure>
 <p>默认情况下ASAv相同安全级别不能访问，流量不能从相同接口进出，这里需要开启这2个特性。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">same-security-traffic permit inter-interface</span><br><span class="line">same-security-traffic permit intra-interface</span><br></pre></td></tr></table></figure>
@@ -294,7 +310,7 @@
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-43.png" alt="AnyConnect"></p>
 <p>如果未修改这个参数，通过远程桌面拨号后会有如下报错。</p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-44.png" alt="AnyConnect"></p>
-<h2 id="测试AnyConnect拨号"><a href="#测试AnyConnect拨号" class="headerlink" title="测试AnyConnect拨号"></a>测试AnyConnect拨号</h2><p>拨号成功后，我通过SSL通道能访问到Windows2016的内网地址即可证明访问成功。Windows2016需要关闭防火墙才能ping通。</p>
+<h2 id="7、测试AnyConnect拨号"><a href="#7、测试AnyConnect拨号" class="headerlink" title="7、测试AnyConnect拨号"></a>7、测试AnyConnect拨号</h2><p>拨号成功后，我通过SSL通道能访问到Windows2016的内网地址即可证明访问成功。Windows2016需要关闭防火墙才能ping通。</p>
 <p><img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-45.png" alt="AnyConnect"></p>
 <p>安全组也需要放行ICMP协议。<img src="/img/AWS-ASAv-Anyconnect/AWS-ASAv-AnyConnect-46.png" alt="AnyConnect"></p>
 <p>在公网上拨号成功。</p>
@@ -338,7 +354,7 @@
 </article>
 <div class="article-nav prev-next-wrap clearfix">
     
-    <a href="/2021/01/30/Markdown%E8%AF%AD%E6%B3%95%E6%B5%8B%E8%AF%95/" class="pre-post btn btn-default" title='Markdown语法测试'>
+    <a href="/Markdown%E8%AF%AD%E6%B3%95%E6%B5%8B%E8%AF%95.html" class="pre-post btn btn-default" title='Markdown语法测试'>
         <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
         <span class="hidden-xs">
             Markdown语法测试</span>
@@ -383,7 +399,7 @@ new Valine({
             文章目录
         </h3>
         
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E7%AE%80%E4%BB%8B"><span class="toc-text">实验简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E4%BB%8B%E7%BB%8D"><span class="toc-text">环境介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E8%B7%B3%E6%9D%BF%E6%9C%BA%E7%8E%AF%E5%A2%83"><span class="toc-text">配置跳板机环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAASAv%E5%AE%9E%E4%BE%8B"><span class="toc-text">创建ASAv实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ASAv%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE"><span class="toc-text">ASAv基础配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ASAv%E9%85%8D%E7%BD%AESSLVPN%EF%BC%88AnyConnect%EF%BC%89"><span class="toc-text">ASAv配置SSLVPN（AnyConnect）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95AnyConnect%E6%8B%A8%E5%8F%B7"><span class="toc-text">测试AnyConnect拨号</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E5%AE%9E%E9%AA%8C%E7%AE%80%E4%BB%8B"><span class="toc-text">1、实验简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E7%8E%AF%E5%A2%83%E4%BB%8B%E7%BB%8D"><span class="toc-text">2、环境介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E9%85%8D%E7%BD%AE%E8%B7%B3%E6%9D%BF%E6%9C%BA%E7%8E%AF%E5%A2%83"><span class="toc-text">3、配置跳板机环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E5%88%9B%E5%BB%BAASAv%E5%AE%9E%E4%BE%8B"><span class="toc-text">4、创建ASAv实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81ASAv%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE"><span class="toc-text">5、ASAv基础配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E3%80%81ASAv%E9%85%8D%E7%BD%AESSLVPN%EF%BC%88AnyConnect%EF%BC%89"><span class="toc-text">6、ASAv配置SSLVPN（AnyConnect）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7%E3%80%81%E6%B5%8B%E8%AF%95AnyConnect%E6%8B%A8%E5%8F%B7"><span class="toc-text">7、测试AnyConnect拨号</span></a></li></ol>
         
     </div>
 </aside>
