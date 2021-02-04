@@ -1,0 +1,697 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
+    <!--SEO-->
+
+<meta name="keywords" content="SSLVPN,ISE,Posture" />
+
+
+<meta name="description" content="
+详细描述了思科ISE Posture结合ASA SSLVPN的场景。员工使用AnyConnect拨号到公司内网时，需要通过思科ISE Posture检测，检测通过才能访问内网，否则访问权限受到..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    Cisco ISE Posture 结合 SSLVPN |
+    
+    LiuQianglong&#39;s Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='LiuQianglong'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        LiuQianglong&#39;s Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Network/"><i class="fa "></i>
+                                Network</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/AWS/"><i class="fa "></i>
+                                AWS</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Python/"><i class="fa "></i>
+                                Python</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Cisco ISE Posture 结合 SSLVPN">
+            
+            Cisco ISE Posture 结合 SSLVPN
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/Network/">Network</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/ISE/" rel="tag">ISE</a> <a class="tag-none-link" href="/tags/Posture/" rel="tag">Posture</a> <a class="tag-none-link" href="/tags/SSLVPN/" rel="tag">SSLVPN</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2021/02/03</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <blockquote>
+<p>详细描述了思科ISE Posture结合ASA SSLVPN的场景。员工使用AnyConnect拨号到公司内网时，需要通过思科ISE Posture检测，检测通过才能访问内网，否则访问权限受到控制。</p>
+</blockquote>
+<h2 id="一、Cisco-ISE-Posure介绍"><a href="#一、Cisco-ISE-Posure介绍" class="headerlink" title="一、Cisco ISE Posure介绍"></a>一、Cisco ISE Posure介绍</h2><h3 id="1-1、Posture简介"><a href="#1-1、Posture简介" class="headerlink" title="1.1、Posture简介"></a>1.1、Posture简介</h3><p>思科的ISE Posture提供了<strong>网络准入</strong>的功能，也就是当员工的电脑只有满足<strong>合规条件</strong>时才能接入到<strong>公司网络</strong>。这里可以针对Windows和MacOS自定义各种类型的条件，以Windows为例，条件可以是：系统必须开启防火墙；系统必须开启BitLocker；系统必须拥有最新的补丁等。满足这些条件才能接入到公司网络，这里网络可以是有线、无线、VPN。这次实验场景就是当员工使用AnyConnect接入到公司网络时，Posture模块只会允许满足条件的电脑接入网络。</p>
+<p>另外思科针对VPN的准入，也可以利用HostScan进行扫描，HostScan可以集成在AnyConnect模块中，不需要安装单独的模块，但是检测的能力不如安装了Posture模块的客户端。针对HostSan的准入检测，我会在其他实验演示。</p>
+<h3 id="1-2、Posture部署模式介绍"><a href="#1-2、Posture部署模式介绍" class="headerlink" title="1.2、Posture部署模式介绍"></a>1.2、Posture部署模式介绍</h3><p>Posture的关键是需要收集到客户端的系统信息，那么客户端上必须要有某种采集信息的代理，ISE2.4提供了3种类型的部署方式：</p>
+<h4 id="1-2-1-AnyConnect"><a href="#1-2-1-AnyConnect" class="headerlink" title="1.2.1 AnyConnect"></a>1.2.1 AnyConnect</h4><p>这种是最常用的安装方式，会在电脑上安装Posure模块，安装之后AnyConnect软件会多出一个模块。这种部署方式拥有Posture全功能的监测，本次实验也是这种部署方式。注意，这种部署方式需要ISE 拥有Apex授权，AnyConnect拥有Apex授权。</p>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202120044778.png" alt="image-20210202120044778"></p>
+<h4 id="1-2-2-Stealth-AnyConnect（隐形模式）"><a href="#1-2-2-Stealth-AnyConnect（隐形模式）" class="headerlink" title="1.2.2 Stealth AnyConnect（隐形模式）"></a>1.2.2 Stealth AnyConnect（隐形模式）</h4><p>Stealth AnyConnect和AnyConnect模式几乎一样，也会永久安装在客户端上，如果你单独安装Stealth AnyConnect，那么它是没有UI界面的，所以叫隐形模式。但是如果你安装了AMP或者VPN模块，那么将会看到UI界面。所以如果你要用在VPN准入上，这种模式不太适合，因为必然会出现UI界面。这种模式更加适合企业内网无线或者有线的准入，但是不想让用户看见UI界面的场景。</p>
+<h4 id="1-2-3-Temporal-Agent（临时客户端）"><a href="#1-2-3-Temporal-Agent（临时客户端）" class="headerlink" title="1.2.3 Temporal Agent（临时客户端）"></a>1.2.3 Temporal Agent（临时客户端）</h4><p>Temporal Agent是一个比较新的特性，它不会在客户端电脑上永久安装软件，但是显然检测能力是不如上面两种模式的。比较适合给访客和供应商作为临时的监测方式。</p>
+<h4 id="1-2-4-Windows-Posture-支持检测特性"><a href="#1-2-4-Windows-Posture-支持检测特性" class="headerlink" title="1.2.4 Windows Posture 支持检测特性"></a>1.2.4 Windows Posture 支持检测特性</h4><table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">Temporal Agent</th>
+<th>Stealth AnyConnect</th>
+<th>AnyConnect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Posture Conditions</td>
+<td align="left">Supported Conditions:              <br/>• AM Installation<br/>• Firewall Installation<br/>• Application Inventory<br/>• Hardware Inventory<br/>• USB Check<br/>• AV Installation<br/>• AV version / date<br/>• AS Installation<br/>• AS version / date<br/>• Application / File Check<br/>• Service packs / Hotfixes<br/>• Process / Registry Check</td>
+<td>Supported Conditions:<br/>• AM Installation<br/>• Firewall Installation<br/>• Application Inventory<br/>• Hardware Inventory<br/>• USB Check<br/>• AV Installation<br/>• AV version / date<br/>• AS Installation<br/>• AS version / date<br/>• Application / File Check<br/>• Service packs / Hotfixes<br/>• Process / Registry Check<br/><strong>• Patch Management<br/>• Disk Encryption<br/>• Service Condition<br/>• Registry Condition<br/>• Dictionary Condition</strong></td>
+<td>Supported Conditions:                          <br/>• AM Installation<br/>• Firewall Installation<br/>• Application Inventory<br/>• Hardware Inventory<br/>• USB Check<br/>• AV Installation<br/>• AV version / date<br/>• AS Installation<br/>• AS version / date<br/>• Application / File Check<br/>• Service packs / Hotfixes<br/>• Process / Registry Check<br/><strong>• Patch Management<br/>• Disk Encryption<br/>• Service Condition<br/>• Registry Condition<br/>• Dictionary Condition</strong></td>
+</tr>
+<tr>
+<td align="left">Remediation Actions</td>
+<td align="left">Manual Remediations</td>
+<td>Partial Automatic Remediation:<br/>File, Link, WSUS Show UI, PM activate UI, <br/>Message Text. <strong>Manual remediation not supported.</strong></td>
+<td>Both Automatic and Manual Remediation supported</td>
+</tr>
+<tr>
+<td align="left">Passive Reassessment</td>
+<td align="left">None</td>
+<td>Supported</td>
+<td>Supported</td>
+</tr>
+</tbody></table>
+<h4 id="1-2-5-macOS-Posture-支持检测特性"><a href="#1-2-5-macOS-Posture-支持检测特性" class="headerlink" title="1.2.5 macOS Posture 支持检测特性"></a>1.2.5 macOS Posture 支持检测特性</h4><table>
+<thead>
+<tr>
+<th></th>
+<th>Temporal Agent</th>
+<th>Stealth AnyConnect</th>
+<th>AnyConnect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Posture Conditions</td>
+<td>Unsupported Conditions:<br/>• Service Condition-macOS<br/>—System Daemon check<br/>• Service Condition-macOS<br/>—Daemon or User Agent check<br/>• PM—Up to Date check<br/>• PM—Enabled check<br/>• DE—Encryption Location based check</td>
+<td>Supported Conditions:<br/>• AM Installation<br/>• Firewall Enabled<br/>• Application Inventory<br/>• Hardware Inventory<br/>• AV Installation<br/>• AV version / date<br/>• AS Installation<br/>• AS version / date<br/>• Application Check<br/>• Plist Check<br/>• File Check<br/>• Patch Management<br/>• Service packs / Hotfixes<br/>• Disk Encryption<br/>• Service Condition<br/>• Dictionary Condition</td>
+<td>Supported Conditions:<br/>• AM Installation<br/>• Firewall Enabled<br/>• Application Inventory<br/>• Hardware Inventory<br/>• AV Installation<br/>• AV version / date<br/>• AS Installation<br/>• AS version / date<br/>• Application Check<br/>• Plist Check<br/>• File Check<br/>• Patch Management<br/>• Service packs / Hotfixes<br/>• Disk Encryption<br/>• Service Condition<br/>• Dictionary Condition</td>
+</tr>
+<tr>
+<td>Remediation Actions</td>
+<td>Not Supported</td>
+<td>Unsupported: Manual, Launch program, <br/>File condition, Patch management, USB</td>
+<td>Unsupported: Manual, Launch program, <br/>File condition, Patch management, USB</td>
+</tr>
+<tr>
+<td>Passive Reassessment</td>
+<td>Not Supported</td>
+<td>Not Supported</td>
+<td>Not Supported</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="二、实验介绍"><a href="#二、实验介绍" class="headerlink" title="二、实验介绍"></a>二、实验介绍</h2><h3 id="2-1、实验注意事项"><a href="#2-1、实验注意事项" class="headerlink" title="2.1、实验注意事项"></a>2.1、实验注意事项</h3><ul>
+<li>ISE Posture功能需要Apex授权，这里实验环境使用ISE的默认90天测试授权。</li>
+<li>ASA AnyConnect也需要有Apex授权，这里实验环境依然用的自带测试授权。</li>
+<li><strong>客户端需要信任ISE Posture的证书，如果ISE是自签名证书，客户端需要导入ISE证书</strong>。</li>
+<li>建议管理员离线为用户安装好ISE Posure模块，可以避免很多问题。重定向到安装页面，让用户自行下载会遇到各种用户无法处理的问题。</li>
+</ul>
+<h3 id="2-2、实验需求"><a href="#2-2、实验需求" class="headerlink" title="2.2、实验需求"></a>2.2、实验需求</h3><p>用户使用AnyConnect拨号时，需要满足下面条件才能接入，如果不满足合规条件，用户只能访问到隔离网络内的补丁服务器。如果用户电脑未安装Posture模块，当用户首次拨号成功后，页面会重定向到Posture安装页面，用户可以自行下载模块进行安装。</p>
+<ul>
+<li>Windows必须开启防火墙功能。</li>
+<li>Windows必须开启了BitLocker功能。</li>
+<li>Windows在C盘根目录下必须要有test.txt文件。</li>
+<li>Windows必须安装最新的补丁文件。</li>
+</ul>
+<h3 id="2-3、实验环境介绍"><a href="#2-3、实验环境介绍" class="headerlink" title="2.3、实验环境介绍"></a>2.3、实验环境介绍</h3><p>本次实验在vSphere环境下进行，ASAv和ISE均是默认的测试授权，ASAv测试授权有限速100k的问题，所以客户端打开Posture重定向网页比较困难，这里我为客户度手动安装Posture客户端。当客户端为通过合规检查时，只能访问ISE、AD、Update Server，不能访问其他服务器。通过合规检测之后允许访问所有网络。</p>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202165836290.png" alt="image-20210202165836290"></p>
+<h3 id="2-4、实验步骤"><a href="#2-4、实验步骤" class="headerlink" title="2.4、实验步骤"></a>2.4、实验步骤</h3><p>配置整体分为2个部分，ISE Posture的配置和ASA SSLVPN的配置，这里聚焦的核心是ISE Posture配置。</p>
+<h4 id="2-4-1-ISE-配置步骤"><a href="#2-4-1-ISE-配置步骤" class="headerlink" title="2.4.1 ISE 配置步骤"></a>2.4.1 ISE 配置步骤</h4><ol>
+<li><strong>配置Posture推送策略</strong>：当用户未安装Posture客户端拨入VPN时，需要为不同的系统推送不同的Posure Agent。</li>
+<li><strong>定义合规检测策略</strong>：也就是定义客户端具体需要满足的策略，只有满足这些对应的策略才能接入网络。如果用户账号具有管理员权限也可以定义修复策略，例如Posture自动为客户端打开防火墙。</li>
+<li><strong>配置授权策略</strong>：ISE为3种状态的客户端给与不同的授权。<code>Unknown</code>状态，重定向到客户端下载页面。<code>Compliant</code>状态，正常授权。<code>Noncompliant</code>状态，授权ACL限制网络访问。</li>
+</ol>
+<h4 id="2-4-2-ASA配置步骤"><a href="#2-4-2-ASA配置步骤" class="headerlink" title="2.4.2 ASA配置步骤"></a>2.4.2 ASA配置步骤</h4><p>ASA上需要注意必须启用CoA（Change of Authorization）功能。CoA提供了在身份验证通过之后更改授权信息的机制，这个场景中，当客户端从不合规状态变为合规状态后，ISE会下发新的授权信息到ASA上。思科使用<code>UDP 1700</code>端口，RFC 5176使用UDP 3799端口。</p>
+<ol>
+<li>ASA基础配置，本次实验并不涉及具体的ASA基础配置操作。</li>
+<li>ASA SSLVPN配置，这里会主要介绍关于与Posture结合的特殊配置。</li>
+</ol>
+<hr>
+<h2 id="三、ISE-Posture-配置"><a href="#三、ISE-Posture-配置" class="headerlink" title="三、ISE Posture 配置"></a>三、ISE Posture 配置</h2><h3 id="3-1、配置ISE-Posture推送策略"><a href="#3-1、配置ISE-Posture推送策略" class="headerlink" title="3.1、配置ISE Posture推送策略"></a>3.1、配置ISE Posture推送策略</h3><ul>
+<li>为客户端推送Posture模块默认是禁用的，会依据授权来判断是否推送</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202194448505.png" alt="image-20210202194448505"></p>
+<ul>
+<li>从Cisco网站下载最新的文件</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202194550988.png" alt="image-20210202194550988"></p>
+<p>下载最新的Windows合规检测模块</p>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202194614554.png" alt="image-20210202194614554"></p>
+<ul>
+<li>AnyConnect现在是单独产品线，不能通过在线直接下载。AnyConnect<a target="_blank" rel="noopener" href="https://software.cisco.com/download/home/286281283/type/282364313/release/4.9.05042">官网下载地址</a>，文件名称为<code>anyconnect-win-4.9.05042-webdeploy-k9.pkg</code>现在下载AnyConnect需要有CCO权限才能下载，最新版AnyConnect可能不太，但是说是一下旧版本还是比较容易找到的，这里只需要4.x版本即可，并不需要最新版本。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202194637927.png" alt="image-20210202194637927"></p>
+<p>这里通过本地文件上传到ISE。</p>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202194721888.png" alt="image-20210202194721888"></p>
+<ul>
+<li>创建<code>AnyConnect Posture Profile</code></li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202194749515.png" alt="image-20210202194749515"></p>
+<ul>
+<li>这里开启<code>Enable Rescan Button</code>允许客户端重新扫描。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202194808186.png" alt="image-20210202194808186"></p>
+<p>允许访问所有网站。##？？</p>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202194852062.png" alt="image-20210202194852062"></p>
+<ul>
+<li>添加<code>AnyConnect Configure</code></li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202194908981.png" alt="image-20210202194908981"></p>
+<ul>
+<li>选择AnyConnect客户端文件、合规性检测文件、ISE Posture配置文件。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202195025904.png" alt="image-20210202195025904"></p>
+<ul>
+<li>创建Client Provisioning Policy</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202195142737.png" alt="image-20210202195142737"></p>
+<h3 id="3-2、定义合规检测策略"><a href="#3-2、定义合规检测策略" class="headerlink" title="3.2、定义合规检测策略"></a>3.2、定义合规检测策略</h3><ul>
+<li>定义Window Patch检测策略，Posture模块可以通过<code>Windows Update Agent</code>或者<code>System Center Configuration Manager Client（SCCM Client）</code>方式检测Patch是否合规。如果选择<code>Windows Update Agent</code>方式检测，那么需要确保客户端VPN拨号之后能访问Window更新服务器，如果企业内部署了<code>WSUS</code>等服务器，需要让客户端能访问到<code>WSUS</code>服务器。如果选择<code>SCCM Client</code>方式检测，同样需要确保客户端能和SCCM的<code>DP</code>分发点通信。</li>
+<li>这里可以有3种类型的监测方式，<code>Installation</code>表示客户端是否安装了对应的程序，<code>Enabled</code>表示客户端是否激活了程序，<code>Up to Date</code>表示客户端是否拥有最新的文件。这3种监测方式时间递增，监测是否安装速度非常快，<strong>监测是否拥有最新的补丁文件速度会慢很多</strong>。如果你选择<code>Up to Date</code>，那么你还可以选择监测具体哪类安全级别的补丁需要安装。一般选择<code>Important &amp; critical</code>即可。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203163822897.png" alt="image-20210203163822897"></p>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203173302707.png" alt="image-20210203173302707"></p>
+<ul>
+<li>检测C盘必须开启BitLocker。这里检测Windows系统，使用4.x以后的合规性检测模块，加密厂商选择微软。BitLocker检测可以检测指定的盘符，也可以指定全盘开启。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203141137573.png" alt="image-20210203141137573"></p>
+<ul>
+<li>配置文件检测策略，这里检测指定目录下文件是否存在。还可以检测文件的创建时间、SHA-256值等信息。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203141154787.png" alt="image-20210203141154787"></p>
+<ul>
+<li>可以利用自带的防火墙检测条件。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203141223315.png" alt="image-20210203141223315"></p>
+<ul>
+<li><p>这里定义防火墙的<code>Remediation</code>策略，即当用户电脑不合规之后Posture采取的动作，例如可以给用户发送文本消息告诉用户具体哪个地方未合规。也可以配置响应的动作，自动帮助客户端修复。这里Posture可以<strong>自动帮助客户端打开防火墙策略，但是需要用户使用管理员账号登录</strong>，也就是用户账号要有权限能开启防火墙。</p>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203162102844.png" alt="image-20210203162102844"></p>
+</li>
+</ul>
+<ul>
+<li><p>这里定义Window Patch不合规时自动修复。</p>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203141242764.png" alt="image-20210203141242764"></p>
+</li>
+</ul>
+<ul>
+<li>配置合规条件，调用上面定义的各种条件。当BitLocker和文件检测未通过时，给客户端文本提示信息；当防火墙和Patch检测未通过时，Posture模块进行自动修复。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203164615696.png" alt="image-20210203164615696"></p>
+<h3 id="3-3、配置授权策略"><a href="#3-3、配置授权策略" class="headerlink" title="3.3、配置授权策略"></a>3.3、配置授权策略</h3><p>需要为3种不同状态的客户端下发不同的授权，未安装Posture模块的客户端下发重定向授权；合规性检测未通过的客户端下发DACL限制网络访问；合规性检测通过的客户端下发正常访问授权。</p>
+<ul>
+<li>为没有安装Posture的客户端创建授权策略。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202220525317.png" alt="image-20210202220525317"></p>
+<p>选择网页重定向模板为<code>Client Provisioning(Posture)</code>，这里使用默认的模板，你也可以去修改模板或者创建新的模板。下发重定向ACL<code>Posture_Redirect_ACL</code>，这里只是推送了重定向ACL的名字，<strong>所以需要在ASA上创建同名的重定向ACL内容</strong>。</p>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202220533253.png" alt="image-20210202220533253"></p>
+<ul>
+<li>创建DACL，限制未合规的客户端访问网络。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202220537813.png" alt="image-20210202220537813"></p>
+<p>一般只允许访问DNS服务、补丁服务器，不允许访问其他内网服务器。这个ACL内容会推送到ASA上，并不需要在ASA上创建同名的ACL列表。</p>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202220542286.png" alt="image-20210202220542286"></p>
+<ul>
+<li>创建授权策略，调用DACL。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202220546039.png" alt="image-20210202220546039"></p>
+<ul>
+<li>ISE可以推送指定group-policy到ASA上，这里演示一下。注意推送的只是group-policy名字，对应的group-policy内容需要在ASA上创建。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202220550156.png" alt="image-20210202220550156"></p>
+<ul>
+<li>创建网络设备，指定与ASA的Radius共享密钥。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202220555097.png" alt="image-20210202220555097"></p>
+<ul>
+<li>ISE创建本地用户用于AnyConnect拨号认证。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202220605316.png" alt="image-20210202220605316"></p>
+<ul>
+<li>ISE创建Policy Set，这里条件可以自己定义。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202220558483.png" alt="image-20210202220558483"></p>
+<ul>
+<li>创建授权策略，这里条件内一定要包含<code>PostureStatus</code>信息，依据3种不同的PostureStatus状态给客户端对应的授权。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203110122703.png" alt="image-20210203110122703"></p>
+<hr>
+<h2 id="四、ASA-配置"><a href="#四、ASA-配置" class="headerlink" title="四、ASA 配置"></a>四、ASA 配置</h2><h3 id="4-1、ASA-基础配置"><a href="#4-1、ASA-基础配置" class="headerlink" title="4.1、ASA 基础配置"></a>4.1、ASA 基础配置</h3><ul>
+<li>这里ASA是空配状态进行的，进行了地址初始化，配置了SSH登录，配置了ASDM登录。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">interface GigabitEthernet0&#x2F;0</span><br><span class="line"> nameif inside</span><br><span class="line"> security-level 100</span><br><span class="line"> ip address 172.20.29.145 255.255.255.0</span><br><span class="line">!</span><br><span class="line">interface GigabitEthernet0&#x2F;1</span><br><span class="line"> nameif outside</span><br><span class="line"> security-level 0</span><br><span class="line"> ip address 52.94.8.18 255.255.255.0</span><br><span class="line"></span><br><span class="line">ssh 0.0.0.0 0.0.0.0 inside</span><br><span class="line"></span><br><span class="line">http server enable 8443</span><br><span class="line">http 0 0 inside</span><br><span class="line">aaa authentication http console LOCAL</span><br><span class="line">username admin password cisco privilege 15</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>通过ASDM上传AnyConnect文件到磁盘下。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">asa# dir</span><br><span class="line"></span><br><span class="line">Directory of disk0:&#x2F;</span><br><span class="line">83     -rwx  76380273     13:33:46 Feb 02 2021  anyconnect-win-4.9.05042-webdeploy-k9.pkg</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="4-1、SSLVPN-配置"><a href="#4-1、SSLVPN-配置" class="headerlink" title="4.1、SSLVPN 配置"></a>4.1、SSLVPN 配置</h3><ul>
+<li>配置webvpn，激活AnyConnect拨号。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">webvpn</span><br><span class="line"> enable outside</span><br><span class="line"> anyconnect enable</span><br><span class="line"> anyconnect image disk0:&#x2F;anyconnect-win-4.9.05042-webdeploy-k9.pkg</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>当客户端访问内网时，地址转换为ASA的inside接口地址。（这并不是必须的操作，这里只是为了省略解决内网路由的问题）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">object network anyconnect_pool_object</span><br><span class="line"> subnet 192.168.100.0 255.255.255.0</span><br><span class="line">nat (outside,inside) source dynamic anyconnect_pool_object interface</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li><p>ASA CoA和重定向列表，这应该是最不同与传统SSLVPN的配置。</p>
+<p><strong>COA</strong>：当ISE感知到客户端从非合规状态变为合规状态时会下发新的授权，ASA只有启用的CoA功能才能使用新的授权信息。</p>
+<p><strong>重定向列表</strong>：初看上去很难理解具体的含义，这里你需要重新理解<code>permit</code>和<code>deny</code>的含义。这里的<code>deny</code>表示抓取的流量不会被重定向，<code>permit</code>表示抓取的流量会被重定向。这里的含义是去往DNS、ISE、DC的流量不要被重定向，客户端可以正常去往这里流量。但是其他所有流量都会被重定向。这里重定向列表一定要明白具体含义，否则很容易出现无限循环重定向。</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">aaa-server ISE protocol radius</span><br><span class="line"> authorize-only</span><br><span class="line"> interim-accounting-update periodic 1</span><br><span class="line"> merge-dacl before-avpair</span><br><span class="line"> dynamic-authorization</span><br><span class="line"> </span><br><span class="line">aaa-server ISE (inside) host 172.20.29.140</span><br><span class="line"> key cisco</span><br><span class="line"> authentication-port 1812</span><br><span class="line"> </span><br><span class="line">access-list Posture_Redirect_ACL extended deny udp any any eq domain</span><br><span class="line">access-list Posture_Redirect_ACL extended deny ip any host 172.20.29.140</span><br><span class="line">access-list Posture_Redirect_ACL extended deny ip any host 172.20.29.150</span><br><span class="line">access-list Posture_Redirect_ACL extended permit ip any any</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>下面就是SSLVPN的常规配置了，这里使用了SSLVPN的默认<code>tunnel-group</code>。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ip local pool sslvpn_client_pool 192.168.100.100-192.168.100.200 mask 255.255.255.255</span><br><span class="line"></span><br><span class="line">group-policy employee-group-policy internal</span><br><span class="line">group-policy employee-group-policy attributes</span><br><span class="line"> dns-server value 172.20.29.150</span><br><span class="line"> vpn-tunnel-protocol ssl-client </span><br><span class="line"> default-domain value liuqianglong.com</span><br><span class="line"> address-pools value sslvpn_client_pool</span><br><span class="line"></span><br><span class="line">tunnel-group DefaultWEBVPNGroup general-attributes</span><br><span class="line"> authentication-server-group ISE</span><br><span class="line"> authorization-server-group ISE</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<h2 id="五、AnyConnect-拨号测试"><a href="#五、AnyConnect-拨号测试" class="headerlink" title="五、AnyConnect 拨号测试"></a>五、AnyConnect 拨号测试</h2><h3 id="5-1、客户端安装Posture模块"><a href="#5-1、客户端安装Posture模块" class="headerlink" title="5.1、客户端安装Posture模块"></a>5.1、客户端安装Posture模块</h3><ul>
+<li>这里ASA没有配置隧道分隔，所以客户端所有流量都会经过AnyConnect，AnyConnect会主动触发一个HTTP流量去访问<a target="_blank" rel="noopener" href="http://www.msftconnecttest.com/redirect%EF%BC%8C%E8%AE%A9%E9%A1%B5%E9%9D%A2%E9%87%8D%E5%AE%9A%E5%90%91%E5%88%B0ISE">http://www.msftconnecttest.com/redirect，让页面重定向到ISE</a> Posture下载页面。如果配置了隧道分隔，需要用户主动访问一个内网服务器触发重定向，才会显示下面的页面。这里跟随向导前进即可。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203100542156.png" alt="image-20210203100542156"></p>
+<ul>
+<li>检测是否安装AnyConnect Posture模块</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202230820562.png" alt="image-20210202230820562"></p>
+<ul>
+<li>下载这个临时代理软件，这个并不是最终的ISE Posture模块，下载之后记得备份这个软件，因为如果安装不成功这个临时代理会自动删除，你又需要重新下载一次。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202230824047.png" alt="image-20210202230824047"></p>
+<ul>
+<li>这里客户端和ISE在进行证书认证，所以如果你的ISE是自签名证书，那么需要导出ISE的自签名证书，导入到客户端才能顺利通过认证。我这里的ISE实验环境显然是自签名证书，所以需要进行导入证书操作。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203102315830.png" alt="image-20210203102315830"></p>
+<ul>
+<li><strong>客户端一定要信任ISE证书之后再进行后面的操作</strong>，否则你可能会看到各种报错界面。这是其中一种报错界面。如果客户端已经信任ISE Posture证书了，那么可以忽略后面导入证书的操作。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202230856654.png" alt="image-20210202230856654"></p>
+<ul>
+<li>如果出现这个报错也是客户端不信任ISE Posture证书导致的。<code>The requirement cannot be evaluated since you are connected to an untrusted server. Please contact your system adminitrator.</code></li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203111206901.png" alt="image-20210203111206901"></p>
+<h3 id="5-2、客户端导入ISE证书"><a href="#5-2、客户端导入ISE证书" class="headerlink" title="5.2、客户端导入ISE证书"></a>5.2、客户端导入ISE证书</h3><ul>
+<li>在ISE上导出自签名证书，导出的是<code>.pem</code>文件，你可以用各种方式将文件传输到客户端上，客户端上修改文件后缀为<code>.cer</code>即可安装证书。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203102353356.png" alt="image-20210203102353356"></p>
+<ul>
+<li>客户端需要将证书同时导入到<strong>当前用户</strong>和<strong>本地计算机</strong>。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202231040224.png" alt="image-20210202231040224"></p>
+<ul>
+<li>导入到「受信任的根证书颁发机构」。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202231049114.png" alt="image-20210202231049114"></p>
+<ul>
+<li>导入之后客户端会信任ISE Posure证书，即可正常通信。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202231054050.png" alt="image-20210202231054050"></p>
+<ul>
+<li>代理软件继续下载ISE Posture模块。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202230844482.png" alt="image-20210202230844482"></p>
+<ul>
+<li>因为ASAv测试license限速100k，所以这里我离线手动安装ISE Posture模块，在线下载Posture模块速度太慢。这个下载链接依然需要CCO账号，与上面AnyConnect下载是同一个链接。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202231429752.png" alt="image-20210202231429752"></p>
+<ul>
+<li>安装成功后AnyConnect UI多出一个<code>System Scan</code>模块。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202231553823.png" alt="image-20210202231553823"></p>
+<ul>
+<li>拨号成功后，Posure会下载ISE提供的Windows合规扫描模块。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210202231659403.png" alt="image-20210202231659403"></p>
+<h3 id="5-3、客户端合规性检测"><a href="#5-3、客户端合规性检测" class="headerlink" title="5.3、客户端合规性检测"></a>5.3、客户端合规性检测</h3><h4 id="5-3-1-合规性监测失败页面展示"><a href="#5-3-1-合规性监测失败页面展示" class="headerlink" title="5.3.1 合规性监测失败页面展示"></a>5.3.1 合规性监测失败页面展示</h4><ul>
+<li>客户端未开启防火墙。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203111528177.png" alt="image-20210203111528177"></p>
+<ul>
+<li>客户端C盘根目录下没有<code>test.txt</code>这个文件。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203111530992.png" alt="image-20210203111530992"></p>
+<ul>
+<li>客户端C盘未开启<code>BitLocker</code>。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203111534066.png" alt="image-20210203111534066"></p>
+<ul>
+<li>当Window Update未通过时，因为配置了<code>Remediation</code>，所以系统会尝试下载最新的Patch文件。这里一定要确认客户端能访问Window Update服务器，在前面配置检测策略时已经详细说过了。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203124507472.png" alt="image-20210203124507472"></p>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203135855038.png" alt="image-20210203135855038"></p>
+<h4 id="5-3-2-客户端进行合规检查时授权信息"><a href="#5-3-2-客户端进行合规检查时授权信息" class="headerlink" title="5.3.2 客户端进行合规检查时授权信息"></a>5.3.2 客户端进行合规检查时授权信息</h4><ul>
+<li>此时客户端正在检查BitLocker是否开启，一共有5分钟的监测时间，在此期间内客户端状态为<code>Unknow</code>，所以流量受到重定向列表管控。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203182220133.png" alt="image-20210203182220133"></p>
+<ul>
+<li>查看用户获取的具体授权信息，最下面可以看到用户获取的重定向列表。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">asa# show vpn-sessiondb detail anyconnect</span><br><span class="line"></span><br><span class="line">  filter  Filter criteria</span><br><span class="line">  sort    Sort Criteria</span><br><span class="line">  |       Output modifiers</span><br><span class="line">  &lt;cr&gt;</span><br><span class="line">asa# show vpn-sessiondb detail anyconnect</span><br><span class="line"></span><br><span class="line">Session Type: AnyConnect Detailed</span><br><span class="line"></span><br><span class="line">Username     : ssluser                Index        : 36</span><br><span class="line">Assigned IP  : 192.168.100.101        Public IP    : 52.94.8.10</span><br><span class="line">Protocol     : AnyConnect-Parent SSL-Tunnel DTLS-Tunnel</span><br><span class="line">License      : AnyConnect Premium</span><br><span class="line">Encryption   : AnyConnect-Parent: (1)none  SSL-Tunnel: (1)AES-GCM-256  DTLS-Tunnel: (1)AES256</span><br><span class="line">Hashing      : AnyConnect-Parent: (1)none  SSL-Tunnel: (1)SHA384  DTLS-Tunnel: (1)SHA1</span><br><span class="line">Bytes Tx     : 63439                  Bytes Rx     : 21404</span><br><span class="line">Pkts Tx      : 128                    Pkts Rx      : 174</span><br><span class="line">Pkts Tx Drop : 0                      Pkts Rx Drop : 0</span><br><span class="line">Group Policy : employee-group-policy  Tunnel Group : DefaultWEBVPNGroup</span><br><span class="line">Login Time   : 10:13:17 UTC Wed Feb 3 2021</span><br><span class="line">Duration     : 0h:00m:46s</span><br><span class="line">Inactivity   : 0h:00m:00s</span><br><span class="line">VLAN Mapping : N&#x2F;A                    VLAN         : none</span><br><span class="line">Audt Sess ID : ac141d9100024000601a773d</span><br><span class="line">Security Grp : none</span><br><span class="line">AnyConnect-Parent Tunnels: 1</span><br><span class="line">SSL-Tunnel Tunnels: 1</span><br><span class="line">DTLS-Tunnel Tunnels: 1</span><br><span class="line"></span><br><span class="line">AnyConnect-Parent:</span><br><span class="line">  Tunnel ID    : 36.1</span><br><span class="line">  Public IP    : 52.94.8.10</span><br><span class="line">  Encryption   : none                   Hashing      : none</span><br><span class="line">  TCP Src Port : 49367                  TCP Dst Port : 443</span><br><span class="line">  Auth Mode    : userPassword</span><br><span class="line">  Idle Time Out: 30 Minutes             Idle TO Left : 29 Minutes</span><br><span class="line">  Client OS    : win</span><br><span class="line">  Client OS Ver: 10.0.19041</span><br><span class="line">  Client Type  : AnyConnect</span><br><span class="line">  Client Ver   : Cisco AnyConnect VPN Agent for Windows 4.9.05042</span><br><span class="line">  Bytes Tx     : 7699                   Bytes Rx     : 0</span><br><span class="line">  Pkts Tx      : 5                      Pkts Rx      : 0</span><br><span class="line">  Pkts Tx Drop : 0                      Pkts Rx Drop : 0</span><br><span class="line"></span><br><span class="line">SSL-Tunnel:</span><br><span class="line">  Tunnel ID    : 36.2</span><br><span class="line">  Assigned IP  : 192.168.100.101        Public IP    : 52.94.8.10</span><br><span class="line">  Encryption   : AES-GCM-256            Hashing      : SHA384</span><br><span class="line">  Ciphersuite  : ECDHE-ECDSA-AES256-GCM-SHA384</span><br><span class="line">  Encapsulation: TLSv1.2                TCP Src Port : 49379</span><br><span class="line">  TCP Dst Port : 443                    Auth Mode    : userPassword</span><br><span class="line">  Idle Time Out: 30 Minutes             Idle TO Left : 29 Minutes</span><br><span class="line">  Client OS    : Windows</span><br><span class="line">  Client Type  : SSL VPN Client</span><br><span class="line">  Client Ver   : Cisco AnyConnect VPN Agent for Windows 4.9.05042</span><br><span class="line">  Bytes Tx     : 16382                  Bytes Rx     : 7801</span><br><span class="line">  Pkts Tx      : 39                     Pkts Rx      : 67</span><br><span class="line">  Pkts Tx Drop : 0                      Pkts Rx Drop : 0</span><br><span class="line"></span><br><span class="line">DTLS-Tunnel:</span><br><span class="line">  Tunnel ID    : 36.3</span><br><span class="line">  Assigned IP  : 192.168.100.101        Public IP    : 52.94.8.10</span><br><span class="line">  Encryption   : AES256                 Hashing      : SHA1</span><br><span class="line">  Ciphersuite  : AES256-SHA</span><br><span class="line">  Encapsulation: DTLSv1.0               UDP Src Port : 58772</span><br><span class="line">  UDP Dst Port : 443                    Auth Mode    : userPassword</span><br><span class="line">  Idle Time Out: 30 Minutes             Idle TO Left : 29 Minutes</span><br><span class="line">  Client OS    : Windows</span><br><span class="line">  Client Type  : DTLS VPN Client</span><br><span class="line">  Client Ver   : Cisco AnyConnect VPN Agent for Windows 4.9.05042</span><br><span class="line">  Bytes Tx     : 39358                  Bytes Rx     : 13603</span><br><span class="line">  Pkts Tx      : 84                     Pkts Rx      : 107</span><br><span class="line">  Pkts Tx Drop : 0                      Pkts Rx Drop : 0</span><br><span class="line"></span><br><span class="line">ISE Posture:</span><br><span class="line">  Redirect URL : https:&#x2F;&#x2F;ise26.liuqianglong.com:8443&#x2F;portal&#x2F;gateway?sessionId&#x3D;ac141d9100024000601a773d&amp;portal&#x3D;27b1bc30-...</span><br><span class="line">  Redirect ACL : Posture_Redirect_ACL</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>可以查看重定向列表的流量匹配情况。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">asa# show access-list</span><br><span class="line">access-list cached ACL log flows: total 0, denied 0 (deny-flow-max 4096)</span><br><span class="line">            alert-interval 300</span><br><span class="line">access-list Posture_Redirect_ACL; 4 elements; name hash: 0xcadb04ea</span><br><span class="line">access-list Posture_Redirect_ACL line 1 extended deny udp any any eq domain (hitcnt&#x3D;4294) 0x99c9a32c</span><br><span class="line">access-list Posture_Redirect_ACL line 2 extended deny ip any host 172.20.29.140 (hitcnt&#x3D;2184) 0x2bb72c86</span><br><span class="line">access-list Posture_Redirect_ACL line 3 extended deny ip any host 172.20.29.150 (hitcnt&#x3D;0) 0xaf71d144</span><br><span class="line">access-list Posture_Redirect_ACL line 4 extended permit ip any any (hitcnt&#x3D;5) 0xd1910f22</span><br></pre></td></tr></table></figure>
+
+
+
+
+<ul>
+<li>在客户端上测试网络连通性，此时客户端只能访问DNS、172.20.29.140、172.20.29.150的流量，除此之外的HTTP流量都会被重定向到ISE上。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203182636274.png" alt="image-20210203182636274"></p>
+<h4 id="5-3-3-客户端未通过合规性检测时的授权信息"><a href="#5-3-3-客户端未通过合规性检测时的授权信息" class="headerlink" title="5.3.3 客户端未通过合规性检测时的授权信息"></a>5.3.3 客户端未通过合规性检测时的授权信息</h4><ul>
+<li>例如此时合规性检测确认失败。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203182846345.png" alt="image-20210203182846345"></p>
+<ul>
+<li>ASA上查看用户授权信息，最后一行可以看到DACL信息，此时客户端访问网络受到DACL的限制。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">asa# show vpn-sessiondb detail anyconnect</span><br><span class="line"></span><br><span class="line">Session Type: AnyConnect Detailed</span><br><span class="line"></span><br><span class="line">Username     : ssluser                Index        : 36</span><br><span class="line">Assigned IP  : 192.168.100.101        Public IP    : 52.94.8.10</span><br><span class="line">Protocol     : AnyConnect-Parent SSL-Tunnel DTLS-Tunnel</span><br><span class="line">License      : AnyConnect Premium</span><br><span class="line">Encryption   : AnyConnect-Parent: (1)none  SSL-Tunnel: (1)AES-GCM-256  DTLS-Tunnel: (1)AES256</span><br><span class="line">Hashing      : AnyConnect-Parent: (1)none  SSL-Tunnel: (1)SHA384  DTLS-Tunnel: (1)SHA1</span><br><span class="line">Bytes Tx     : 69643                  Bytes Rx     : 34502</span><br><span class="line">Pkts Tx      : 172                    Pkts Rx      : 240</span><br><span class="line">Pkts Tx Drop : 0                      Pkts Rx Drop : 0</span><br><span class="line">Group Policy : employee-group-policy  Tunnel Group : DefaultWEBVPNGroup</span><br><span class="line">Login Time   : 10:13:17 UTC Wed Feb 3 2021</span><br><span class="line">Duration     : 0h:02m:44s</span><br><span class="line">Inactivity   : 0h:00m:00s</span><br><span class="line">VLAN Mapping : N&#x2F;A                    VLAN         : none</span><br><span class="line">Audt Sess ID : ac141d9100024000601a773d</span><br><span class="line">Security Grp : none</span><br><span class="line">AnyConnect-Parent Tunnels: 1</span><br><span class="line">SSL-Tunnel Tunnels: 1</span><br><span class="line">DTLS-Tunnel Tunnels: 1</span><br><span class="line"></span><br><span class="line">AnyConnect-Parent:</span><br><span class="line">  Tunnel ID    : 36.1</span><br><span class="line">  Public IP    : 52.94.8.10</span><br><span class="line">  Encryption   : none                   Hashing      : none</span><br><span class="line">  TCP Src Port : 49367                  TCP Dst Port : 443</span><br><span class="line">  Auth Mode    : userPassword</span><br><span class="line">  Idle Time Out: 30 Minutes             Idle TO Left : 27 Minutes</span><br><span class="line">  Client OS    : win</span><br><span class="line">  Client OS Ver: 10.0.19041</span><br><span class="line">  Client Type  : AnyConnect</span><br><span class="line">  Client Ver   : Cisco AnyConnect VPN Agent for Windows 4.9.05042</span><br><span class="line">  Bytes Tx     : 7699                   Bytes Rx     : 0</span><br><span class="line">  Pkts Tx      : 5                      Pkts Rx      : 0</span><br><span class="line">  Pkts Tx Drop : 0                      Pkts Rx Drop : 0</span><br><span class="line"></span><br><span class="line">SSL-Tunnel:</span><br><span class="line">  Tunnel ID    : 36.2</span><br><span class="line">  Assigned IP  : 192.168.100.101        Public IP    : 52.94.8.10</span><br><span class="line">  Encryption   : AES-GCM-256            Hashing      : SHA384</span><br><span class="line">  Ciphersuite  : ECDHE-ECDSA-AES256-GCM-SHA384</span><br><span class="line">  Encapsulation: TLSv1.2                TCP Src Port : 49379</span><br><span class="line">  TCP Dst Port : 443                    Auth Mode    : userPassword</span><br><span class="line">  Idle Time Out: 30 Minutes             Idle TO Left : 27 Minutes</span><br><span class="line">  Client OS    : Windows</span><br><span class="line">  Client Type  : SSL VPN Client</span><br><span class="line">  Client Ver   : Cisco AnyConnect VPN Agent for Windows 4.9.05042</span><br><span class="line">  Bytes Tx     : 16382                  Bytes Rx     : 7801</span><br><span class="line">  Pkts Tx      : 39                     Pkts Rx      : 67</span><br><span class="line">  Pkts Tx Drop : 0                      Pkts Rx Drop : 0</span><br><span class="line">  Filter Name  : #ACSACL#-IP-Posture_NonCompliant_ACL-601a74eb</span><br><span class="line"></span><br><span class="line">DTLS-Tunnel:</span><br><span class="line">  Tunnel ID    : 36.3</span><br><span class="line">  Assigned IP  : 192.168.100.101        Public IP    : 52.94.8.10</span><br><span class="line">  Encryption   : AES256                 Hashing      : SHA1</span><br><span class="line">  Ciphersuite  : AES256-SHA</span><br><span class="line">  Encapsulation: DTLSv1.0               UDP Src Port : 58772</span><br><span class="line">  UDP Dst Port : 443                    Auth Mode    : userPassword</span><br><span class="line">  Idle Time Out: 30 Minutes             Idle TO Left : 29 Minutes</span><br><span class="line">  Client OS    : Windows</span><br><span class="line">  Client Type  : DTLS VPN Client</span><br><span class="line">  Client Ver   : Cisco AnyConnect VPN Agent for Windows 4.9.05042</span><br><span class="line">  Bytes Tx     : 45562                  Bytes Rx     : 26701</span><br><span class="line">  Pkts Tx      : 128                    Pkts Rx      : 173</span><br><span class="line">  Pkts Tx Drop : 0                      Pkts Rx Drop : 0</span><br><span class="line">  Filter Name  : #ACSACL#-IP-Posture_NonCompliant_ACL-601a74eb</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>在ISE上可以看到通过CoA机制下发的DACL信息。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203183045240.png" alt="image-20210203183045240"></p>
+<ul>
+<li>此时DACL未放行的流量，客户端无法通信。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203183232741.png" alt="image-20210203183232741"></p>
+<h4 id="5-3-4-客户端通过合规性检测后的授权"><a href="#5-3-4-客户端通过合规性检测后的授权" class="headerlink" title="5.3.4 客户端通过合规性检测后的授权"></a>5.3.4 客户端通过合规性检测后的授权</h4><ul>
+<li>这里我测试时，关闭了检测Patch，因为流量通过ASA100k的速度下载更新速度太慢。同时也关闭了BitLocker检测，Window开启BitLocker是一个漫长的过程。但是这2项我都在生产环境中成功部署了，检测和修复是没有问题的。在生产环境中因为部署的SCCM，所以我使用了<code>SCCM Client</code>的监测方式。</li>
+<li>这里ISE只授权了group-policy，所以客户端会受到group-policy的权限控制。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203143047722.png" alt="image-20210203143047722"></p>
+<h4 id="5-3-5-ISE查看客户端合规日志"><a href="#5-3-5-ISE查看客户端合规日志" class="headerlink" title="5.3.5 ISE查看客户端合规日志"></a>5.3.5 ISE查看客户端合规日志</h4><ul>
+<li>这里可以看到客户端Posture检测是否通过。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203183749290.png" alt="image-20210203183749290"></p>
+<ul>
+<li>Posture检测通过。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203183851476.png" alt="image-20210203183851476"></p>
+<ul>
+<li>未通过Posture检测。</li>
+</ul>
+<p><img src="/img/ISE-Posture-SSLVPN/image-20210203183902256.png" alt="image-20210203183902256"></p>
+<hr>
+<h2 id="六、参考资料"><a href="#六、参考资料" class="headerlink" title="六、参考资料"></a>六、参考资料</h2><ul>
+<li><p><strong>ISE Posture部署指南</strong>：<a target="_blank" rel="noopener" href="https://community.cisco.com/t5/security-documents/ise-posture-prescriptive-deployment-guide/ta-p/3680273">https://community.cisco.com/t5/security-documents/ise-posture-prescriptive-deployment-guide/ta-p/3680273</a></p>
+</li>
+<li><p><strong>ISE Posture结合AnyConnect配置</strong>：<a target="_blank" rel="noopener" href="https://community.cisco.com/t5/security-documents/how-to-configure-posture-with-anyconnect-compliance-module-and/ta-p/3647768">https://community.cisco.com/t5/security-documents/how-to-configure-posture-with-anyconnect-compliance-module-and/ta-p/3647768</a></p>
+</li>
+<li><p><strong>ISE Posture配置实例</strong>：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=xrAdpdfBZgg">https://www.youtube.com/watch?v=xrAdpdfBZgg</a></p>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            非商业转载请注明出处，商业转载请联系作者获得授权。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/Markdown%E8%AF%AD%E6%B3%95%E6%B5%8B%E8%AF%95.html" class="next-post btn btn-default" title='Markdown语法测试'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            Markdown语法测试</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'stf5rGD17bcrWN1mvUT4pu8C-gzGzoHsz',
+    appKey: 'r5qpzBWMAzt2hDAcDftecM1R',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: false,
+    avatar: 'mm',
+    meta: 'nick'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh-CN'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Cisco-ISE-Posure%E4%BB%8B%E7%BB%8D"><span class="toc-text">一、Cisco ISE Posure介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1%E3%80%81Posture%E7%AE%80%E4%BB%8B"><span class="toc-text">1.1、Posture简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2%E3%80%81Posture%E9%83%A8%E7%BD%B2%E6%A8%A1%E5%BC%8F%E4%BB%8B%E7%BB%8D"><span class="toc-text">1.2、Posture部署模式介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-1-AnyConnect"><span class="toc-text">1.2.1 AnyConnect</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-2-Stealth-AnyConnect%EF%BC%88%E9%9A%90%E5%BD%A2%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-text">1.2.2 Stealth AnyConnect（隐形模式）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-3-Temporal-Agent%EF%BC%88%E4%B8%B4%E6%97%B6%E5%AE%A2%E6%88%B7%E7%AB%AF%EF%BC%89"><span class="toc-text">1.2.3 Temporal Agent（临时客户端）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-4-Windows-Posture-%E6%94%AF%E6%8C%81%E6%A3%80%E6%B5%8B%E7%89%B9%E6%80%A7"><span class="toc-text">1.2.4 Windows Posture 支持检测特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-5-macOS-Posture-%E6%94%AF%E6%8C%81%E6%A3%80%E6%B5%8B%E7%89%B9%E6%80%A7"><span class="toc-text">1.2.5 macOS Posture 支持检测特性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E9%AA%8C%E4%BB%8B%E7%BB%8D"><span class="toc-text">二、实验介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1%E3%80%81%E5%AE%9E%E9%AA%8C%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-text">2.1、实验注意事项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2%E3%80%81%E5%AE%9E%E9%AA%8C%E9%9C%80%E6%B1%82"><span class="toc-text">2.2、实验需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3%E3%80%81%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83%E4%BB%8B%E7%BB%8D"><span class="toc-text">2.3、实验环境介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4%E3%80%81%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4"><span class="toc-text">2.4、实验步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-1-ISE-%E9%85%8D%E7%BD%AE%E6%AD%A5%E9%AA%A4"><span class="toc-text">2.4.1 ISE 配置步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-2-ASA%E9%85%8D%E7%BD%AE%E6%AD%A5%E9%AA%A4"><span class="toc-text">2.4.2 ASA配置步骤</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81ISE-Posture-%E9%85%8D%E7%BD%AE"><span class="toc-text">三、ISE Posture 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1%E3%80%81%E9%85%8D%E7%BD%AEISE-Posture%E6%8E%A8%E9%80%81%E7%AD%96%E7%95%A5"><span class="toc-text">3.1、配置ISE Posture推送策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2%E3%80%81%E5%AE%9A%E4%B9%89%E5%90%88%E8%A7%84%E6%A3%80%E6%B5%8B%E7%AD%96%E7%95%A5"><span class="toc-text">3.2、定义合规检测策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3%E3%80%81%E9%85%8D%E7%BD%AE%E6%8E%88%E6%9D%83%E7%AD%96%E7%95%A5"><span class="toc-text">3.3、配置授权策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81ASA-%E9%85%8D%E7%BD%AE"><span class="toc-text">四、ASA 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1%E3%80%81ASA-%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE"><span class="toc-text">4.1、ASA 基础配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1%E3%80%81SSLVPN-%E9%85%8D%E7%BD%AE"><span class="toc-text">4.1、SSLVPN 配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81AnyConnect-%E6%8B%A8%E5%8F%B7%E6%B5%8B%E8%AF%95"><span class="toc-text">五、AnyConnect 拨号测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1%E3%80%81%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%AE%89%E8%A3%85Posture%E6%A8%A1%E5%9D%97"><span class="toc-text">5.1、客户端安装Posture模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2%E3%80%81%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%AF%BC%E5%85%A5ISE%E8%AF%81%E4%B9%A6"><span class="toc-text">5.2、客户端导入ISE证书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3%E3%80%81%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%88%E8%A7%84%E6%80%A7%E6%A3%80%E6%B5%8B"><span class="toc-text">5.3、客户端合规性检测</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-1-%E5%90%88%E8%A7%84%E6%80%A7%E7%9B%91%E6%B5%8B%E5%A4%B1%E8%B4%A5%E9%A1%B5%E9%9D%A2%E5%B1%95%E7%A4%BA"><span class="toc-text">5.3.1 合规性监测失败页面展示</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-2-%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9B%E8%A1%8C%E5%90%88%E8%A7%84%E6%A3%80%E6%9F%A5%E6%97%B6%E6%8E%88%E6%9D%83%E4%BF%A1%E6%81%AF"><span class="toc-text">5.3.2 客户端进行合规检查时授权信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-3-%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AA%E9%80%9A%E8%BF%87%E5%90%88%E8%A7%84%E6%80%A7%E6%A3%80%E6%B5%8B%E6%97%B6%E7%9A%84%E6%8E%88%E6%9D%83%E4%BF%A1%E6%81%AF"><span class="toc-text">5.3.3 客户端未通过合规性检测时的授权信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-4-%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%80%9A%E8%BF%87%E5%90%88%E8%A7%84%E6%80%A7%E6%A3%80%E6%B5%8B%E5%90%8E%E7%9A%84%E6%8E%88%E6%9D%83"><span class="toc-text">5.3.4 客户端通过合规性检测后的授权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-5-ISE%E6%9F%A5%E7%9C%8B%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%88%E8%A7%84%E6%97%A5%E5%BF%97"><span class="toc-text">5.3.5 ISE查看客户端合规日志</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">六、参考资料</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2021
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
