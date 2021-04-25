@@ -1,0 +1,399 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
+    <!--SEO-->
+
+<meta name="keywords" content="Python,正则表达式" />
+
+
+<meta name="description" content="需求描述前端时间做了一个Python的小练习题，这个问题初看简单，做下来发现有不少以前没有了解的知识点，这里记录一下解决的过程。
+需求：在文本里面任意给定一个单词，将这个单词逆序之后替换原来位置..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    Python对文本中的特定单词进行逆序替换 |
+    
+    LiuQianglong&#39;s Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='LiuQianglong'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        LiuQianglong&#39;s Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Network/"><i class="fa "></i>
+                                Network</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/AWS/"><i class="fa "></i>
+                                AWS</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Python/"><i class="fa "></i>
+                                Python</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Python对文本中的特定单词进行逆序替换">
+            
+            Python对文本中的特定单词进行逆序替换
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/Python/">Python</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/Python/" rel="tag">Python</a> <a class="tag-none-link" href="/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" rel="tag">正则表达式</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2021/04/25</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h2 id="需求描述"><a href="#需求描述" class="headerlink" title="需求描述"></a>需求描述</h2><p>前端时间做了一个Python的小练习题，这个问题初看简单，做下来发现有不少以前没有了解的知识点，这里记录一下解决的过程。</p>
+<p>需求：<strong>在文本里面任意给定一个单词，将这个单词逆序之后替换原来位置的单词，返回替换后的文本。</strong></p>
+<p>这里随意写了一段文本，需要进行逆序替换的关键字是<code>long</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str1 = <span class="string">&#x27;&#x27;&#x27;long The time that my journey takes is long and the way of it long.I came out on loanglong</span></span><br><span class="line"><span class="string">the chariot of the first gleam long, of light, long many a star and planet long&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>替换后的效果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gnol The time that my journey takes is gnol and the way of it gnol.I came out on loanglong</span><br><span class="line">the chariot of the first gleam gnol, of light, gnol many a star and planet gnol</span><br></pre></td></tr></table></figure>
+
+
+<p>推荐大家先自己做一下这个题，直接看答案就失去了很多乐趣，实在做不出来再慢慢看这个答案。</p>
+<p>.</p>
+<p>.</p>
+<p>.</p>
+<p>做</p>
+<p>题</p>
+<p>中</p>
+<p>.</p>
+<p>.</p>
+<p>.</p>
+<h2 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h2><p>这个需求大致看来就2个步骤：1、将单词进行逆序；2、用逆序后的单词替换原来的单词。</p>
+<p>将单词进行逆序方法还是比较多的，逆序之后进行替换这个需求应该很快能想到正则表达式来做替换。总体思路没有问题，下面开干。</p>
+<h2 id="解决步骤"><a href="#解决步骤" class="headerlink" title="解决步骤"></a>解决步骤</h2><h3 id="逆序单词"><a href="#逆序单词" class="headerlink" title="逆序单词"></a>逆序单词</h3><p>首先想到的是<code>reverse</code>方法，将单词转换为一个列表，然后用<code>reverse</code>方法逆序列表，最后用<code>join</code>方法将列表里面的单词组合起来。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">str1 = <span class="string">&#x27;&#x27;&#x27;long The time that my journey takes is long and the way of it long.I came out on loanglong</span></span><br><span class="line"><span class="string">the chariot of the first gleam long, of light, long many a star and planet long&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">keyword = <span class="string">&#x27;long&#x27;</span></span><br><span class="line"></span><br><span class="line">reverse_key = <span class="built_in">list</span>(keyword)</span><br><span class="line">reverse_key.reverse()</span><br><span class="line">new_k1 = <span class="string">&#x27;&#x27;</span>.join(reverse_key)</span><br><span class="line">print(new_k1)</span><br></pre></td></tr></table></figure>
+<p>输入结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gnol</span><br></pre></td></tr></table></figure>
+
+
+<p>上面的结果确实满足了要求，但是解决的不够优雅，这里推荐用更加简洁的一种方法，这是python的<code>slice notation</code>的特殊用法，格式为<code>a[i:j:s]</code>，这里<code>i</code>和<code>j</code>都缺省了相当于复制了一份<code>keyword</code>，<code>s </code>表示步进，默认为1，当为负数时表示从右往左取，所以<code>keyword[::-1]</code>即为逆序复制。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">str1 = <span class="string">&#x27;&#x27;&#x27;long The time that my journey takes is long and the way of it long.I came out on loanglong</span></span><br><span class="line"><span class="string">the chariot of the first gleam long, of light, long many a star and planet long&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">keyword = <span class="string">&#x27;long&#x27;</span></span><br><span class="line"></span><br><span class="line">new_k1 = keyword[::-<span class="number">1</span>]</span><br><span class="line">print(new_k1)</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>参考链接：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/mxh1099/p/5804064.html">https://www.cnblogs.com/mxh1099/p/5804064.html</a></p>
+<p>a = [0,1,2,3,4,5,6,7,8,9]<br>b = a[i:j] 表示复制a[i]到a[j-1]，以生成新的list对象<br>b = a[1:3] 那么，b的内容是 [1,2]<br>当i缺省时，默认为0，即 a[:3]相当于 a[0:3]<br>当j缺省时，默认为len(alist), 即a[1:]相当于a[1:10]<br>当i,j都缺省时，a[:]就相当于完整复制一份a了</p>
+<p>b = a[i:j:s]这种格式呢，i,j与上面的一样，但s表示步进，缺省为1.<br>所以a[i:j:1]相当于a[i:j]<br>当s&lt;0时，i缺省时，默认为-1. j缺省时，默认为-len(a)-1<br>所以a[::-1]相当于 a[-1:-len(a)-1:-1]，也就是从最后一个元素到第一个元素复制一遍。</p>
+</blockquote>
+<h3 id="替换单词"><a href="#替换单词" class="headerlink" title="替换单词"></a>替换单词</h3><h4 id="replace方法"><a href="#replace方法" class="headerlink" title="replace方法"></a>replace方法</h4><p>要做正则替换刚开始我想到了<code>replace</code>方法，但是使用这个方法会误伤到包含关键字的单词，例如下面我乱构造的「单词」<code>loanglong</code>内部的<code>long</code>也被做了替换，这显然不是想要的结果。我只想要对特定<br>的单词进行替换，不是只要包含这几个字母都做替换。这里<code>f&#39;&#123;new_k1&#125;&#39;</code>可以使用<code>f-string</code>导入新的字符串。</p>
+<p>inputs = “hello 11 word 11” 想11变成22</p>
+<p>replacestr = inputs.replace(“11”,”22”)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">str1 = <span class="string">&#x27;&#x27;&#x27;long The time that my journey takes is long and the way of it long.I came out on loanglong</span></span><br><span class="line"><span class="string">the chariot of the first gleam long, of light, long many a star and planet long&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">keyword = <span class="string">&#x27;long&#x27;</span></span><br><span class="line">new_k1 = keyword[::-<span class="number">1</span>]</span><br><span class="line">new_str1 = str1.replace(<span class="string">&#x27;long&#x27;</span>, <span class="string">f&#x27;<span class="subst">&#123;new_k1&#125;</span>&#x27;</span>)</span><br><span class="line">print(new_str1)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gnol The time that my journey takes is gnol and the way of it gnol.I came out on loanggnol</span><br><span class="line">the chariot of the first gleam gnol, of light, gnol many a star and planet gnol</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="re-sub方法"><a href="#re-sub方法" class="headerlink" title="re.sub方法"></a>re.sub方法</h4><p><code>replace</code>无法解决这个问题，需要<code>re.sub</code>这个方法来解决问题了，这个函数就是主要用来替换字符串中的匹配项。函数有5个参数，前面3个参数是必选项。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">re.sub(pattern, repl, string, count&#x3D;0, flags&#x3D;0)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>pattern</code>：表示正则中要匹配的字符串；</li>
+<li><code>repl</code>：表示想要替换的字符串，既匹配出来的pattern替换为repl，这里repl可以是个函数；</li>
+<li><code>string</code>：表示要被查找的原始字符串；</li>
+<li><code>count</code>：表示要替换的最大次数，默认为0，表示所有匹配的都会被替换，是可选参数；</li>
+<li><code>flags</code>：表示编译时用的匹配模式，例如互联大小写、多行模式等，默认为0；</li>
+</ul>
+<p>下面用<code>re.sub()</code>方法先试一下，可以看到还是出现一样的问题，我乱构造的「单词」<code>loanglong</code>内部的<code>long</code>也被做了替换。问题出现在==匹配不精确==，这里我只想要匹配单词<code>long</code>，但是里面包含这个<br>关键词的不想被匹配到。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">str1 = <span class="string">&#x27;&#x27;&#x27;long The time that my journey takes is long and the way of it long.I came out on loanglong</span></span><br><span class="line"><span class="string">the chariot of the first gleam long, of light, long many a star and planet long&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">keyword = <span class="string">&#x27;long&#x27;</span></span><br><span class="line">new_k1 = keyword[::-<span class="number">1</span>]</span><br><span class="line">new_str1 = re.sub(<span class="string">fr&#x27;<span class="subst">&#123;keyword&#125;</span>&#x27;</span>, <span class="string">fr&#x27;<span class="subst">&#123;new_k1&#125;</span>&#x27;</span>, str1)</span><br><span class="line"></span><br><span class="line">print(new_str1)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gnol The time that my journey takes is gnol and the way of it gnol.I came out on loanggnol</span><br><span class="line">the chariot of the first gleam gnol, of light, gnol many a star and planet gnol</span><br></pre></td></tr></table></figure>
+<h4 id="零宽断言"><a href="#零宽断言" class="headerlink" title="零宽断言"></a>零宽断言</h4><p>这个卡了我特别长时间，因为我不知道”<strong>零宽断言</strong>“这个「高级货」技术…</p>
+<p>这个技术涉及到比较多绕口的名词，先来看下不用这个技术会遇到什么问题。即<code>pattern</code>参数匹配的关键字都会被替换，这里希望描述一下单词的前后是什么内容，但是并不希望这种描述本身也被匹配进去。</p>
+<p>所以<strong>零宽断言</strong>的作用是并不真正匹配字符串，而仅仅是匹配对应的位置，断言本身不会被匹配，因为匹配的宽度为零，所以叫<strong>零宽</strong>。<strong>断言</strong>可以理解为判断的意思，正则表达式里面有很多断言，例<br>如<code>^</code>匹配字符串的开头，<code>$</code>匹配字符串的末尾，<code>\b</code><strong>匹配单词的边界</strong>等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(?&lt;&#x3D;exp1)(?&lt;!exp2)string(?&#x3D;exp3)(?!exp4)</span><br></pre></td></tr></table></figure>
+<p><img src="/img/Python-RegEX-Keywords/zero-width-assertio.png" alt="zero-width assertio"></p>
+<ul>
+<li><code>?&lt;=</code> 代表<strong>正回顾后发断言</strong>，它断言自身出现的位置的<strong>前面可以匹配exp1</strong>表达式。例如：<code>(?&lt;=\d)a</code>，返回匹配字符串中以数字为开头的a字符。</li>
+<li><code>?=</code> 代表<strong>正预测先行断言</strong>，表示自身出现的位置的<strong>后面可以匹配exp3</strong>表达式。例如：<code>a(?=\d)</code>，返回匹配字符串中以数字为结尾的a字符。</li>
+<li><code>?&lt;!</code> 代表<strong>负回顾后发断言</strong>，它断言自身出现的位置的<strong>前面不可以匹配exp2</strong>的表达式。例如：<code>a(?!\d)</code>，返回不匹配字符串中以数字开头的a字符。</li>
+<li><code>?!</code> 代表<strong>负预测先行断言</strong>，它断言自身出现的位置的<strong>后面不可以匹配exp4</strong>表达式。例如：<code>a(?!\d)</code>，返回不匹配字符串中以数字结尾的a字符。</li>
+</ul>
+<p>上面的概念第一次接触会有点绕，总的来说就是你想描述<code>string</code>这个单词前面一定具备某个特征、后面一定具体某个特征、前面一定没有这个特征、后面一定没有这个特征，一共就是这4种情况。</p>
+<p>回到上面的需求，我想要匹配出单独的一个单词<code>long</code>，这个关键词前后有字母的不会被匹配。所以需要匹配出一个单词的边界，就是<code>\b</code>。</p>
+<h4 id="b与-B"><a href="#b与-B" class="headerlink" title="\b与\B"></a>\b与\B</h4><p>这里简单描述<code>\b</code>的作用，它用来匹配一个「单词」的边界，边界近似于<code>\w</code>即<code>([0-9a-zA-Z_])</code>。</p>
+<p>例如下面的字符串<code>abc!123_</code>，这里认为<code>abc</code>和<code>123_</code>都是一个「单词」，那么它们的前后就是边界。<code>\B</code>取<code>\b</code>的相反即可，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">str1 = <span class="string">&#x27;abc!123_&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result1 = re.findall(<span class="string">r&#x27;\b&#x27;</span>, str1)</span><br><span class="line">result2 = re.findall(<span class="string">r&#x27;\B&#x27;</span>, str1)</span><br><span class="line"></span><br><span class="line">print(result1)</span><br><span class="line">print(result2)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[&#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;]</span><br><span class="line">[&#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;]</span><br></pre></td></tr></table></figure>
+<p><img src="/img/Python-RegEX-Keywords/-bB.png" alt="\b\B"></p>
+<p>最终的代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">str1 = <span class="string">&#x27;&#x27;&#x27;long The time that my journey takes is long and the way of it long.I came out on loanglong</span></span><br><span class="line"><span class="string">the chariot of the first gleam long, of light, long many a star and planet long&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">keyword = <span class="string">&#x27;long&#x27;</span></span><br><span class="line">new_k1 = keyword[::-<span class="number">1</span>]</span><br><span class="line">new_str1 = re.sub(<span class="string">fr&#x27;(?&lt;=\b)<span class="subst">&#123;keyword&#125;</span>(?=\b)&#x27;</span>, <span class="string">fr&#x27;<span class="subst">&#123;new_k1&#125;</span>&#x27;</span>, str1)</span><br><span class="line"></span><br><span class="line">print(new_str1)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gnol The time that my journey takes is gnol and the way of it gnol.I came out on loanglong</span><br><span class="line">the chariot of the first gleam gnol, of light, gnol many a star and planet gnol</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li>Python3 re模块：<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/re.html">https://docs.python.org/3/library/re.html</a></li>
+<li>正则表达式sub：<a target="_blank" rel="noopener" href="https://www.jb51.net/article/170226.htm">https://www.jb51.net/article/170226.htm</a></li>
+<li>正则表达式的\b与\B：<a target="_blank" rel="noopener" href="https://www.jb51.net/article/138235.htm">https://www.jb51.net/article/138235.htm</a></li>
+<li>零宽断言：<a target="_blank" rel="noopener" href="https://www.shuzhiduo.com/A/QW5Y2nZBdm/">https://www.shuzhiduo.com/A/QW5Y2nZBdm/</a></li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            非商业转载请注明出处，商业转载请联系作者获得授权。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/Cisco-ISE-Posture-%E7%BB%93%E5%90%88-SSLVPN.html" class="next-post btn btn-default" title='Cisco ISE Posture 结合 SSLVPN'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            Cisco ISE Posture 结合 SSLVPN</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'stf5rGD17bcrWN1mvUT4pu8C-gzGzoHsz',
+    appKey: 'r5qpzBWMAzt2hDAcDftecM1R',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: false,
+    avatar: 'mm',
+    meta: 'nick'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh-CN'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E6%B1%82%E6%8F%8F%E8%BF%B0"><span class="toc-text">需求描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="toc-text">需求分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%AD%A5%E9%AA%A4"><span class="toc-text">解决步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%86%E5%BA%8F%E5%8D%95%E8%AF%8D"><span class="toc-text">逆序单词</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%BF%E6%8D%A2%E5%8D%95%E8%AF%8D"><span class="toc-text">替换单词</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#replace%E6%96%B9%E6%B3%95"><span class="toc-text">replace方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#re-sub%E6%96%B9%E6%B3%95"><span class="toc-text">re.sub方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9B%B6%E5%AE%BD%E6%96%AD%E8%A8%80"><span class="toc-text">零宽断言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#b%E4%B8%8E-B"><span class="toc-text">\b与\B</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2021
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>

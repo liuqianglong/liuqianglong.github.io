@@ -747,7 +747,7 @@ pre {
   background-color: #fff3f0;
   font-family: "Roboto Mono", "Source Sans Pro", "Microsoft YaHei", 微软雅黑 !important;
   margin: 0px 2px;
-  padding: 2px 4px;
+  padding: 1px 4px;
   border-radius: 3px;
 }
 .post-content tt {
@@ -1650,7 +1650,7 @@ pre .javascript .function {
 @media screen and (min-width: 1100px) {
   .post-content blockquote {
     padding-left: 20px;
-    border-width: 4px;
+    border-width: 2px;
   }
   .post-content blockquote blockquote {
     margin-left: 0;
