@@ -1,0 +1,537 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
+    <!--SEO-->
+
+<meta name="keywords" content="Network,NAT,SLA,PBR" />
+
+
+<meta name="description" content="1、介绍为了实现出口ISP链路的冗余，可以在出口路由器上连接两条不同的ISP线路，获得链路冗余的同时也带来新的问题，即如何决定流量送往哪个ISP。一般来说有两种流量选择方式：负载均衡和主备切换。..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    ISP Failover PAT配置 |
+    
+    LiuQianglong&#39;s Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='LiuQianglong'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        LiuQianglong&#39;s Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Network/"><i class="fa "></i>
+                                Network</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/AWS/"><i class="fa "></i>
+                                AWS</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Python/"><i class="fa "></i>
+                                Python</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="ISP Failover PAT配置">
+            
+            ISP Failover PAT配置
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/Network/">Network</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/NAT/" rel="tag">NAT</a> <a class="tag-none-link" href="/tags/Network/" rel="tag">Network</a> <a class="tag-none-link" href="/tags/PBR/" rel="tag">PBR</a> <a class="tag-none-link" href="/tags/SLA/" rel="tag">SLA</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2021/06/16</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h2 id="1、介绍"><a href="#1、介绍" class="headerlink" title="1、介绍"></a>1、介绍</h2><p>为了实现出口ISP链路的冗余，可以在出口路由器上连接两条不同的ISP线路，获得链路冗余的同时也带来新的问题，即如何决定流量送往哪个ISP。一般来说有两种流量选择方式：负载均衡和主备切换。</p>
+<p>负载均衡：出口网关配置两条默认路由分别到ISP1和ISP2，去往ISP的流量会通过这两条等价的默认路由进行负载均衡，可以通过<code>ip cef load-sharing algorithm</code>命令修改负载均衡的算法，<a target="_blank" rel="noopener" href="https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipswitch_cef/configuration/15-mt/isw-cef-15-mt-book/isw-cef-load-balancing.html#GUID-D545ACC1-258F-4073-BC8E-94EC30AAE924">参见文档</a>。负载均衡方式的优势在于更加充分的利用两条线路带宽，当其中一个ISP不可用时，故障切换速度更快。</p>
+<p><img src="/img/ISP-Failover-PAT-Config/image-20210616143717851.png" alt="image-20210616143717851"></p>
+<p>主备切换：利用浮动静态路由和SLA结合来实现主用到ISP1，当ISP1出现故障时能自动切换到ISP2。主备切换的优势在于出口公网IP固定，线路更加稳定。但是备用链路的带宽长期是闲置的。当主用ISP1可用时，流量不会走备用ISP2，但是你可以通过添加明细路由到ISP2改变流量选路，也可以通过PRB抓取特定的源IP地址通过备用ISP2出去。</p>
+<p><img src="/img/ISP-Failover-PAT-Config/image-20210616143720498.png" alt="image-20210616143720498"></p>
+<p>另外需要注意的是这种NAT的切换需要结合<code>route-map</code>来配置。</p>
+<h2 id="2、拓扑图"><a href="#2、拓扑图" class="headerlink" title="2、拓扑图"></a>2、拓扑图</h2><p>这里使用<code>EVE-NG</code>的<code>CSR1Kv</code>搭建的实验环境，使用GNS3和其他型号路由器对实验结果没有影响。</p>
+<p><img src="/img/ISP-Failover-PAT-Config/image-20210616143738656.png" alt="image-20210616143738656"></p>
+<h2 id="3、设备初始化"><a href="#3、设备初始化" class="headerlink" title="3、设备初始化"></a>3、设备初始化</h2><p>这里初始化所有设置的IP地址，以及内部路由配置，出口网关的路由和NAT在下一个部分配置。</p>
+<ul>
+<li>CSR1（Inside-Router）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">host Inside-Router</span><br><span class="line">！</span><br><span class="line">interface Loopback0</span><br><span class="line"> ip address 172.20.10.1 255.255.255.0</span><br><span class="line">！</span><br><span class="line">interface GigabitEthernet1</span><br><span class="line"> ip address 172.20.1.1 255.255.255.0</span><br><span class="line">！</span><br><span class="line">router ospf 10</span><br><span class="line"> network 172.20.1.0 0.0.0.255 area 0</span><br><span class="line"> network 172.20.10.0 0.0.0.255 area 0</span><br><span class="line">！</span><br><span class="line">ip route 0.0.0.0 0.0.0.0 172.20.1.254</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>CSR2（GW）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">host GW</span><br><span class="line">！</span><br><span class="line">interface GigabitEthernet1</span><br><span class="line"> ip address 172.20.1.254 255.255.255.0</span><br><span class="line">!</span><br><span class="line">interface GigabitEthernet2</span><br><span class="line"> ip address 52.83.1.1 255.255.255.0</span><br><span class="line">!</span><br><span class="line">interface GigabitEthernet3</span><br><span class="line"> ip address 52.83.2.1 255.255.255.0</span><br><span class="line">!</span><br><span class="line">router ospf 10</span><br><span class="line"> network 172.20.1.0 0.0.0.255 area 0</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>CSR3（ISP-Router）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">host ISP-Router</span><br><span class="line">！</span><br><span class="line">interface GigabitEthernet1</span><br><span class="line"> ip address 52.84.1.1 255.255.255.0</span><br><span class="line">!</span><br><span class="line">interface GigabitEthernet2</span><br><span class="line"> ip address 52.83.1.2 255.255.255.0</span><br><span class="line">!</span><br><span class="line">interface GigabitEthernet3</span><br><span class="line"> ip address 52.83.2.2 255.255.255.0</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>CSR4（ISP-Service）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">host ISP-Service</span><br><span class="line">！</span><br><span class="line">interface GigabitEthernet1</span><br><span class="line"> ip address 52.84.1.2 255.255.255.0</span><br><span class="line">!</span><br><span class="line">ip route 0.0.0.0 0.0.0.0 52.84.1.1</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="4、负载均衡配置"><a href="#4、负载均衡配置" class="headerlink" title="4、负载均衡配置"></a>4、负载均衡配置</h2><p>这里配置去往ISP1和ISP2的默认路由为等价路由，需要利用<code>route-map</code>来结合NAT进行配置。</p>
+<p><img src="/img/ISP-Failover-PAT-Config/image-20210616143717851.png" alt="image-20210616143717851"></p>
+<ul>
+<li>CSR1（Inside-Router）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">interface GigabitEthernet1</span><br><span class="line"> ip address 172.20.1.254 255.255.255.0</span><br><span class="line"> ip nat inside</span><br><span class="line">!</span><br><span class="line">interface GigabitEthernet2</span><br><span class="line"> ip address 52.83.1.1 255.255.255.0</span><br><span class="line"> ip nat outside</span><br><span class="line">!</span><br><span class="line">interface GigabitEthernet3</span><br><span class="line"> ip address 52.83.2.1 255.255.255.0</span><br><span class="line"> ip nat outside</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ip access-list extended NAT_ACL</span><br><span class="line"> permit ip 172.20.0.0 0.0.255.255 any log</span><br><span class="line">!</span><br><span class="line">route-map NAT_ISP1 permit 10</span><br><span class="line"> match ip address NAT_ACL</span><br><span class="line"> match interface GigabitEthernet2</span><br><span class="line">!</span><br><span class="line">route-map NAT_ISP2 permit 10</span><br><span class="line"> match ip address NAT_ACL</span><br><span class="line"> match interface GigabitEthernet3</span><br><span class="line"></span><br><span class="line">ip nat pool ISP1_Pool 52.83.1.100 52.83.1.110 netmask 255.255.255.0</span><br><span class="line">ip nat pool ISP2_Pool 52.83.2.100 52.83.2.110 netmask 255.255.255.0</span><br><span class="line">ip nat inside source route-map NAT_ISP1 pool ISP1_Pool overload</span><br><span class="line">ip nat inside source route-map NAT_ISP2 pool ISP2_Pool overload</span><br><span class="line"></span><br><span class="line">ip route 0.0.0.0 0.0.0.0 52.83.1.2</span><br><span class="line">ip route 0.0.0.0 0.0.0.0 52.83.2.2</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>查看网关的出口路由，去往ISP1和ISP2的等价路由。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GW#show ip route</span><br><span class="line">S*    0.0.0.0&#x2F;0 [1&#x2F;0] via 52.83.2.2</span><br><span class="line">                [1&#x2F;0] via 52.83.1.2</span><br><span class="line">O        172.20.10.1&#x2F;32 [110&#x2F;2] via 172.20.1.1, 1d02h, GigabitEthernet1</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>内部路由器测试</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Inside-Router#ping 52.84.1.2</span><br><span class="line">Type escape sequence to abort.</span><br><span class="line">Sending 5, 100-byte ICMP Echos to 52.84.1.2, timeout is 2 seconds:</span><br><span class="line">.!!!!</span><br><span class="line"></span><br><span class="line">Inside-Router#ping 52.84.1.2 source lo0</span><br><span class="line">Type escape sequence to abort.</span><br><span class="line">Sending 5, 100-byte ICMP Echos to 52.84.1.2, timeout is 2 seconds:</span><br><span class="line">Packet sent with a source address of 172.20.10.1</span><br><span class="line">.!!!!</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>查看转换表项，可以看到不同的源IP从不同的ISP链路出去。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GW#show ip nat translations</span><br><span class="line">Pro  Inside global         Inside local          Outside local         Outside global</span><br><span class="line">icmp 52.83.2.100:1         172.20.10.1:48        52.84.1.2:48          52.84.1.2:1</span><br><span class="line">icmp 52.83.1.100:1         172.20.1.1:47         52.84.1.2:47          52.84.1.2:1</span><br><span class="line">Total number of translations: 2</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>通过<code>show ip cef exact-route </code>命令可以用来预测源到目的IP使用的下一跳接口和IP地址。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GW#show ip cef exact-route 172.20.1.1 52.84.1.2</span><br><span class="line">172.20.1.1 -&gt; 52.84.1.2 &#x3D;&gt;IP adj out of GigabitEthernet2, addr 52.83.1.2</span><br><span class="line"></span><br><span class="line">GW#show ip cef exact-route 172.20.10.1 52.84.1.2</span><br><span class="line">172.20.10.1 -&gt; 52.84.1.2 &#x3D;&gt;IP adj out of GigabitEthernet3, addr 52.83.2.2</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="5、主备配置"><a href="#5、主备配置" class="headerlink" title="5、主备配置"></a>5、主备配置</h2><h3 id="5-1、主备切换"><a href="#5-1、主备切换" class="headerlink" title="5.1、主备切换"></a>5.1、主备切换</h3><p>这里配置ISP1为主用，利用SLA监控ISP1直连地址，当ISP1不可用时路由切换到ISP2上。</p>
+<p><img src="/img/ISP-Failover-PAT-Config/image-20210616143720498.png" alt="image-20210616143720498"></p>
+<ul>
+<li>CSR2（GW），注意这里为了试验需要将sla的参数调的更小了，生产环境下需要自己设计这个参数。<code>frequency</code>表示这里每3秒发送一次探针，<code>timeout</code>表示发送探针后1秒后还未接受到那么认为这个探针超时了，<code>threshold</code>表示连续两次超时后达到阈值。所以结合上面的参数，当52.83.1.2不可达后，最多需要6秒sla会达到阈值。（注意，这里需要先删除上面指向ISP2的路由之后再添加管理距离更大的路由）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ip sla 10</span><br><span class="line"> icmp-echo 52.83.1.2 source-ip 52.83.1.1</span><br><span class="line"> threshold 2</span><br><span class="line"> timeout 1000</span><br><span class="line"> frequency 3</span><br><span class="line"></span><br><span class="line">ip sla schedule 10 life forever start-time now</span><br><span class="line"></span><br><span class="line">track 10 ip sla 10 reachability</span><br><span class="line"></span><br><span class="line">no ip route 0.0.0.0 0.0.0.0 52.83.1.2</span><br><span class="line">ip route 0.0.0.0 0.0.0.0 52.83.1.2 track 10</span><br><span class="line">ip route 0.0.0.0 0.0.0.0 52.83.2.2 10</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>GW查看路由表和SLA状态</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GW#show ip route</span><br><span class="line">S*    0.0.0.0&#x2F;0 [1&#x2F;0] via 52.83.1.2</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GW#show ip sla summary</span><br><span class="line">IPSLAs Latest Operation Summary</span><br><span class="line">Codes: * active, ^ inactive, ~ pending</span><br><span class="line"></span><br><span class="line">ID           Type        Destination       Stats       Return      Last</span><br><span class="line">                                           (ms)        Code        Run</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">*10          icmp-echo   52.83.1.2         RTT&#x3D;12      Over thresh 0 seconds ago</span><br><span class="line">                                                       old</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>内部路由器ping测试</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Inside-Router#ping 52.84.1.2</span><br><span class="line">Type escape sequence to abort.</span><br><span class="line">Sending 5, 100-byte ICMP Echos to 52.84.1.2, timeout is 2 seconds:</span><br><span class="line">.!!!!</span><br><span class="line"></span><br><span class="line">Inside-Router#ping 52.84.1.2 source lo0</span><br><span class="line">Type escape sequence to abort.</span><br><span class="line">Sending 5, 100-byte ICMP Echos to 52.84.1.2, timeout is 2 seconds:</span><br><span class="line">Packet sent with a source address of 172.20.10.1</span><br><span class="line">.!!!!</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>GW查看转换表项，可以看到流量都是从ISP1出去。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GW#show ip nat translations</span><br><span class="line">Pro  Inside global         Inside local          Outside local         Outside global</span><br><span class="line">icmp 52.83.1.100:1         172.20.1.1:49         52.84.1.2:49          52.84.1.2:1</span><br><span class="line">icmp 52.83.1.100:2         172.20.10.1:50        52.84.1.2:50          52.84.1.2:2</span><br><span class="line">Total number of translations: 2</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>CSR3（ISP-Router)，关闭G2端口，模拟ISP1故障。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ISP-Router(config)#interface g2</span><br><span class="line">ISP-Router(config-if)#shutdown</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>GW上查看sla状态变为Down，默认路由切换到了ISP2上。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*Jun 16 07:53:00.039: %TRACK-6-STATE: 10 ip sla 10 reachability Up -&gt; Down</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GW#show ip route</span><br><span class="line">S*    0.0.0.0&#x2F;0 [1&#x2F;0] via 52.83.2.2</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>Inside-Router重新发起流量测试</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Inside-Router#ping 52.84.1.2</span><br><span class="line">Type escape sequence to abort.</span><br><span class="line">Sending 5, 100-byte ICMP Echos to 52.84.1.2, timeout is 2 seconds:</span><br><span class="line">!!!!!</span><br><span class="line">Success rate is 100 percent (5&#x2F;5), round-trip min&#x2F;avg&#x2F;max &#x3D; 13&#x2F;18&#x2F;34 ms</span><br><span class="line"></span><br><span class="line">Inside-Router#ping 52.84.1.2 source lo0</span><br><span class="line">Type escape sequence to abort.</span><br><span class="line">Sending 5, 100-byte ICMP Echos to 52.84.1.2, timeout is 2 seconds:</span><br><span class="line">Packet sent with a source address of 172.20.10.1</span><br><span class="line">!!!!!</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>GW查看NAT转换表项，流量都从ISP2出去。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GW#show ip nat translations</span><br><span class="line">Pro  Inside global         Inside local          Outside local         Outside global</span><br><span class="line">icmp 52.83.2.100:2         172.20.10.1:55        52.84.1.2:55          52.84.1.2:2</span><br><span class="line">icmp 52.83.2.100:1         172.20.1.1:54         52.84.1.2:54          52.84.1.2:1</span><br><span class="line">Total number of translations: 2</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h3 id="5-2、使用明细路由控制出口ISP"><a href="#5-2、使用明细路由控制出口ISP" class="headerlink" title="5.2、使用明细路由控制出口ISP"></a>5.2、使用明细路由控制出口ISP</h3><p>在上面的主备切换模式下，所有流量都通过ISP1出去，如果你需要指定去往某些特定IP的地址从ISP2出去，可以通过配置明细路由来实现。</p>
+<ul>
+<li>恢复ISP-Router G2号接口</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ISP-Router(config)#int g2</span><br><span class="line">ISP-Router(config-if)#no shutdown</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>去往52.84.1.2/32的地址通过ISP2访问。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GW(config)#ip route 52.84.1.2 255.255.255.255 52.83.2.2</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>在Inside路由器上ping测试到52.84.1.1和52.84.1.2</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Inside-Router#ping 52.84.1.1</span><br><span class="line">Type escape sequence to abort.</span><br><span class="line">Sending 5, 100-byte ICMP Echos to 52.84.1.1, timeout is 2 seconds:</span><br><span class="line">!!!!!</span><br><span class="line">Success rate is 100 percent (5&#x2F;5), round-trip min&#x2F;avg&#x2F;max &#x3D; 10&#x2F;12&#x2F;18 ms</span><br><span class="line"></span><br><span class="line">Inside-Router#ping 52.84.1.2</span><br><span class="line">Type escape sequence to abort.</span><br><span class="line">Sending 5, 100-byte ICMP Echos to 52.84.1.2, timeout is 2 seconds:</span><br><span class="line">!!!!!</span><br><span class="line">Success rate is 100 percent (5&#x2F;5), round-trip min&#x2F;avg&#x2F;max &#x3D; 13&#x2F;20&#x2F;46 ms</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>查看转换表项，看到去往52.84.1.2通过ISP2出去</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GW#show ip nat translations</span><br><span class="line">Pro  Inside global         Inside local          Outside local         Outside global</span><br><span class="line">icmp 52.83.1.100:1         172.20.1.1:58         52.84.1.1:58          52.84.1.1:1</span><br><span class="line">icmp 52.83.2.100:1         172.20.1.1:59         52.84.1.2:59          52.84.1.2:1</span><br><span class="line">Total number of translations: 2</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="5-3、使用PBR控制出口ISP"><a href="#5-3、使用PBR控制出口ISP" class="headerlink" title="5.3、使用PBR控制出口ISP"></a>5.3、使用PBR控制出口ISP</h3><p>如果是希望控制特定的源IP地址从ISP2出去，那么通过添加明细路由就无法解决这个问题了，这种场景下可以通过PBR（策略路由）来实现这个需求，通过抓取指定的源IP地址送到ISP2的下一跳出去。</p>
+<ul>
+<li>删除添加的明细路由，重新回到主备状态。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GW(config)#no ip route 52.84.1.2 255.255.255.255 52.83.2.2</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>CSR2（GW），配置PRB，抓取Inside-Router的环回口从ISP2出去。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ip access-list extended TO_ISP2_ACL</span><br><span class="line"> permit ip host 172.20.10.1 any</span><br><span class="line"></span><br><span class="line">route-map Route_ISP2 permit 10</span><br><span class="line"> match ip address TO_ISP2_ACL</span><br><span class="line"> set ip next-hop 52.83.2.2</span><br><span class="line"></span><br><span class="line">interface GigabitEthernet1</span><br><span class="line"> ip address 172.20.1.254 255.255.255.0</span><br><span class="line"> ip policy route-map Route_ISP2 </span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>在Insid-Router上使用不用的源IP进行测试</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Inside-Router#ping 52.84.1.2</span><br><span class="line">Type escape sequence to abort.</span><br><span class="line">Sending 5, 100-byte ICMP Echos to 52.84.1.2, timeout is 2 seconds:</span><br><span class="line">!!!!!</span><br><span class="line">Success rate is 100 percent (5&#x2F;5), round-trip min&#x2F;avg&#x2F;max &#x3D; 13&#x2F;19&#x2F;26 ms</span><br><span class="line"></span><br><span class="line">Inside-Router#ping 52.84.1.2 source  lo 0</span><br><span class="line">Type escape sequence to abort.</span><br><span class="line">Sending 5, 100-byte ICMP Echos to 52.84.1.2, timeout is 2 seconds:</span><br><span class="line">Packet sent with a source address of 172.20.10.1</span><br><span class="line">!!!!!</span><br><span class="line">Success rate is 100 percent (5&#x2F;5), round-trip min&#x2F;avg&#x2F;max &#x3D; 12&#x2F;23&#x2F;53 ms</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>查看转换表项，确认Inside-Router环回口地址从ISP2出去。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GW#show ip nat translations</span><br><span class="line">Pro  Inside global         Inside local          Outside local         Outside global</span><br><span class="line">icmp 52.83.1.100:1         172.20.1.1:63         52.84.1.2:63          52.84.1.2:1</span><br><span class="line">icmp 52.83.2.100:1         172.20.10.1:62        52.84.1.2:62          52.84.1.2:1</span><br><span class="line">Total number of translations: 2</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>上述的PRB配置有一个隐患，因为PRB下一跳强制指向了ISP2的接口，如果ISP2不可达了，那么抓取的源IP无法进行切换。可以在PRB也结合SLA配置来实现自动切换。</p>
+<ul>
+<li>配置SLA监控ISP2接口地址，PBR调用SLA。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ip sla 20</span><br><span class="line"> icmp-echo 52.83.2.2 source-ip 52.83.2.1</span><br><span class="line"> threshold 2</span><br><span class="line"> timeout 1000</span><br><span class="line"> frequency 3</span><br><span class="line"></span><br><span class="line">ip sla schedule 20 life forever start-time now</span><br><span class="line">track 20 ip sla 20 reachability</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">GW(config)#route-map Route_ISP2 permit 10</span><br><span class="line">GW(config-route-map)#no  set ip next-hop 223.70.229.53 52.83.2.2</span><br><span class="line">GW(config-route-map)#set ip next-hop verify-availability 52.83.2.2 1 track 20</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>在Inside-Router上进行长ping测试</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Inside-Router#ping 52.84.1.2 source  lo 0 re 1000000</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>关闭ISP-Router的G3接口，模拟ISP2故障</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ISP-Router(config)#int g3</span><br><span class="line">ISP-Router(config-if)#shutdown</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>如果为Inside-Router持续ping时，GW会认为是一个连续的会话，会继续匹配以前的NAT转换表项，从而刷新NAT转换表项（默认超时时间60s）造成不通。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GW#show ip nat translations verbose</span><br><span class="line">Pro  Inside global         Inside local          Outside local         Outside global</span><br><span class="line">icmp 52.83.1.100:1         172.20.10.1:67        52.84.1.2:67          52.84.1.2:1</span><br><span class="line">  create: 06&#x2F;16&#x2F;21 10:18:21, use: 06&#x2F;16&#x2F;21 10:18:21, timeout: 00:00:56</span><br><span class="line">  Map-Id(In): 12</span><br><span class="line">  Appl type: none</span><br><span class="line">  Mac-Address: 0000.0000.0000    Input-IDB: GigabitEthernet1</span><br><span class="line">  entry-id: 0xe94efa80, use_count:1</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>此时需要强制清空NAT转换表项即可。或者Inside-Router重新发起一次ping也可以正常通信，因为新的ping进行会在GW上创建新的NAT转换表项。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GW#cle ip nat translation *</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="5-4、PAT地址池"><a href="#5-4、PAT地址池" class="headerlink" title="5.4、PAT地址池"></a>5.4、PAT地址池</h3><p>在实际环境中ISP提供公网地址时，互联地址和公网IP地址池可能不在一个网段。例如互联地址段是52.83.1.0/24，提供的公网地址池是52.83.100.100~52.83.100.110，在这个实验环境下模拟这个场景时需要在ISP-Router上添加去往52.83.100.0/24的路由即可。</p>
+<ul>
+<li>GW 修改地址池</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">no ip nat pool ISP1_Pool 52.83.1.100 52.83.1.110 netmask 255.255.255.0</span><br><span class="line">no ip nat pool ISP2_Pool 52.83.2.100 52.83.2.110 netmask 255.255.255.0</span><br><span class="line"></span><br><span class="line">ip nat pool ISP1_Pool 52.83.100.100 52.83.100.110 netmask 255.255.255.0</span><br><span class="line">ip nat pool ISP2_Pool 52.83.200.100 52.83.200.110 netmask 255.255.255.0</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>ISP-Router添加去往NAT地址池的路由即可</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip route 52.83.100.0 255.255.255.0 52.83.1.1</span><br><span class="line">ip route 52.83.200.0 255.255.255.0 52.83.2.1</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ul>
+<li>ISP Failover with Default Routes using IP SLA Tracking：<a target="_blank" rel="noopener" href="https://www.cisco.com/c/en/us/support/docs/ip/ip-routing/200785-ISP-Failover-with-default-routes-using-I.html">https://www.cisco.com/c/en/us/support/docs/ip/ip-routing/200785-ISP-Failover-with-default-routes-using-I.html</a></li>
+<li>CONFIGURING POLICY-BASED ROUTING (PBR) WITH IP SLA TRACKING - AUTO REDIRECTING TRAFFIC：<a target="_blank" rel="noopener" href="http://www.firewall.cx/cisco-technical-knowledgebase/cisco-routers/861-cisco-router-pbr-ipsla-auto-redirect.html">http://www.firewall.cx/cisco-technical-knowledgebase/cisco-routers/861-cisco-router-pbr-ipsla-auto-redirect.html</a></li>
+<li>Cisco IP SLA — Using a Cisco Router to generate traffic：<a target="_blank" rel="noopener" href="https://www.practicalnetworking.net/stand-alone/cisco-ip-sla-using-a-cisco-router-to-generate-traffic/">https://www.practicalnetworking.net/stand-alone/cisco-ip-sla-using-a-cisco-router-to-generate-traffic/</a></li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            非商业转载请注明出处，商业转载请联系作者获得授权。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/AWS-Session-Manager.html" class="next-post btn btn-default" title='AWS Session Manager'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            AWS Session Manager</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'stf5rGD17bcrWN1mvUT4pu8C-gzGzoHsz',
+    appKey: 'r5qpzBWMAzt2hDAcDftecM1R',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: false,
+    avatar: 'mm',
+    meta: 'nick'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh-CN'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E4%BB%8B%E7%BB%8D"><span class="toc-text">1、介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E6%8B%93%E6%89%91%E5%9B%BE"><span class="toc-text">2、拓扑图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E8%AE%BE%E5%A4%87%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">3、设备初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E9%85%8D%E7%BD%AE"><span class="toc-text">4、负载均衡配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81%E4%B8%BB%E5%A4%87%E9%85%8D%E7%BD%AE"><span class="toc-text">5、主备配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1%E3%80%81%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2"><span class="toc-text">5.1、主备切换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2%E3%80%81%E4%BD%BF%E7%94%A8%E6%98%8E%E7%BB%86%E8%B7%AF%E7%94%B1%E6%8E%A7%E5%88%B6%E5%87%BA%E5%8F%A3ISP"><span class="toc-text">5.2、使用明细路由控制出口ISP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3%E3%80%81%E4%BD%BF%E7%94%A8PBR%E6%8E%A7%E5%88%B6%E5%87%BA%E5%8F%A3ISP"><span class="toc-text">5.3、使用PBR控制出口ISP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4%E3%80%81PAT%E5%9C%B0%E5%9D%80%E6%B1%A0"><span class="toc-text">5.4、PAT地址池</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">参考文档</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2021
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
