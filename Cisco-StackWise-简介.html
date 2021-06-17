@@ -1,0 +1,470 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
+    <!--SEO-->
+
+<meta name="keywords" content="Cisco,StackWise" />
+
+
+<meta name="description" content="1、什么是StackWiseStackWise是思科的堆叠技术，直译过来可以叫智能堆叠，StackWise技术分为硬堆叠和软堆叠两种。
+硬堆叠技术使用专用的堆叠线连接成一个环形拓扑结构，最多能堆..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    Cisco StackWise 简介 |
+    
+    LiuQianglong&#39;s Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='LiuQianglong'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        LiuQianglong&#39;s Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Network/"><i class="fa "></i>
+                                Network</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/AWS/"><i class="fa "></i>
+                                AWS</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Python/"><i class="fa "></i>
+                                Python</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Cisco StackWise 简介">
+            
+            Cisco StackWise 简介
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/Network/">Network</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/Cisco/" rel="tag">Cisco</a> <a class="tag-none-link" href="/tags/StackWise/" rel="tag">StackWise</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2021/06/17</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h2 id="1、什么是StackWise"><a href="#1、什么是StackWise" class="headerlink" title="1、什么是StackWise"></a>1、什么是StackWise</h2><p>StackWise是思科的堆叠技术，直译过来可以叫<strong>智能堆叠</strong>，StackWise技术分为硬堆叠和软堆叠两种。</p>
+<p><strong>硬堆叠</strong>技术使用专用的<strong>堆叠线</strong>连接成一个环形拓扑结构，最多能堆叠<strong>八台</strong>交换机，实现最大480G的带宽，硬堆叠一般也可以叫做<strong>StackWise-480</strong>。目前思科Catalyst 9200/9300 支持硬堆叠，从支持的型号可以看出硬件堆叠的使用场景一般是大型网络的分布层（Distribution）或者是小型网络的核心层。</p>
+<img src="/img/Cisco-Stackwise/nb-06-cat9300-architecture-cte-en_23.png" alt="Cisco Catalyst 9300 Series Switches Architecture White Paper - Cisco" style="zoom: 50%;" />
+
+<p><strong>软堆叠</strong>（<strong>StackWise Virtual</strong>）是思科用于取代VSS（Virtual Switching System）的一个新技术，使用StackWise Virtual技术可以通过10G/40G接口连接<strong>两台</strong>交换机形成一台虚拟交换机。除了能提供与VSS一样的能力外，还能提供可编程性、应用可见性、MPLS等特性，可以理解为VSS的加强版。目前思科Catalyst 9000系列 9400/9500/9600 均支持StackWise Virtual。从支持的型号可以看出StackWise Virtual一般用在网络的核心层。</p>
+<img src="/img/Cisco-Stackwise/nb-06-cat-9k-stack-wp-cte-en_7.png" alt="StackWise virtual quad sup RPR – How it works" style="zoom:50%;" />
+
+
+
+<p>StackWise Virtual与StackWise-480除了在网络中的使用场景不太一样之外，StackWise Virtual因为使用10G/40G接口进行连接，所以可以将<strong>距离更远</strong>的两个交换机连接起来。而StackWise-480需要使用堆叠线进行连接，堆叠线规格有50cm/1m/3m，所以决定了使用StackWise-480技术的交换机往往在同一个机架。</p>
+<h2 id="2、StackWise-的优势"><a href="#2、StackWise-的优势" class="headerlink" title="2、StackWise 的优势"></a>2、StackWise 的优势</h2><p>无论是StackWise-480还是StackWise Virtual都可以简化网络、提供冗余、简化管理。另外StackWise-480还提供了可扩展性。</p>
+<ul>
+<li>简化网络：使用StackWise技术之后，网络拓扑结构上只有一台逻辑上的交换机。</li>
+<li>提供冗余：交换机之间会通过Stateful Switchover(SSO)进行状态信息同步，交换机可以实现热备。</li>
+<li>简化管理：提供统一的管理平面进行管理、配置和排错。便于维护配置统一性，当你你登录不同交换机的控制台所看到的是相同的管理平台。</li>
+</ul>
+<h2 id="3、企业园区网高可用架构"><a href="#3、企业园区网高可用架构" class="headerlink" title="3、企业园区网高可用架构"></a>3、企业园区网高可用架构</h2><p>在进行企业园区网络高可用设计时，可以考虑如下设计，在接入层或者分布层使用StackWise-480技术进行堆叠，在核心层使用StackWise Virtual技术。</p>
+<img src="/img/Cisco-Stackwise/image-20210316195318995.png" alt="image-20210316195318995" style="zoom: 50%;" />
+
+
+
+<p>上面的物理接线，在逻辑上就是下面的拓扑接口。</p>
+<p><img src="/img/Cisco-Stackwise/image-20210319142416086.png" alt="image-20210319142416086"></p>
+<p>从下面的两个图片可以看出，在使用StackWise之后，配置设备数量急剧减少，设计时需要考虑的很多二层问题就被解决了。</p>
+<img src="/img/Cisco-Stackwise/image-20210316195333226.png" alt="image-20210316195333226" style="zoom: 50%;" />
+
+<img src="/img/Cisco-Stackwise/image-20210316195337228.png" alt="image-20210316195337228" style="zoom:50%;" />
+
+
+
+
+
+<h2 id="4、StackWise-480-介绍"><a href="#4、StackWise-480-介绍" class="headerlink" title="4、StackWise-480 介绍"></a>4、StackWise-480 介绍</h2><p>思科交换机最多支持8台交换机进行堆叠，堆叠能达到的最大速率为480G，堆叠后就如同一台高端口密度的交换机。堆叠组内选取一台交换机作为Active，主要负责控制层面的信息处理，就好比是C9400中的supervisor板卡；而其他组成员就好比是高端交换机中的I/O modules板卡，主要负责数据层面的流量转发。</p>
+<img src="/img/Cisco-Stackwise/image-20210319151804354.png" alt="image-20210319151804354" style="zoom:50%;" />
+
+
+
+
+
+
+
+<h3 id="4-1、StackPower"><a href="#4-1、StackPower" class="headerlink" title="4.1、StackPower"></a>4.1、StackPower</h3><p>StackPower能让堆叠中的电源作为公共资源，在所有交换机之间共享。思科StackPower将交换机中安装的各个电源统一起来，创建一个电源池，哪里有需要就将电源引向哪里。</p>
+<img src="/img/Cisco-Stackwise/2021-06-17 09 42 57.png" alt="2021-06-17 09 42 57" style="zoom: 33%;" />
+
+
+
+
+
+<p>StackPower线，两头和堆叠线非常相似，StackPower线会更加粗一些，堆叠线是是3根细线合在一起的。</p>
+<p><img src="/img/Cisco-Stackwise/s-l640.jpg" alt="StackPower 30cm Cable"></p>
+<h3 id="4-2、Extended-Fast-Software-Upgrade（xFSU，扩展的快速软件升级）"><a href="#4-2、Extended-Fast-Software-Upgrade（xFSU，扩展的快速软件升级）" class="headerlink" title="4.2、Extended Fast Software Upgrade（xFSU，扩展的快速软件升级）"></a>4.2、Extended Fast Software Upgrade（xFSU，扩展的快速软件升级）</h3><p>在交换机上进行软件升级期间，用户流量将被中断，直到新软件完全启动。对于运行关键应用程序的客户来说，流量停机是一个需要考虑的问题。xFSU是一个软件增强过程，旨在减少软件重载或升级操作期间的流量停机时间。xFSU使用优雅重启功能（也称为Cisco Nonstop Forwarding(NSF)），确保交换机配置和路由协议在软件升级或重载期间保持不受影响。目前xFSU升级只适用于Catalyst 9300和Catalyst 9300L交换机。</p>
+<img src="/img/Cisco-Stackwise/image-20210319145743992.png" alt="image-20210319145743992" style="zoom: 50%;" />
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">9300# install add file flash:cat9k_iosxe.BLD_V1610 activate reloadfast commit</span><br><span class="line">9300# Reload Fast</span><br></pre></td></tr></table></figure>
+
+
+<p>想要进一步了解，可以看这里<a target="_blank" rel="noopener" href="https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/216837-extended-fast-software-upgrade-on-cataly.html">参考文档</a></p>
+<h3 id="4-3、StackWise-480配置"><a href="#4-3、StackWise-480配置" class="headerlink" title="4.3、StackWise-480配置"></a>4.3、StackWise-480配置</h3><p>StackWise-480其实直接插上堆叠线就可以正常工作了，但是为了后期维护方便，需要提前设计好主用和备用的交换机。</p>
+<ul>
+<li>默认配置交换机的优先级（1-15）默认为1，越高越好</li>
+<li>打开你要使其成为Active状态的第一个开关的电源</li>
+<li>打开你要作为Standby成员的第二个成员的电源，然后打开其余成员的电源</li>
+<li>要将成员添加到现有堆栈中，请先插入堆栈电缆，然后打开交换机电源</li>
+<li>尽可能避免堆栈合并和堆栈拆分</li>
+</ul>
+<img src="/img/Cisco-Stackwise/image-20210319144411069.png" alt="image-20210319144411069" style="zoom:50%;" />
+
+
+
+<p>下面是堆叠线</p>
+<img src="/img/Cisco-Stackwise/Cisco-STACK-50CM.JPG" style="zoom:25%;" />
+
+
+
+<p>StackWise-480<a target="_blank" rel="noopener" href="https://blog.51cto.com/thely/1570600">参考文档</a></p>
+<h2 id="5、StackWise-Virtual-介绍"><a href="#5、StackWise-Virtual-介绍" class="headerlink" title="5、StackWise Virtual 介绍"></a>5、StackWise Virtual 介绍</h2><h3 id="5-1、Stackwise-Virtual-角色"><a href="#5-1、Stackwise-Virtual-角色" class="headerlink" title="5.1、Stackwise Virtual 角色"></a>5.1、Stackwise Virtual 角色</h3><ul>
+<li>角色只有两种，<code>Active</code>和<code>Standby</code>。</li>
+<li>初始状态基于两个条件进行选举，<code>priority</code><strong>数值小的优先</strong>；系统mac数值小的优先</li>
+<li>角色<strong>不会发生抢占</strong>。</li>
+</ul>
+<p><img src="/img/Cisco-Stackwise/image-20210316195329206.png" alt="image-20210316195329206"></p>
+<h3 id="5-2、Stackwise-Virtual-部署注意事项"><a href="#5-2、Stackwise-Virtual-部署注意事项" class="headerlink" title="5.2、Stackwise Virtual 部署注意事项"></a>5.2、Stackwise Virtual 部署注意事项</h3><ul>
+<li>交换机需要具有相同的物理型号、相同的IOS版本、相同类型的授权。</li>
+<li>引擎必须位于两个交换机的同一插槽中（例如，使用9407时，两个机箱的插槽3）。</li>
+<li>StackWise Virtual Link（SVL）需要在Supervisor上建立10/40G连接。</li>
+<li>每个机箱仅支持一个引擎来做StackWise Virtual。如果你安装了两个引擎，则第二个引擎powered off状态。</li>
+<li>VLAN 4094由StackWise Virtual使用，因此不能用于任何其他目的。</li>
+<li>手动完成StackWise Virtual的配置，双活检测DAD（dual-active detection）和SVL（StackWise Virtual Link），并且在每个步骤之后都需要重新启动交换机。</li>
+<li>每个机箱SVL最多可具有80GE（8x10GE或2x40GE）或50GE（2x25GE）的组合带宽。</li>
+</ul>
+<p>思科<a target="_blank" rel="noopener" href="https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/16-12/configuration_guide/ha/b_1612_ha_9400_cg/configuring_cisco_stackwise_virtual.html#id_75434">参考文档</a></p>
+<h3 id="5-3、StackWise-Virtual-配置"><a href="#5-3、StackWise-Virtual-配置" class="headerlink" title="5.3、StackWise Virtual 配置"></a>5.3、StackWise Virtual 配置</h3><p>1、首先在交换机上创建相同StackWise domain ID。配置优先级，优先级数值低的成为Active。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">SW01#switch 1 priority 5 </span><br><span class="line"></span><br><span class="line">SW01(config)#stackwise-virtual</span><br><span class="line">SW01(config-stackwise-virtual)#domain 10</span><br><span class="line"></span><br><span class="line">SW01#wr mem</span><br><span class="line">SW01#reload</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">SW02#switch 1 priority 10</span><br><span class="line">SW02#switch 1 renumber 2</span><br><span class="line">SW02(config)#stackwise-virtual</span><br><span class="line">SW02(config-stackwise-virtual)#domain 10</span><br><span class="line"></span><br><span class="line">SW02#wr mem</span><br><span class="line">SW02#reload</span><br></pre></td></tr></table></figure>
+
+
+<p>2、配置SVL接口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">SW01(config)#interface rage TenGigabitEthernet1&#x2F;3&#x2F;0&#x2F;1 - 2</span><br><span class="line">SW01(config-if)stackwise-virtual link 1</span><br><span class="line">SW01(config-if)#end</span><br><span class="line">SW01#wr mem</span><br><span class="line">SW01#reload</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">SW02(config)#interface rage TenGigabitEthernet1&#x2F;3&#x2F;0&#x2F;1 - 2</span><br><span class="line">SW02(config-if)stackwise-virtual link 1</span><br><span class="line">SW02(config-if)#end</span><br><span class="line">SW02#wr mem</span><br><span class="line">SW02#reload</span><br></pre></td></tr></table></figure>
+
+
+<p>3、配置DAD（dual-active detection）接口，DAD可以加快故障检测时间，这是可选步骤。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SW01(config)#interface GigabitEthernet1&#x2F;1&#x2F;0&#x2F;1</span><br><span class="line">SW01(config-if)stackwise-virtual dual-active-detection</span><br><span class="line">SW01#wr mem</span><br><span class="line">SW01#reload</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">SW02(config)#interface GigabitEthernet1&#x2F;1&#x2F;0&#x2F;1</span><br><span class="line">SW02(config-if)stackwise-virtual dual-active-detection</span><br><span class="line">SW02#wr mem</span><br><span class="line">SW02#reload</span><br></pre></td></tr></table></figure>
+
+
+<p>4、最后可以通过下面命令来验证结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SW01#show stackwise-virtual switch 1</span><br><span class="line">SW01#show stackwise-virtual link</span><br><span class="line">SW01#show stackwise-virtual bandwidth</span><br><span class="line">SW01#show stackwise-virtual neighbors</span><br><span class="line">SW01#show stackwise-virtual dual-active-detection</span><br></pre></td></tr></table></figure>
+
+
+<p>配置<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_22763255/article/details/105526534">参考文档</a></p>
+<h3 id="5-4、In-Service-Software-Upgrade-ISSU-服务中软件升级"><a href="#5-4、In-Service-Software-Upgrade-ISSU-服务中软件升级" class="headerlink" title="5.4、In-Service Software Upgrade (ISSU 服务中软件升级 )"></a>5.4、In-Service Software Upgrade (ISSU 服务中软件升级 )</h3><h4 id="5-4-1、什么是ISSU？"><a href="#5-4-1、什么是ISSU？" class="headerlink" title="5.4.1、什么是ISSU？"></a>5.4.1、什么是ISSU？</h4><p>ISSU提供了一种机制，<strong>在交换机继续转发流量的情况下进行软件升级和降级</strong>，ISSU利用NSF和SSO功能在升级或降级期间继续转发流量，切换的速度小于200ms。Catalyst 3850和Catalyst 9000系列做Stackwise-Virtual之后可以支持ISSU，具有双引擎的Catalyst 9400/9600独立支持ISSU，另外思科最新的无线控制C9800系列也可以支持ISSU进行升级。这里可以查看版本<a target="_blank" rel="noopener" href="https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst_standalones/b-in-service-software-upgrade-issu.html">兼容列表</a>。</p>
+<img src="/img/Cisco-Stackwise/image-20210319103726142.png" alt="image-20210319103726142" style="zoom:50%;" />
+
+
+
+<h4 id="5-4-2、ISSU-工作流程"><a href="#5-4-2、ISSU-工作流程" class="headerlink" title="5.4.2、ISSU 工作流程"></a>5.4.2、ISSU 工作流程</h4><p>下面图片简要描述了C9K在ISSU升级过程中的步骤：</p>
+<ul>
+<li>镜像已经存在于Active和Standby。</li>
+<li>Standby镜像开始升级。</li>
+<li>Standby升级成功之后会自动切换为Active，此时原先的Active已经成为Standby并且开始升级。</li>
+<li>Standby升级完成，升级完成后其实引擎的主备切换了。</li>
+</ul>
+<p><img src="/img/Cisco-Stackwise/image-20210319104616722.png" alt="image-20210319104616722"></p>
+<h4 id="5-4-3、C9500-StackWise-Virtual-ISSU-配置步骤"><a href="#5-4-3、C9500-StackWise-Virtual-ISSU-配置步骤" class="headerlink" title="5.4.3、C9500 StackWise-Virtual ISSU 配置步骤"></a>5.4.3、C9500 StackWise-Virtual ISSU 配置步骤</h4><p>关于详细的升级步骤以及注意事项参考这个<a target="_blank" rel="noopener" href="https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9500-series-switches/214406-in-service-software-upgrade-issu-on-ca.html">文档</a></p>
+<ul>
+<li>升级步骤关键有三步</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C9500#install add file flash:cat9k-universalk9.SPA.16.09.03.BETA.E1.SSA.bin.bin    </span><br><span class="line">C9500#install activate issu</span><br><span class="line">C9500#install commit </span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>三个步骤也可以简化可以一条命令执行</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C9500#install add file flash:cat9k-universalk9.SPA.16.09.03.BETA.E1.SSA.bin.bin activate ISSU commit</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="6、参考链接"><a href="#6、参考链接" class="headerlink" title="6、参考链接"></a>6、参考链接</h2><ul>
+<li>思科C9K系列StackWise Virtual白皮书：<a target="_blank" rel="noopener" href="https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9000/nb-06-cat-9k-stack-wp-cte-en.html">https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9000/nb-06-cat-9k-stack-wp-cte-en.html</a></li>
+</ul>
+<ul>
+<li>StackWise-480 白皮书：<a target="_blank" rel="noopener" href="https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9300-series-switches/white-paper-c11-741468.html">https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9300-series-switches/white-paper-c11-741468.html</a></li>
+</ul>
+<ul>
+<li>Cisco StackWise Virtual Q&amp;A：<a target="_blank" rel="noopener" href="https://www.cisco.com/c/dam/en/us/products/collateral/switches/catalyst-3850-series-switches/q-and-a-c67-738577.pdf">https://www.cisco.com/c/dam/en/us/products/collateral/switches/catalyst-3850-series-switches/q-and-a-c67-738577.pdf</a></li>
+</ul>
+<ul>
+<li>What is the Cisco Stackwise Virtual Technology? 6 FAQ You Need to Know!：<a target="_blank" rel="noopener" href="https://blog.router-switch.com/2019/12/what-is-the-cisco-stackwise-virtual-technology/">https://blog.router-switch.com/2019/12/what-is-the-cisco-stackwise-virtual-technology/</a></li>
+<li>Extended Fast Software Upgrade on Catalyst 9300 Platform：<a target="_blank" rel="noopener" href="https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/216837-extended-fast-software-upgrade-on-cataly.html">https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/216837-extended-fast-software-upgrade-on-cataly.html</a></li>
+</ul>
+<ul>
+<li>Stackwise实物接线：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=5bimzoJJkK8">https://www.youtube.com/watch?v=5bimzoJJkK8</a></li>
+</ul>
+<ul>
+<li>思科堆栈配置-如何从堆栈中移除交换机：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=-J9wtau25sY">https://www.youtube.com/watch?v=-J9wtau25sY</a></li>
+</ul>
+<p><img src="/img/Cisco-Stackwise/image-20210319152339318.png" alt="image-20210319152339318"></p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            非商业转载请注明出处，商业转载请联系作者获得授权。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/ISP-Failover-PAT%E9%85%8D%E7%BD%AE.html" class="next-post btn btn-default" title='ISP Failover PAT配置'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            ISP Failover PAT配置</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'stf5rGD17bcrWN1mvUT4pu8C-gzGzoHsz',
+    appKey: 'r5qpzBWMAzt2hDAcDftecM1R',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: false,
+    avatar: 'mm',
+    meta: 'nick'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh-CN'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AFStackWise"><span class="toc-text">1、什么是StackWise</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81StackWise-%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-text">2、StackWise 的优势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E4%BC%81%E4%B8%9A%E5%9B%AD%E5%8C%BA%E7%BD%91%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84"><span class="toc-text">3、企业园区网高可用架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81StackWise-480-%E4%BB%8B%E7%BB%8D"><span class="toc-text">4、StackWise-480 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1%E3%80%81StackPower"><span class="toc-text">4.1、StackPower</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2%E3%80%81Extended-Fast-Software-Upgrade%EF%BC%88xFSU%EF%BC%8C%E6%89%A9%E5%B1%95%E7%9A%84%E5%BF%AB%E9%80%9F%E8%BD%AF%E4%BB%B6%E5%8D%87%E7%BA%A7%EF%BC%89"><span class="toc-text">4.2、Extended Fast Software Upgrade（xFSU，扩展的快速软件升级）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3%E3%80%81StackWise-480%E9%85%8D%E7%BD%AE"><span class="toc-text">4.3、StackWise-480配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81StackWise-Virtual-%E4%BB%8B%E7%BB%8D"><span class="toc-text">5、StackWise Virtual 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1%E3%80%81Stackwise-Virtual-%E8%A7%92%E8%89%B2"><span class="toc-text">5.1、Stackwise Virtual 角色</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2%E3%80%81Stackwise-Virtual-%E9%83%A8%E7%BD%B2%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-text">5.2、Stackwise Virtual 部署注意事项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3%E3%80%81StackWise-Virtual-%E9%85%8D%E7%BD%AE"><span class="toc-text">5.3、StackWise Virtual 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4%E3%80%81In-Service-Software-Upgrade-ISSU-%E6%9C%8D%E5%8A%A1%E4%B8%AD%E8%BD%AF%E4%BB%B6%E5%8D%87%E7%BA%A7"><span class="toc-text">5.4、In-Service Software Upgrade (ISSU 服务中软件升级 )</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-1%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AFISSU%EF%BC%9F"><span class="toc-text">5.4.1、什么是ISSU？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-2%E3%80%81ISSU-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">5.4.2、ISSU 工作流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-3%E3%80%81C9500-StackWise-Virtual-ISSU-%E9%85%8D%E7%BD%AE%E6%AD%A5%E9%AA%A4"><span class="toc-text">5.4.3、C9500 StackWise-Virtual ISSU 配置步骤</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E3%80%81%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-text">6、参考链接</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2021
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
