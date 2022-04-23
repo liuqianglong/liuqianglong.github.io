@@ -566,7 +566,7 @@ pre {
   main post content
 ====================================================*/
 .post-content {
-  font: 400 16px/1.62 "Microsoft YaHei", "Georgia", "Xin Gothic", "Hiragino Sans GB", "Droid Sans Fallback", sans-serif;
+  font: 400 12px/1.62 "Microsoft YaHei", "Georgia", "Xin Gothic", "Hiragino Sans GB", "Droid Sans Fallback", sans-serif;
   color: #262626;
 }
 .post-content h1 {
@@ -747,7 +747,7 @@ pre {
   background-color: #fff3f0;
   font-family: "Roboto Mono", "Source Sans Pro", "Microsoft YaHei", 微软雅黑 !important;
   margin: 0px 2px;
-  padding: 1px 4px;
+  padding: 2px 4px;
   border-radius: 3px;
 }
 .post-content tt {
@@ -849,7 +849,7 @@ pre {
   line-height: 36px;
 }
 .pagination .prev {
-  margin: 0 5px;
+  margin:  5px;
 }
 .pagination .next {
   margin: 0 5px;
@@ -1650,7 +1650,7 @@ pre .javascript .function {
 @media screen and (min-width: 1100px) {
   .post-content blockquote {
     padding-left: 20px;
-    border-width: 2px;
+    border-width: 4px;
   }
   .post-content blockquote blockquote {
     margin-left: 0;
