@@ -158,7 +158,7 @@ input[type="search"] {
   box-sizing: border-box;
   width: 75%;
   height: 32px;
-  line-height: 16px;
+  line-height: 14px;
   padding: 7px 11px 7px 7px;
   border-radius: 4px 0 0 4px;
   margin-bottom: 1em;
@@ -374,7 +374,7 @@ pre {
   line-height: 4em;
   display: block;
   padding: 0 21px;
-  font-size: 16px;
+  font-size: 14px;
 }
 .main-navigation .menu li:hover > a {
   color: var(--main-6);
@@ -439,7 +439,7 @@ pre {
 }
 .main-content .breadcrumb {
   padding-left: 20px;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 2em;
 }
 .post {
@@ -566,7 +566,7 @@ pre {
   main post content
 ====================================================*/
 .post-content {
-  font: 400 12px/1.62 "Microsoft YaHei", "Georgia", "Xin Gothic", "Hiragino Sans GB", "Droid Sans Fallback", sans-serif;
+  font: 400 14px/1.62 "Microsoft YaHei", "Georgia", "Xin Gothic", "Hiragino Sans GB", "Droid Sans Fallback", sans-serif;
   color: #262626;
 }
 .post-content h1 {
@@ -708,12 +708,12 @@ pre {
 }
 .post-content ul {
   margin: 0 0 24px 6px;
-  padding-left: 16px;
+  padding-left: 14px;
   list-style-type: disc;
 }
 .post-content ol {
   margin: 0 0 24px 6px;
-  padding-left: 16px;
+  padding-left: 14px;
   list-style-type: decimal;
 }
 .post-content li {
@@ -818,7 +818,7 @@ pre {
   margin-bottom: 30px;
 }
 .windows .post-content {
-  font-size: 16px;
+  font-size: 14px;
   font-family: "Georgia", "SimSun", sans-serif;
 }
 /*====================================================
@@ -926,7 +926,7 @@ pre {
 }
 .sidebar .widget {
   background: #fff;
-  padding: 16px 25px;
+  padding: 14px 25px;
 }
 .sidebar .widget ul {
   padding: 0;
@@ -952,7 +952,7 @@ pre {
 }
 .sidebar .widget-box {
   background: #fff;
-  padding: 0 25px 16px;
+  padding: 0 25px 14px;
 }
 .main-footer {
   background: #202020;
@@ -1107,7 +1107,7 @@ pre {
 }
 .widget #search-form #result-wrap #search-result .item .title {
   line-height: 1.25;
-  font-size: 16px;
+  font-size: 14px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -1383,7 +1383,7 @@ pre {
   padding-left: 41px;
   margin-top: -5px;
   font-weight: normal;
-  font-size: 16px;
+  font-size: 14px;
   color: #505050;
 }
 .timeline ul li a:hover {
@@ -1675,5 +1675,4 @@ pre .javascript .function {
     margin-bottom: 10px;
   }
 }
-
 
