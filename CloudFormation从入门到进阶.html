@@ -22,8 +22,7 @@
 <meta name="keywords" content="AWS,CloudFormation" />
 
 
-<meta name="description" content="AWS 的 CloudFormation 是非常好用的一个服务，这里介绍一下常见的使用方法。
-1、CloudFormation简介1.1、AWS Console操作遇到的问题要说需要CloudF..." />
+<meta name="description" content="1、CloudFormation简介1.1、AWS Console操作遇到的问题要说需要CloudFormation这个技术来解决什么问题，我们首先看下以往的AWS Console中遇到的一些问..." />
 
 
 <meta name="robots" content="all" />
@@ -191,8 +190,7 @@ var _hmt = _hmt || [];
     </div>
     
     <div class="post-body post-content">
-        <p>AWS 的 CloudFormation 是非常好用的一个服务，这里介绍一下常见的使用方法。</p>
-<h2 id="1、CloudFormation简介"><a href="#1、CloudFormation简介" class="headerlink" title="1、CloudFormation简介"></a>1、CloudFormation简介</h2><h3 id="1-1、AWS-Console操作遇到的问题"><a href="#1-1、AWS-Console操作遇到的问题" class="headerlink" title="1.1、AWS Console操作遇到的问题"></a>1.1、AWS Console操作遇到的问题</h3><p>要说需要CloudFormation这个技术来解决什么问题，我们首先看下以往的AWS Console中遇到的一些问题。</p>
+        <h2 id="1、CloudFormation简介"><a href="#1、CloudFormation简介" class="headerlink" title="1、CloudFormation简介"></a>1、CloudFormation简介</h2><h3 id="1-1、AWS-Console操作遇到的问题"><a href="#1-1、AWS-Console操作遇到的问题" class="headerlink" title="1.1、AWS Console操作遇到的问题"></a>1.1、AWS Console操作遇到的问题</h3><p>要说需要CloudFormation这个技术来解决什么问题，我们首先看下以往的AWS Console中遇到的一些问题。</p>
 <p><strong>无法复制粘贴</strong>-AWS Console是图形化操作的，所以你在测试账号里面创建VPC，子网，路由这些操作，在迁移到生产环境的时候，还需要重复的操作一遍。不仅浪费时间，还很容易出错。</p>
 <p><strong>无法批量操作</strong>-在AWS Console里面，你只能同时操作单个资源，例如当你清空一个测试VPC的时候，你一步步的删除实例、删除安全组、删除IGW，最后在删除VPC。如果不小心忘记删除了EIP，还会产生费用。</p>
 <p><strong>没有版本控制</strong>-很有可能运维A前天修改了一个安全组，运维B昨天修改了一个路由，今天业务不通了。你很难找到对这些内容的修改，CloudTrail的记录也并不直观。</p>
