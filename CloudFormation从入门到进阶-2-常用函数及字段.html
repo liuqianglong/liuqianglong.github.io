@@ -1,0 +1,466 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
+    <!--SEO-->
+
+<meta name="keywords" content="AWS,CloudFormation" />
+
+
+<meta name="description" content="B站视频链接：https://www.bilibili.com/video/BV1Pe411L7zL/?spm_id_from=333.999.list.card_archive.click微信..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    AWS CloudFormation 系列--(2)常用函数及字段 |
+    
+    LiuQianglong&#39;s Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='LiuQianglong'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        LiuQianglong&#39;s Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Network/"><i class="fa "></i>
+                                Network</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/AWS/"><i class="fa "></i>
+                                AWS</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Python/"><i class="fa "></i>
+                                Python</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="AWS CloudFormation 系列--(2)常用函数及字段">
+            
+            AWS CloudFormation 系列--(2)常用函数及字段
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/AWS/">AWS</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/AWS/" rel="tag">AWS</a> <a class="tag-none-link" href="/tags/CloudFormation/" rel="tag">CloudFormation</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2022/10/11</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <p><strong>B站视频链接：</strong><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Pe411L7zL/?spm_id_from=333.999.list.card_archive.click">https://www.bilibili.com/video/BV1Pe411L7zL/?spm_id_from=333.999.list.card_archive.click</a><br><strong>微信公众号：</strong>自刘地<br><img src="/img/wechat.jpg" alt="自刘地"></p>
+<p>前面CloudFormation的快速入门，基本了解了如何使用这个服务来创建AWS资源。但是前面写的代码基本只能自己看看，没法分享给别人使用，比如代码里面明确写了EC2的密钥，别人账号里面肯定没有这个密钥，应该让使用者自己选择密钥信息。</p>
+<p>所以需要创建更加灵活的CloudFormation模板，这里会介绍一些常见的字段和函数，了解了这些之后，基本上能看懂网络上大部分的CloudFormation代码。</p>
+<p>这篇文章知识点比较多，我会先追个介绍，最后会通过一个实验把这些知识点整合起来。下面这个实验环境，和之前快速入门是一样的，但是会通过一些函数和字段，让这个模板更加灵活。</p>
+<p><img src="/img/CloudFormation-2/image-20220918225135044.png" alt="image-20220918225135044"></p>
+<h2 id="一、DependsOn属性"><a href="#一、DependsOn属性" class="headerlink" title="一、DependsOn属性"></a>一、DependsOn属性</h2><p>前面快速入门，讲过了模板里面最重要的资源（Resources）字段。资源字段内部一共有6种属性，这里只介绍最常用的<code>DependsOn</code>属性。</p>
+<p>之前创建的环境比较简单，所以没有用到这个属性。如果在两个资源之间有依赖关系时，如果你希望其中一个资源先创建，然后再创建另外一个资源，就可以用<code>DependsOn</code>属性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CreationPolicy attribute</span><br><span class="line">DeletionPolicy attribute</span><br><span class="line">DependsOn attribute</span><br><span class="line">Metadata attribute</span><br><span class="line">UpdatePolicy attribute</span><br><span class="line">UpdateReplacePolicy attribute</span><br></pre></td></tr></table></figure>
+<p>这里通过一个场景，来看DependsOn属性的用法。例如需要在CloudFormation代码里面创建EC2和数据库，并且让EC2连接上数据库。那么肯定希望先创建数据，然后再创建EC2，否则肯定连接不上。这时候就可以在EC2资源下面，加上<code>DependsOn</code>属性，确保创建完数据之后再创建EC2。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Resources:</span></span><br><span class="line">  <span class="attr">Ec2Instance:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Instance</span></span><br><span class="line">    <span class="attr">DependsOn:</span> <span class="string">myDB</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">ImageId:</span> <span class="string">ami-003a3de8892ecbc45</span></span><br><span class="line">  <span class="attr">myDB:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::RDS::DBInstance</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">AllocatedStorage:</span> <span class="string">&#x27;5&#x27;</span></span><br><span class="line">      <span class="attr">DBInstanceClass:</span> <span class="string">db.t2.small</span></span><br><span class="line">      <span class="attr">Engine:</span> <span class="string">MySQL</span></span><br><span class="line">      <span class="attr">EngineVersion:</span> <span class="string">&#x27;5.5&#x27;</span></span><br><span class="line">      <span class="attr">MasterUsername:</span> <span class="string">MyName</span></span><br><span class="line">      <span class="attr">MasterUserPassword:</span> <span class="string">MyPassword</span></span><br></pre></td></tr></table></figure>
+<p>这里其实隐含了一个特性，就是AWS在创建、更新、删除资源的时候默认是<strong>并行</strong>的，也就是尽可能同时创建所有资源。使用<code>DependsOn</code>属性可以明确的指定资源创建的先后顺序。</p>
+<p>另外<code>!Ref</code>和<code>!GetAtt</code> 这两个内部函数具有隐式的依赖关系。例如之前使用过<code>!Ref</code>函数，在创建IGW时，使用Ref函数调用了VPC ID信息，这样也可以确保被调用的资源先创建，也就是创建VPC之后，才会创建IGW。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># IGW 关联VPC</span></span><br><span class="line">  <span class="attr">MyTestAttachIgw:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::VPCGatewayAttachment&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">InternetGatewayId:</span> <span class="type">!Ref</span> <span class="string">MyTestIgw</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="二、常用内部函数"><a href="#二、常用内部函数" class="headerlink" title="二、常用内部函数"></a>二、常用内部函数</h2><p>下面介绍CloudFormation常见的一些内部函数。</p>
+<p>只能在特定的模板字段下面使用内部函数，例如在<strong>resource properties</strong>、<strong>outputs</strong>、metadata attributes、update policy attributes这几个字段下面使用内部函数。下面是所有内部函数，这里只介绍几个常用的<u>内部函数</u>[参考链接1]。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Fn::Base64</span><br><span class="line">Fn::Cidr</span><br><span class="line">Condition functions</span><br><span class="line">Fn::FindInMap</span><br><span class="line">Fn::GetAtt</span><br><span class="line">Fn::GetAZs</span><br><span class="line">Fn::ImportValue</span><br><span class="line">Fn::Join</span><br><span class="line">Fn::Select</span><br><span class="line">Fn::Split</span><br><span class="line">Fn::Sub</span><br><span class="line">Fn::Transform</span><br><span class="line">Ref</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Fn-Ref-函数"><a href="#Fn-Ref-函数" class="headerlink" title="Fn::Ref 函数"></a>Fn::Ref 函数</h3><p>最常见的毫无疑问就是<code>Ref</code>函数，前面的模板使用过了<code>Ref</code>函数，一般情况下<code>Ref</code>函数返回资源的ID信息。有些资源会返回有重要意义的标识符，例如<u>AWS::EC2::EIP</u>[参考链接2]资源返回 IP 地址，AWS::EC2::Instance返回实例 ID。</p>
+<p>完整函数名称的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Ref: logicalName</span><br></pre></td></tr></table></figure>
+<p>短格式的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">!Ref logicalName</span><br></pre></td></tr></table></figure>
+<p>例如前面将IGW关联到VPC，就用到<code>Ref</code>函数，VPC ID使用了完成名称，IGW ID使用了短格式写法。一般我会使用短格式写法，写在一行更加简洁。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">MyTestAttachIgw:</span></span><br><span class="line">  <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::VPCGatewayAttachment&quot;</span></span><br><span class="line">  <span class="attr">Properties:</span></span><br><span class="line">    <span class="attr">VpcId:</span> </span><br><span class="line">      <span class="attr">Ref:</span> <span class="string">MyTestVpc</span></span><br><span class="line">    <span class="attr">InternetGatewayId:</span> <span class="type">!Ref</span> <span class="string">MyTestIgw</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Fn-GetAtt-函数"><a href="#Fn-GetAtt-函数" class="headerlink" title="Fn::GetAtt 函数"></a>Fn::GetAtt 函数</h3><p><code>Fn::GetAtt</code> 函数返回模板中资源的属性值。例如你希望获取EC2实例的公网IP地址，就可以使用<code>!GetAtt MyTestEc2Instance.PublicIp</code>来获取EC2的公网IP地址。具体每个资源可以获取哪些属性值，可以查阅对应资源的文档，例如查看AWS::EC2::Instance有哪些属性值。</p>
+<p>完整函数名称的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fn::GetAtt: [ logicalNameOfResource, attributeName ]</span><br></pre></td></tr></table></figure>
+<p>短格式的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">!GetAtt logicalNameOfResource.attributeName</span><br></pre></td></tr></table></figure>
+<p>例如输出EC2的公网IP地址，Fn::GetAtt 函数短格式写法为：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Outputs:</span></span><br><span class="line">  <span class="attr">MyTestEc2InstanceEip:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">MyTestEc2InstanceEip</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!GetAtt</span> <span class="string">MyTestEc2Instance.PublicIp</span></span><br><span class="line">    <span class="attr">Export:</span></span><br><span class="line">      <span class="attr">Name:</span> <span class="string">MyTestEc2InstanceEip</span></span><br></pre></td></tr></table></figure>
+<p>下面是对应的Fn::GetAtt 函数的完整写法。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Outputs:</span></span><br><span class="line">  <span class="attr">MyTestEc2InstanceEip:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">MyTestEc2InstanceEip</span></span><br><span class="line">    <span class="attr">Value:</span> </span><br><span class="line">      <span class="attr">Fn::Getatt:</span> [ <span class="string">MyTestEc2Instance</span>, <span class="string">PublicIp</span> ]</span><br><span class="line">    <span class="attr">Export:</span></span><br><span class="line">      <span class="attr">Name:</span> <span class="string">MyTestEc2InstanceEip</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Fn-Select-函数"><a href="#Fn-Select-函数" class="headerlink" title="Fn::Select 函数"></a>Fn::Select 函数</h3><p><code>Fn::Select</code>函数通过索引，来获取列表中的某个对象。一般结合函数<code>Fn::GetAZs</code>使用。</p>
+<p>完整函数名称的语法，index指定索引序号，listOfObjects表示对象的列表。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fn::Select: [ index, listOfObjects ] </span><br></pre></td></tr></table></figure>
+<p>短格式的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">!Select [ index, listOfObjects ]</span><br></pre></td></tr></table></figure>
+<p>为了更好理解这个函数的用法，这里通过一个伪代码来进行解释。例如变量<code>Ec2TypeList</code>是一个列表，想要设置EC2实例类型为<code>t2.micro</code>，通过<code>Select</code>函数，选择列表的第一个索引，即0号索引即可。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">Ec2TypeList</span> <span class="string">=</span> [ <span class="string">t2.micro</span>, <span class="string">t2.small</span>, <span class="string">t2.large</span> ]</span><br><span class="line"></span><br><span class="line">  <span class="attr">MyTestEc2Instance:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Instance</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">InstanceType:</span> <span class="type">!Select</span> [ <span class="number">0</span>, <span class="string">Ec2TypeList</span> ]</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Fn-GetAZs-函数"><a href="#Fn-GetAZs-函数" class="headerlink" title="Fn::GetAZs 函数"></a>Fn::GetAZs 函数</h3><p><code>Fn::GetAZs</code>函数返回一个数组，该数组按字母顺序列出指定区域的可用区。</p>
+<p>前面模板创建子网时，在模板里面硬编码了可用区信息<code>AvailabilityZone: cn-northwest-1a</code>，那么这个代码在宁夏以外的其他区域使用就会报错，因为其他区域没有<code>cn-northwest-1a</code>这个可用区。</p>
+<p>下面案例中，<code>AWS::Region</code>是<u>伪参数</u>[参考链接3]。伪参数是 AWS CloudFormation 内建的变量，调用<code>AWS::Region</code>会返回代码运行的区域值，即<code>cn-northwest-1</code>。</p>
+<p>进一步通过<code>Fn::GetAZs</code>函数来指定获取可用区信息，因为返回的结果是一个列表，所以可以用<code>Select</code>函数来选择单个对象，例如这里选择返回结果中的第一个可用区。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">AvailabilityZone:</span> <span class="type">!Select</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="number">0</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">Fn::GetAZs:</span> <span class="type">!Ref</span> <span class="string">&#x27;AWS::Region&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>这样前面子网的可用区信息就不用硬编码了，换成更加灵活的方式指定可用区，这里指定为CloudFormation运行区域的第一个可用区。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在VPC内创建子网</span></span><br><span class="line">  <span class="attr">MyTestVpcSubnet:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Subnet</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">CidrBlock:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">      <span class="attr">AvailabilityZone:</span> </span><br><span class="line">        <span class="attr">Fn::Select:</span> </span><br><span class="line">          <span class="bullet">-</span> <span class="number">0</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">Fn::GetAZs:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">        <span class="attr">Value:</span> <span class="string">my-test-vpc-public-subnet</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Fn-Base64-函数"><a href="#Fn-Base64-函数" class="headerlink" title="Fn::Base64 函数"></a>Fn::Base64 函数</h3><p>内部函数<code>Fn::Base64</code>返回输入字符串的 Base64 表示方法。该函数通常用于通过 <code>UserData</code> 属性将编码的数据传递给 Amazon EC2 实例。你可以在 <code>Fn::Base64</code> 函数内部使用返回字符串的任意函数。</p>
+<p>完整函数名称的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fn::Base64: valueToEncode</span><br></pre></td></tr></table></figure>
+<p>短格式的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">!Base64 valueToEncode</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Fn-Sub-函数"><a href="#Fn-Sub-函数" class="headerlink" title="Fn::Sub 函数"></a>Fn::Sub 函数</h3><p>内部函数 <code>Fn::Sub</code> 将输入字符串中的变量替换为你指定的值。 <code>Fn::Sub</code> 主要有两个使用场景，一个是拼接字符串，另外就是结合<code>Fn::Base64</code>函数，将数据传递到EC2的 <code>UserData</code> 里面。</p>
+<p>完整函数名称的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fn::Sub: String</span><br></pre></td></tr></table></figure>
+<p>短格式的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">!Sub String</span><br></pre></td></tr></table></figure>
+<p>例如下面这个案例，通过<code>UserData</code>来安装apache服务，修改http端口，并启动服务。</p>
+<p>函数<code>Fn::Base64:</code>表示将后面的字符串编码转换为Base64格式。</p>
+<p>函数<code>!Sub</code>将输入字符串中的变量替换为你指定的值。</p>
+<p>字符<code>|</code>（管道符号）表示一种文本风格(Literal Style)，它可以让你输入正常的文本，而不用使用<code>\n</code>来表示换行。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个EC2实例</span></span><br><span class="line">  <span class="attr">MyTestEc2Instance:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Instance</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">ImageId:</span> <span class="string">ami-003a3de8892ecbc45</span></span><br><span class="line">      <span class="attr">KeyName:</span> <span class="string">CloudFormation-Test-Key</span></span><br><span class="line">      <span class="attr">InstanceType:</span> <span class="string">t3.small</span></span><br><span class="line">      <span class="attr">NetworkInterfaces:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">AssociatePublicIpAddress:</span> <span class="literal">true</span></span><br><span class="line">          <span class="attr">DeviceIndex:</span> <span class="number">0</span></span><br><span class="line">          <span class="attr">GroupSet:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">Ref:</span> <span class="string">MyTestVpcSg</span></span><br><span class="line">          <span class="attr">SubnetId:</span>  <span class="type">!Ref</span> <span class="string">MyTestVpcSubnet</span></span><br><span class="line">      <span class="attr">UserData:</span></span><br><span class="line">        <span class="attr">Fn::Base64:</span></span><br><span class="line">          <span class="type">!Sub</span> <span class="string">|</span></span><br><span class="line">          <span class="comment">#!/bin/bash</span></span><br><span class="line">          <span class="string">yum</span> <span class="string">update</span> <span class="string">-y</span></span><br><span class="line">          <span class="string">yum</span> <span class="string">install</span> <span class="string">-y</span> <span class="string">httpd</span></span><br><span class="line">          <span class="string">sed</span> <span class="string">-i.bak</span> <span class="string">&#x27;s/Listen 80/Listen 8443/g&#x27;</span> <span class="string">/etc/httpd/conf/httpd.conf</span></span><br><span class="line">          <span class="string">systemctl</span> <span class="string">start</span> <span class="string">httpd.service</span></span><br><span class="line">          <span class="string">systemctl</span> <span class="string">enable</span> <span class="string">httpd.service</span></span><br></pre></td></tr></table></figure>
+
+
+<p>函数 <code>Fn::Sub</code> 也经常用来做文本替换操作，有两种使用场景，一种是直接调用已有变量，另外一种是指定变量映射。</p>
+<p><strong>直接调用已有变量</strong></p>
+<p>以下示例使用AWS::Region这个伪参数，以及 VPC 资源逻辑 ID 产生了一个字符串。替换的结果格式为<code>arn:aws:ec2:cn-northwest-1:vpc/vpc-0e2bd48e14bb15086</code>。</p>
+<p>使用<code>$&#123;&#125;</code>替换变量，其实就是直接调用变量。以下示例使用<code>AWS::Region</code>这个伪参数，以及 VPC 资源逻辑 ID 产生了一个字符串。替换的结果格式为<code>arn:aws:ec2:cn-northwest-1:vpc/vpc-0e2bd48e14bb15086</code>。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">!Sub</span> <span class="string">&#x27;arn:aws:ec2:$&#123;AWS::Region&#125;:vpc/$&#123;MyTestVpc&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>变量映射</strong></p>
+<p>变量映射的短格式语法如下，后面的变量往前面的字符串传递参数。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">!Sub</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">String</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">Var1Name:</span> <span class="string">Var1Value</span></span><br><span class="line">    <span class="attr">Var2Name:</span> <span class="string">Var2Value</span></span><br></pre></td></tr></table></figure>
+<p>例如，使用<code>GetAtt</code> 函数获取的结果，来替换变量 <code>$&#123;MyTestEc2InstanceEip&#125;</code> 的值。注意<code>$&#123;&#125;</code>内部只能填写变量，不能嵌套其他函数，例如不能写成<code>$&#123;!GetAtt MyTestEc2Instance.PublicIp&#125;</code>。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">WebServerSubUrl:</span></span><br><span class="line">  <span class="attr">Description:</span> <span class="string">WebServerSubUrl</span></span><br><span class="line">  <span class="attr">Value:</span> <span class="type">!Sub</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;http://$&#123;MyTestEc2InstanceEip&#125;:$&#123;webServerPort&#125;&quot;</span></span><br><span class="line">    <span class="bullet">-</span> &#123;<span class="attr">MyTestEc2InstanceEip:</span> <span class="type">!GetAtt</span> <span class="string">MyTestEc2Instance.PublicIp</span>&#125;</span><br><span class="line">  <span class="attr">Export:</span></span><br><span class="line">    <span class="attr">Name:</span> <span class="string">WebServerSubUrl</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Fn-FindInMap-函数"><a href="#Fn-FindInMap-函数" class="headerlink" title="Fn::FindInMap 函数"></a>Fn::FindInMap 函数</h3><p>内置函数<code>Fn::FindInMap</code>返回与<code>Mappings</code>部分声明的<strong>双层映射中的键对应的值</strong>。通过下面的例子看下什么是双层映射中的键对应的值：</p>
+<p><code>ToplevelKey1</code>是第一层映射的键，<code>SecondLevelKey1</code>是第二层映射的键。想要获取<code>Vaule-ABC</code>这个值，就可以利用<code>FindInMap</code>函数来获取。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Mappings:</span></span><br><span class="line"> <span class="attr">logicalResource:</span></span><br><span class="line">   <span class="attr">ToplevelKey1:</span></span><br><span class="line">     <span class="attr">SecondLevelKey1:</span> <span class="string">Vaule-ABC</span></span><br><span class="line">     <span class="attr">SecondLevelKey2:</span> <span class="string">Vaule-123</span></span><br><span class="line">   <span class="attr">ToplevelKey2:</span></span><br><span class="line">     <span class="attr">SecondLevelKey1:</span> <span class="string">Vaule-XYZ</span></span><br><span class="line">     <span class="attr">SecondLevelKey2:</span> <span class="string">Vaule-456</span></span><br><span class="line"></span><br><span class="line"><span class="type">!FindInMap</span> [<span class="string">logicalResource</span>, <span class="string">ToplevelKey1</span>, <span class="string">SecondLevelKey1</span>]</span><br><span class="line"><span class="string">Vaule-ABC</span></span><br></pre></td></tr></table></figure>
+<p>上面就是一些常见的函数，还有一些函数没有介绍，后续有时间会在单独介绍。</p>
+<h2 id="三、Parameters-参数"><a href="#三、Parameters-参数" class="headerlink" title="三、Parameters(参数)"></a>三、Parameters(参数)</h2><p>Parameters是模板里面的可选字段。利用参数，你能够在每次创建或更新堆栈时将自定义值输入模板。</p>
+<p>例如可以让用户自己选择EC2的密钥对，密钥对可以设置默认值。设置Web服务器的端口，端口值只能在<code>AllowedValues</code>中选择，后续安全组和输出都可以调用这个端口信息。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Parameters:</span></span><br><span class="line">  <span class="attr">myKeyPair:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">Amazon</span> <span class="string">EC2</span> <span class="string">Key</span> <span class="string">Pair</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::KeyPair::KeyName</span></span><br><span class="line">    <span class="attr">Default:</span> <span class="string">MyCN-CloudFormation-Test-Key</span></span><br><span class="line">  <span class="attr">webServerPort:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">Apache</span> <span class="string">Http</span> <span class="string">Server</span> <span class="string">Port</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">String</span></span><br><span class="line">    <span class="attr">Default:</span> <span class="number">8443</span></span><br><span class="line">    <span class="attr">AllowedValues:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">8443</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">8888</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">8088</span></span><br></pre></td></tr></table></figure>
+<p>在创建EC2时，调用参数定义的密钥对信息。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个EC2实例</span></span><br><span class="line">  <span class="attr">MyTestEc2Instance:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Instance</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">KeyName:</span> <span class="type">!Ref</span> <span class="string">myKeyPair</span> </span><br></pre></td></tr></table></figure>
+<p>在安全组放行端口时，可以使用<code>!Ref</code>或者<code>!Sub</code>函数调用参数里面定义的Web服务器端口。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在VPC内创建一个安全组</span></span><br><span class="line">  <span class="attr">MyTestVpcSg:</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">IpProtocol:</span> <span class="string">tcp</span></span><br><span class="line">        <span class="attr">FromPort:</span> <span class="type">!Ref</span> <span class="string">webServerPort</span>  <span class="comment"># !Sub $&#123;webServerPort&#125;</span></span><br><span class="line">        <span class="attr">ToPort:</span> <span class="type">!Ref</span> <span class="string">webServerPort</span>	<span class="comment"># !Sub $&#123;webServerPort&#125;</span></span><br><span class="line">        <span class="attr">CidrIp:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br></pre></td></tr></table></figure>
+
+
+<p>在创建堆栈时，需要填写参数信息。</p>
+<p><img src="/img/CloudFormation-2/image-20220401150442255.png" alt="image-20220401150442255"></p>
+<h2 id="四、Outputs-输出"><a href="#四、Outputs-输出" class="headerlink" title="四、Outputs(输出)"></a>四、Outputs(输出)</h2><p>Outputs是模板里面的可选参数，你可以输出指定的值，这些值可以导入到其他堆栈中、可以从响应中获取这些值、或者在AWS CloudFormation 控制台中查看。</p>
+<p>这里输出了EC2的公网IP地址信息。还通过字符串替换或拼接的方式输出了EC2的URL信息，可以用<code>!Sub</code>和<code>!Join</code>两种方式输出Web服务器的URL，<code>!Join</code>函数这里简单演示一下使用案例，Join函数类似于字符串拼接，我个人更习惯使用<code>!Sub</code>函数。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Outputs:</span></span><br><span class="line">  <span class="attr">MyTestEc2InstanceEip:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">MyTestEc2InstanceEip</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!GetAtt</span> <span class="string">MyTestEc2Instance.PublicIp</span></span><br><span class="line">    <span class="attr">Export:</span></span><br><span class="line">      <span class="attr">Name:</span> <span class="string">MyTestEc2InstanceEip</span></span><br><span class="line">  <span class="attr">WebServerSubUrl:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">WebServerUrl</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!Sub</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;http://$&#123;MyTestEc2InstanceEip&#125;:$&#123;webServerPort&#125;&quot;</span></span><br><span class="line">      <span class="bullet">-</span> &#123;<span class="attr">MyTestEc2InstanceEip:</span> <span class="type">!GetAtt</span> <span class="string">MyTestEc2Instance.PublicIp</span>&#125;</span><br><span class="line">    <span class="attr">Export:</span></span><br><span class="line">      <span class="attr">Name:</span> <span class="string">WebServerSubUrl</span></span><br><span class="line">  <span class="attr">WebServerJoinUrl:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">WebServerUrlTest</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!Join</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">&#x27;http://&#x27;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="type">!GetAtt</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">MyTestEc2Instance</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">PublicIp</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&#x27;:&#x27;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="type">!Sub</span> <span class="string">$&#123;webServerPort&#125;</span></span><br><span class="line">    <span class="attr">Export:</span></span><br><span class="line">      <span class="attr">Name:</span> <span class="string">WebServerJoinUrl</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="五、Mappings-映像"><a href="#五、Mappings-映像" class="headerlink" title="五、Mappings(映像)"></a>五、Mappings(映像)</h2><p>Mappings是模板里面的可选字段，包含一些键值对，通过<code>Fn::FindInMap</code>函数可以获取映射中值的信息。</p>
+<p>Mappings字段在网上其它人分享的模板里面经常会看到。例如，因为AMI ID每个区域都是不一样的，所以想要模板内部的EC2实例能在多个区域运行，需要提前指定不同区域的AMI ID信息，然后就可以利用Mappings定义好不同区域的AMI ID信息，然后在EC2资源利用<code>Fn::FindInMap</code>调用。</p>
+<p>这里定义了中国北京和中国宁夏区域的Amazon Linux AMI ID。其中<code>HVM64</code>表示全虚拟化x86架构64位系统，<code>HVMG2</code>表示Arm架构Graviton2处理器。[<u>参考链接4</u>]</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Mappings:</span></span><br><span class="line">  <span class="attr">RegionMap:</span></span><br><span class="line">    <span class="attr">cn-north-1:</span></span><br><span class="line">      <span class="attr">HVM64:</span> <span class="string">ami-0a01c170bf8ccec5b</span></span><br><span class="line">      <span class="attr">HVMG2:</span> <span class="string">ami-0491098e85ea4b162</span></span><br><span class="line">    <span class="attr">cn-northwest-1:</span></span><br><span class="line">      <span class="attr">HVM64:</span> <span class="string">ami-003a3de8892ecbc45</span></span><br><span class="line">      <span class="attr">HVMG2:</span> <span class="string">ami-026d9fc0529d10475</span></span><br></pre></td></tr></table></figure>
+<p>在指定EC2镜像时，可以使用<code>!FindInMap</code>函数进行调用。其中<code>!Ref &quot;AWS::Region&quot;</code>是伪参数，可以获取创建堆栈的AWS区域。这里就实现了在哪个区域部署时，就传递对应区域的AMI ID信息，模板将具有更好的灵活性。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个EC2实例</span></span><br><span class="line">  <span class="attr">MyTestEc2Instance:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Instance</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">ImageId:</span> <span class="type">!FindInMap</span> [<span class="string">RegionMap</span>, <span class="type">!Ref</span> <span class="string">&quot;AWS::Region&quot;</span>, <span class="string">HVM64</span>]</span><br></pre></td></tr></table></figure>
+
+
+<p>另外一个常见使用Mappings的场景，是根据测试环境或者生产环境自动选择EC2的实例类型，或者其他参数。</p>
+<p>Mappings定义测试环境和生产环境的实例类型，并提供参数让用户选择环境类型。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Mappings:</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">EnvironmentType:</span></span><br><span class="line">    <span class="attr">dev:</span></span><br><span class="line">      <span class="attr">instanceType:</span> <span class="string">t3.micro</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">dev</span></span><br><span class="line">    <span class="attr">prod:</span></span><br><span class="line">      <span class="attr">instanceType:</span> <span class="string">t3.small</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">prod</span></span><br><span class="line">      </span><br><span class="line"><span class="attr">Parameters:</span></span><br><span class="line">  <span class="attr">Environment:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">String</span></span><br><span class="line">    <span class="attr">AllowedValues:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">dev</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">prod</span></span><br><span class="line">    <span class="attr">Default:</span> <span class="string">dev</span></span><br></pre></td></tr></table></figure>
+
+
+<p>EC2实例调用用户选择的环境类型，来决定启动的实例类型。例如如果选择的<code>dev</code>环境，那么实例类型就会通过<code>FindInMap</code>函数获取到<code>t3.micro</code>。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个EC2实例</span></span><br><span class="line">  <span class="attr">MyTestEc2Instance:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Instance</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">ImageId:</span> <span class="type">!FindInMap</span> [<span class="string">RegionMap</span>, <span class="type">!Ref</span> <span class="string">&quot;AWS::Region&quot;</span>, <span class="string">HVM64</span>]</span><br><span class="line">      <span class="attr">KeyName:</span> <span class="type">!Ref</span> <span class="string">myKeyPair</span></span><br><span class="line">      <span class="attr">InstanceType:</span> <span class="type">!FindInMap</span> [<span class="string">EnvironmentType</span>, <span class="type">!Ref</span> <span class="string">Environment</span>, <span class="string">instanceType</span>]</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="六、创建一个更加灵活的模板"><a href="#六、创建一个更加灵活的模板" class="headerlink" title="六、创建一个更加灵活的模板"></a>六、创建一个更加灵活的模板</h2><p>现在把上面的参数和函数都整合起来。</p>
+<p>模板添加了Parameters字段、让用户选择EC2的Key、指定Web服务器的端口、在安全组内调用Web端口的参数、在<code>UserData</code>的配置文件调用Web端口信息、添加了Outputs字段，输出EC2的公网IP地址，输出Web服务器的URL信息。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">AWSTemplateFormatVersion:</span> <span class="string">&quot;2010-09-09&quot;</span></span><br><span class="line"><span class="attr">Description:</span> <span class="string">&quot;CloudFormation learning template from Liu Qianglong.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Mappings:</span></span><br><span class="line">  <span class="attr">RegionMap:</span></span><br><span class="line">    <span class="attr">cn-north-1:</span></span><br><span class="line">      <span class="attr">HVM64:</span> <span class="string">ami-0a01c170bf8ccec5b</span></span><br><span class="line">      <span class="attr">HVMG2:</span> <span class="string">ami-0491098e85ea4b162</span></span><br><span class="line">    <span class="attr">cn-northwest-1:</span></span><br><span class="line">      <span class="attr">HVM64:</span> <span class="string">ami-003a3de8892ecbc45</span></span><br><span class="line">      <span class="attr">HVMG2:</span> <span class="string">ami-026d9fc0529d10475</span></span><br><span class="line">  <span class="attr">EnvironmentType:</span></span><br><span class="line">    <span class="attr">dev:</span></span><br><span class="line">      <span class="attr">instanceType:</span> <span class="string">t3.micro</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">dev</span></span><br><span class="line">    <span class="attr">prod:</span></span><br><span class="line">      <span class="attr">instanceType:</span> <span class="string">t3.small</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">prod</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Parameters:</span></span><br><span class="line">  <span class="attr">Environment:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">String</span></span><br><span class="line">    <span class="attr">AllowedValues:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">dev</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">prod</span></span><br><span class="line">    <span class="attr">Default:</span> <span class="string">dev</span></span><br><span class="line">  <span class="attr">myKeyPair:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">Amazon</span> <span class="string">EC2</span> <span class="string">Key</span> <span class="string">Pair</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::KeyPair::KeyName</span></span><br><span class="line">    <span class="attr">Default:</span> <span class="string">CloudFormation-Test-Key</span></span><br><span class="line">  <span class="attr">webServerPort:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">Apache</span> <span class="string">Http</span> <span class="string">Server</span> <span class="string">Port</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">String</span></span><br><span class="line">    <span class="attr">Default:</span> <span class="number">8443</span></span><br><span class="line">    <span class="attr">AllowedValues:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">8443</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">8888</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">8088</span></span><br><span class="line">      </span><br><span class="line"><span class="attr">Resources:</span></span><br><span class="line"><span class="comment"># 创建一个VPC</span></span><br><span class="line">  <span class="attr">MyTestVpc:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::VPC</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">CidrBlock:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line">      <span class="attr">EnableDnsSupport:</span> <span class="string">&#x27;true&#x27;</span></span><br><span class="line">      <span class="attr">EnableDnsHostnames:</span> <span class="string">&#x27;true&#x27;</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">       <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">         <span class="attr">Value:</span> <span class="string">MyTestVpc</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建IGW并且关联到VPC</span></span><br><span class="line">  <span class="attr">MyTestIgw:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::InternetGateway&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">          <span class="attr">Value:</span> <span class="string">my-test-igw</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">MyTestAttachIgw:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::VPCGatewayAttachment&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">InternetGatewayId:</span> <span class="type">!Ref</span> <span class="string">MyTestIgw</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在VPC内创建子网</span></span><br><span class="line">  <span class="attr">MyTestVpcSubnet:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Subnet</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">CidrBlock:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">      <span class="attr">AvailabilityZone:</span></span><br><span class="line">        <span class="attr">Fn::Select:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="number">0</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">Fn::GetAZs:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">        <span class="attr">Value:</span> <span class="string">my-test-vpc-public-subnet</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># VPC内创建路由表并关联到子网，路由表设置默认路由指向IGW</span></span><br><span class="line">  <span class="attr">MyTestPublicRouteTable:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::RouteTable&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">          <span class="attr">Value:</span> <span class="string">my-test-public-route-table</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">MyTestRouteTableAssociation:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::SubnetRouteTableAssociation&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">RouteTableId:</span> <span class="type">!Ref</span> <span class="string">MyTestPublicRouteTable</span></span><br><span class="line">      <span class="attr">SubnetId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpcSubnet</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">MyTestInternetRoute:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::Route&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">     <span class="attr">RouteTableId:</span> <span class="type">!Ref</span> <span class="string">MyTestPublicRouteTable</span></span><br><span class="line">     <span class="attr">DestinationCidrBlock:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br><span class="line">     <span class="attr">GatewayId:</span> <span class="type">!Ref</span> <span class="string">MyTestIgw</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在VPC内创建一个安全组</span></span><br><span class="line">  <span class="attr">MyTestVpcSg:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::SecurityGroup</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">GroupDescription:</span> <span class="string">SG</span> <span class="string">to</span> <span class="string">test</span> <span class="string">ping</span></span><br><span class="line">      <span class="attr">VpcId:</span></span><br><span class="line">        <span class="attr">Ref:</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">SecurityGroupIngress:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">IpProtocol:</span> <span class="string">tcp</span></span><br><span class="line">        <span class="attr">FromPort:</span> <span class="number">22</span></span><br><span class="line">        <span class="attr">ToPort:</span> <span class="number">22</span></span><br><span class="line">        <span class="attr">CidrIp:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">IpProtocol:</span> <span class="string">icmp</span></span><br><span class="line">        <span class="attr">FromPort:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">ToPort:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">CidrIp:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">IpProtocol:</span> <span class="string">tcp</span></span><br><span class="line">        <span class="attr">FromPort:</span> <span class="type">!Ref</span> <span class="string">webServerPort</span>  <span class="comment"># !Sub $&#123;webServerPort&#125;</span></span><br><span class="line">        <span class="attr">ToPort:</span> <span class="type">!Ref</span> <span class="string">webServerPort</span></span><br><span class="line">        <span class="attr">CidrIp:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个EC2实例</span></span><br><span class="line">  <span class="attr">MyTestEc2Instance:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Instance</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">ImageId:</span> <span class="type">!FindInMap</span> [<span class="string">RegionMap</span>, <span class="type">!Ref</span> <span class="string">&quot;AWS::Region&quot;</span>, <span class="string">HVM64</span>]</span><br><span class="line">      <span class="attr">KeyName:</span> <span class="type">!Ref</span> <span class="string">myKeyPair</span>     <span class="comment"># MyCN-CloudFormation-Test-Key</span></span><br><span class="line">      <span class="attr">InstanceType:</span> <span class="type">!FindInMap</span> [<span class="string">EnvironmentType</span>, <span class="type">!Ref</span> <span class="string">Environment</span>, <span class="string">instanceType</span>]</span><br><span class="line">      <span class="attr">NetworkInterfaces:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">AssociatePublicIpAddress:</span> <span class="literal">true</span></span><br><span class="line">          <span class="attr">DeviceIndex:</span> <span class="number">0</span></span><br><span class="line">          <span class="attr">GroupSet:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">Ref:</span> <span class="string">MyTestVpcSg</span></span><br><span class="line">          <span class="attr">SubnetId:</span>  <span class="type">!Ref</span> <span class="string">MyTestVpcSubnet</span></span><br><span class="line">      <span class="attr">UserData:</span></span><br><span class="line">        <span class="attr">Fn::Base64:</span></span><br><span class="line">          <span class="type">!Sub</span> <span class="string">|</span></span><br><span class="line">          <span class="comment">#!/bin/bash</span></span><br><span class="line">          <span class="string">yum</span> <span class="string">update</span> <span class="string">-y</span></span><br><span class="line">          <span class="string">yum</span> <span class="string">install</span> <span class="string">-y</span> <span class="string">httpd</span></span><br><span class="line">          <span class="string">sed</span> <span class="string">-i.bak</span> <span class="string">&#x27;s/Listen 80/Listen $&#123;webServerPort&#125;/g&#x27;</span> <span class="string">/etc/httpd/conf/httpd.conf</span></span><br><span class="line">          <span class="string">echo</span> <span class="string">&quot;&lt;h2&gt;Hello World from $(hostname -f)&lt;/h2&gt;&quot;</span> <span class="string">&gt;</span> <span class="string">/var/www/html/index.html</span></span><br><span class="line">          <span class="string">systemctl</span> <span class="string">start</span> <span class="string">httpd.service</span></span><br><span class="line">          <span class="string">systemctl</span> <span class="string">enable</span> <span class="string">httpd.service</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Outputs:</span></span><br><span class="line">  <span class="attr">MyTestEc2InstanceEip:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">MyTestEc2InstanceEip</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!GetAtt</span> <span class="string">MyTestEc2Instance.PublicIp</span></span><br><span class="line">    <span class="attr">Export:</span></span><br><span class="line">      <span class="attr">Name:</span> <span class="string">MyTestEc2InstanceEip</span></span><br><span class="line">  <span class="attr">WebServerSubUrl:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">WebServerSubUrl</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!Sub</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;http://$&#123;MyTestEc2InstanceEip&#125;:$&#123;webServerPort&#125;&quot;</span></span><br><span class="line">      <span class="bullet">-</span> &#123;<span class="attr">MyTestEc2InstanceEip:</span> <span class="type">!GetAtt</span> <span class="string">MyTestEc2Instance.PublicIp</span>&#125;</span><br><span class="line">    <span class="attr">Export:</span></span><br><span class="line">      <span class="attr">Name:</span> <span class="string">WebServerSubUrl</span></span><br><span class="line">  <span class="attr">WebServerJoinUrl:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">WebServerJoinUrl</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!Join</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">&#x27;http://&#x27;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="type">!GetAtt</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">MyTestEc2Instance</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">PublicIp</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&#x27;:&#x27;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="type">!Sub</span> <span class="string">$&#123;webServerPort&#125;</span></span><br><span class="line">    <span class="attr">Export:</span></span><br><span class="line">      <span class="attr">Name:</span> <span class="string">WebServerJoinUrl</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>可以通过【参数】查看用户堆栈的输入</p>
+<p><img src="/img/CloudFormation-2/image-20220401192853510.png" alt="image-20220401192853510"></p>
+<p>通过【输出】查看Outputs</p>
+<p><img src="/img/CloudFormation-2/image-20220401192903030.png" alt="image-20220401192903030"></p>
+<p>打开Web服务器的URL</p>
+<p><img src="/img/CloudFormation-2/image-20220401153720795.png" alt="image-20220401153720795"></p>
+<h2 id="七、参考文档"><a href="#七、参考文档" class="headerlink" title="七、参考文档"></a>七、参考文档</h2><ul>
+<li><strong>[1] 内置函数参考：</strong><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html">https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html</a></li>
+<li><strong>[2] AWS::EC2::EIP：</strong><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-eip.html">https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-eip.html</a></li>
+<li><strong>[3] AWS CloudFormation 伪参数：</strong><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html</a></li>
+<li><strong>[4] AWS Linux AMI 虚拟化类型：</strong><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/virtualization_types.html">https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/virtualization_types.html</a></li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            非商业转载请注明出处，商业转载请联系作者获得授权。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/CloudFormation%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E8%BF%9B%E9%98%B6-3-Python%E6%93%8D%E4%BD%9CCloudFormation.html" class="pre-post btn btn-default" title='AWS CloudFormation 系列--(3)Python操作CloudFormation'>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            AWS CloudFormation 系列--(3)Python操作CloudFormation</span>
+    </a>
+    
+    
+    <a href="/CloudFormation%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E8%BF%9B%E9%98%B6-1-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8.html" class="next-post btn btn-default" title='AWS CloudFormation 系列--(1)快速入门'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            AWS CloudFormation 系列--(1)快速入门</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'stf5rGD17bcrWN1mvUT4pu8C-gzGzoHsz',
+    appKey: 'r5qpzBWMAzt2hDAcDftecM1R',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: false,
+    avatar: 'mm',
+    meta: 'nick'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh-CN'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81DependsOn%E5%B1%9E%E6%80%A7"><span class="toc-text">一、DependsOn属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%B8%B8%E7%94%A8%E5%86%85%E9%83%A8%E5%87%BD%E6%95%B0"><span class="toc-text">二、常用内部函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fn-Ref-%E5%87%BD%E6%95%B0"><span class="toc-text">Fn::Ref 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fn-GetAtt-%E5%87%BD%E6%95%B0"><span class="toc-text">Fn::GetAtt 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fn-Select-%E5%87%BD%E6%95%B0"><span class="toc-text">Fn::Select 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fn-GetAZs-%E5%87%BD%E6%95%B0"><span class="toc-text">Fn::GetAZs 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fn-Base64-%E5%87%BD%E6%95%B0"><span class="toc-text">Fn::Base64 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fn-Sub-%E5%87%BD%E6%95%B0"><span class="toc-text">Fn::Sub 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fn-FindInMap-%E5%87%BD%E6%95%B0"><span class="toc-text">Fn::FindInMap 函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Parameters-%E5%8F%82%E6%95%B0"><span class="toc-text">三、Parameters(参数)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81Outputs-%E8%BE%93%E5%87%BA"><span class="toc-text">四、Outputs(输出)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81Mappings-%E6%98%A0%E5%83%8F"><span class="toc-text">五、Mappings(映像)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%8A%A0%E7%81%B5%E6%B4%BB%E7%9A%84%E6%A8%A1%E6%9D%BF"><span class="toc-text">六、创建一个更加灵活的模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">七、参考文档</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2022
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>

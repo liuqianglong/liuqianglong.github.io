@@ -1,0 +1,517 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
+    <!--SEO-->
+
+<meta name="keywords" content="AWS,CloudFormation,AWS Gateway Load Balancer,FortiGate" />
+
+
+<meta name="description" content="B站视频链接：https://www.bilibili.com/video/BV1ee4y147HK/?spm_id_from=333.999.0.0微信公众号：自刘地
+一、背景之前在《AWS ..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    AWS VPC 流量集中检测系列--(3)AWS GWLB集成FortiGate防火墙 |
+    
+    LiuQianglong&#39;s Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='LiuQianglong'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        LiuQianglong&#39;s Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Network/"><i class="fa "></i>
+                                Network</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/AWS/"><i class="fa "></i>
+                                AWS</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Python/"><i class="fa "></i>
+                                Python</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="AWS VPC 流量集中检测系列--(3)AWS GWLB集成FortiGate防火墙">
+            
+            AWS VPC 流量集中检测系列--(3)AWS GWLB集成FortiGate防火墙
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/AWS/">AWS</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/AWS/" rel="tag">AWS</a> <a class="tag-none-link" href="/tags/AWS-Gateway-Load-Balancer/" rel="tag">AWS Gateway Load Balancer</a> <a class="tag-none-link" href="/tags/CloudFormation/" rel="tag">CloudFormation</a> <a class="tag-none-link" href="/tags/FortiGate/" rel="tag">FortiGate</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2022/10/31</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <p><strong>B站视频链接：</strong><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1ee4y147HK/?spm_id_from=333.999.0.0">https://www.bilibili.com/video/BV1ee4y147HK/?spm_id_from=333.999.0.0</a><br><strong>微信公众号：</strong>自刘地<br><img src="/img/wechat.jpg" alt="自刘地"></p>
+<h2 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h2><p>之前在《AWS GWLB集成paloalto防火墙》里面提到过，AWS GWLB集成FortiGate防火墙的<u>官方博客</u>[1]缺少一些配置，导致无法实现防火墙的高可用。这篇文档来介绍一下AWS GWLB如何集成FortiGate防火墙。</p>
+<p>FortiGate防火墙集成AWS GWLB需要注意：</p>
+<ul>
+<li>FortiGate防火墙建议使用6.4.10版本。经过测试目前使用7.0.7版本无法正常工作，但是从6.4.10升级到7.0.7版本，流量是可以正常转发的。另外，不建议对防火墙执行降级操作，防火墙会丢配置，并且图形化界面可能遇到无法切换VDOM的Bug。所以目前生产环境建议使用6.4.10，7.2.2版本可以用于测试。</li>
+<li>FortiGate防火墙建议配置VDOM，Fortigate默认没有带外管理接口，也就是所有接口默认都会转发数据流量，通过配置VDOM可以将管理流量与数据流量分离，从而简化路由配置。</li>
+</ul>
+<h2 id="二、Fortigate-VDOM"><a href="#二、Fortigate-VDOM" class="headerlink" title="二、Fortigate VDOM"></a>二、Fortigate VDOM</h2><p>FortiGate 中有两种类型的 VDOM 模式——Split VDOM 和 Multi-VDOM 。你可以将一个VDOM理解成一个虚拟的防火墙，不同的VDOM之间，默认情况下路由表、流量等都是隔离的。</p>
+<p><strong>Split VDOM：</strong>启用<u>Split VDOM 模式</u>[2]后，FortiGate 会产生两个 VDOM，一个root VDOM 和 FG-Traffic VDOM。在Split VDOM 模式下，不能添加新的 VDOM。</p>
+<p>这个非常实用的一个模式，激活这个模式能快速的将防火墙的管理平面和数据平面进行分离。但是在<code>7.0.8</code>版本之后，FortiGate取消了Split VDOM模式。</p>
+<ul>
+<li>Root：只能允许管理工作，并且有分离的条目。</li>
+<li>FG-Traffic：可以提供单独的安全策略并允许流量通过 FortiGate，它仅用于数据流量。</li>
+</ul>
+<p>激活split-vdom命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config system global</span><br><span class="line">	set vdom-mode split-vdom</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/img/AWS-GWLB-FortiGate-1/41614b2a13e24b96db7c6f742d5dc9b1_Split-task-mode-1667030393327.png"></p>
+<p><strong>Multi-VDOM</strong> ：在<code>7.0.8</code>版本之后，只有<u>Multi-VDOM模式</u>[3]。Split VDOM模式更加适合小型网络，快速的分离管理和数据平面。Multi-VDOM更加适合ISP，可以划分多个租户并进行隔离，或者需要进行流量细分的大型网络。</p>
+<p>激活Multi-VDOM模式之后，所有的VDOM配置都会迁移到root VDOM下，root VDOM用于管理防火墙，无法删除。一次只能存在一个管理 VDOM。建议管理 VDOM 具有 Internet 访问权限，否则与管理相关的服务（例如 FortiGuard 更新和查询）将无法工作。</p>
+<p>激活multi-vdom命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config system global</span><br><span class="line">    set vdom-mode multi-vdom</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+<p><img src="/img/AWS-GWLB-FortiGate-1/Topology_VDOMs_Admin_Type_on_Mgmt_Network_Updated-01.png"></p>
+<h2 id="三、实验环境介绍"><a href="#三、实验环境介绍" class="headerlink" title="三、实验环境介绍"></a>三、实验环境介绍</h2><p>这里实验环境与之前的《AWS GWLB集成paloalto防火墙》是一样的，只是替换了防火墙产品。</p>
+<p>这里AppVpc模拟业务的VPC，APP进出互联网的流量会被引导到SecVpc内的防火墙做安全检测，防火墙允许通过后，流量才能正常通信。</p>
+<p>这次实验的核心组件：</p>
+<p><strong>GWLB</strong>：Gateway Load Balancer与防火墙建立<u>GENEVE</u>[4]隧道，使用UDP 6081来转发数据，这种封装方式让防火墙不用关闭源/目的地址检查，也不用做源/目的NAT的转换。GWLB会在子网创建一个弹性接口，流量通过这个弹性接口来转发。</p>
+<p><strong>GWLBe</strong>：Gateway Load Balancer endpoint 是由AWS PrivateLink提供的VPC终端节点，可以作为路由表中的下一跳存在，流量送到GWLBe后，会继续送往GWLB背后的实例。</p>
+<p><strong>Ingress Route Table</strong>：这个路由表关联在IGW上，路由表一般都是关联在子网，这里是AWS 2019年发布的一个功能<u>VPC Ingress Routing</u>[5]，让路由表可以关联到IGW上，用于控制入向的流量。</p>
+<p><img src="/img/AWS-GWLB-FortiGate-1/GWLB-Fortigate.png" alt="GWLB-Fortigate"></p>
+<p><strong>APP访问互联网流量路径（红色箭头）</strong></p>
+<ol>
+<li>AppVpc内的APP1想要访问Internet上的资源，所在子网关联的路由表将默认路由指向了GWLB Endpoint1。</li>
+<li>GWLB Endpoint1 使用 AWS PrivateLink 将流量送到到GWLB，这里流量是由AWS来控制，无需用户配置。</li>
+<li>GWLB会使用IP数据包的5元组或者3元组哈希来选择实例。GWLB使用GENEVE来封装原始IP流量，并通过UDP 6081发送到防火墙。GENEVE封装可以将所有的IP流量送到实例上，GWLB的侦听组上不需要为每个协议和端口配置侦听器。<ul>
+<li>当 GWLB 接收到新的 TCP/UDP 流时，它会使用 5 元组流哈希（源 IP、目标 IP、传输协议、源端口、目标端口）从目标组中选择一个健康的设备。随后，GWLB 将该流的所有数据包（正向和反向）路由到同一设备（粘性）。对于非 TCP/UDP 流，GWLB 仍然使用 3 元组（源 IP、目标 IP、传输协议）进行转发决策。</li>
+</ul>
+</li>
+<li>防火墙收到GENEVE报文，需要解封装流量，然后根据防火墙的安全策略决定是否允许流量通过。</li>
+<li>防火墙重新使用GENEVE封装流量，并发送到GWLB。</li>
+<li>GWLB根据 GENEVE TLV字段，选择转发到GWLB Endpoint1，并且发送时会去除GENEVE封装。<ul>
+<li>为了支持具有重叠 CIDR 的多租户设备，设备需要知道流量的来源。GWLB 还需要跟踪流量并避免用户流量的混合。GWLB 可以通过将每个数据包的类型-长度-值 (TLV) 三元组发送到设备的额外信息（例如 GWLBE/VPCE ID、附件 ID、流 Cookie）来实现这一点。</li>
+</ul>
+</li>
+<li>GWLB Endpoint1接受到流量，查看子网关联路由表，默认路由指向IGW，流量通过IGW访问Internet。</li>
+</ol>
+<p><strong>互联网访问APP的流量路径（蓝色箭头）</strong></p>
+<ol>
+<li>客户发起对App1公网地址的访问，流量到达AppVpc的IGW，IGW查看所关联的路由表，将流量送往GWLB Endpoint1。</li>
+<li>GWLB Endpoint1 使用 AWS PrivateLink 将流量送到到GWLB。</li>
+<li>GWLB使用GENEVE来封装原始IP流量，并通过UDP 6081转发到实例。</li>
+<li>防火墙收到GENEVE报文，需要解封装流量，然后根据防火墙的安全策略决定是否允许流量通过。</li>
+<li>防火墙重新使用GENEVE封装流量，并发送到GWLB。</li>
+<li>GWLB根据 GENEVE TLV字段，选择转发到GWLB Endpoint1，并去除GENEVE封装。</li>
+<li>GWLB Endpoint1接受到流量，查看子网关联路由表，匹配到local路由，流量送到APP1。</li>
+</ol>
+<h2 id="四、-配置部署"><a href="#四、-配置部署" class="headerlink" title="四、 配置部署"></a>四、 配置部署</h2><h3 id="4-1-VPC-配置"><a href="#4-1-VPC-配置" class="headerlink" title="4.1 VPC 配置"></a>4.1 VPC 配置</h3><h4 id="4-1-1-创建VPC"><a href="#4-1-1-创建VPC" class="headerlink" title="4.1.1 创建VPC"></a>4.1.1 创建VPC</h4><p>创建两个VPC</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">VPC名称		网段</span><br><span class="line">AppVpc		10.10.0.0&#x2F;16</span><br><span class="line">SecVpc		10.20.0.0&#x2F;16</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="4-1-2-创建IGW关联VPC"><a href="#4-1-2-创建IGW关联VPC" class="headerlink" title="4.1.2 创建IGW关联VPC"></a>4.1.2 创建IGW关联VPC</h4><p>创建两个IGW，分别关联上VPC<img src="/img/AWS-GWLB-FortiGate-1/image-20220921113918034.png" alt="image-20220921113918034"></p>
+<h4 id="4-1-3-创建子网"><a href="#4-1-3-创建子网" class="headerlink" title="4.1.3 创建子网"></a>4.1.3 创建子网</h4><p>AppVpc 创建4个子网</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">子网名称				 网段					备注</span><br><span class="line">AppVpc-GWLBe1-Subnet	10.10.10.0&#x2F;24		AZ1 的Gateway Load Balancer Endpoint所在子网</span><br><span class="line">AppVpc-App1-Subnet		10.10.20.0&#x2F;24		AZ1 App1 所在子网</span><br><span class="line">AppVpc-GWLBe2-Subnet	10.10.30.0&#x2F;24		AZ2 的Gateway Load Balancer Endpoint所在子网</span><br><span class="line">AppVpc-App2-Subnet		10.10.40.0&#x2F;24		AZ2 App2 所在子网</span><br></pre></td></tr></table></figure>
+<p><img src="/img/AWS-GWLB-FortiGate-1/image-20220921105143914.png" alt="image-20220921105143914"></p>
+<p>SecVpc 创建4个子网</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">子网名称				  网段		    备注</span><br><span class="line">SecVpc-GWLB1-Subnet		10.20.10.0&#x2F;24	AZ1 FortiGate 数据接口所在子网，GWLB的接口也在此子网</span><br><span class="line">SecVpc-MGT1-Subnet		10.20.20.0&#x2F;24	AZ1 FortiGate 的管理接口所在子网，可以通过互联网直接访问</span><br><span class="line">SecVpc-GWLB2-Subnet		10.20.30.0&#x2F;24	AZ2 FortiGate 数据接口所在子网，GWLB的接口也在此子网</span><br><span class="line">SecVpc-MGT2-Subnet		10.20.40.0&#x2F;24	AZ2 FortiGate 的管理接口所在子网，可以通过互联网直接访问</span><br></pre></td></tr></table></figure>
+<p><img src="/img/AWS-GWLB-FortiGate-1/image-20220921105910094.png" alt="image-20220921105910094"></p>
+<h4 id="4-1-4-创建路由表"><a href="#4-1-4-创建路由表" class="headerlink" title="4.1.4 创建路由表"></a>4.1.4 创建路由表</h4><p>这里创建路由表之后，暂时先不修改路由，因为有些路由的下一跳是Endpoint，需要等Endpoint创建完成后再修改路由表。</p>
+<p>AppVpc创建4个路由表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">路由表名称							备注</span><br><span class="line">AppVpc-Igw-Ingress-route-table		这个路由表关联AppVpcIGW，不关联子网，用于将入向流量引导到endpoint			</span><br><span class="line">AppVpc-Gwlbe-route-table			这个路由表关联两个GWLBe所在的子网，用于将流量从IGW出去</span><br><span class="line">AppVpc-App1-route-table				这是AZ1 App的路由表，默认路由指向AZ1的endpoint</span><br><span class="line">AppVpc-App2-route-table				这是AZ2 App的路由表，默认路由指向AZ2的endpoint</span><br></pre></td></tr></table></figure>
+
+
+<p>AppVpc-Igw-Ingress-route-table关联IGW。路由表一般都是关联子网，这里是AWS 2019年发布的一个功能VPC Ingress Routing，让路由表可以关联到IGW上，用于控制入向的流量。<img src="/img/AWS-GWLB-FortiGate-1/image-20220921115109559.png" alt="image-20220921115109559"></p>
+<p>AppVpc-Gwlbe-route-table关联两个GWLBe子网<img src="/img/AWS-GWLB-FortiGate-1/image-20220921115113783.png" alt="image-20220921115113783"></p>
+<p>AppVpc-App1-route-table关联AZ1的APP1的子网。<img src="/img/AWS-GWLB-FortiGate-1/image-20220921115119782.png" alt="image-20220921115119782"></p>
+<p>AppVpc-App2-route-table关联AZ2的APP2的子网。<img src="/img/AWS-GWLB-FortiGate-1/image-20220921115123253.png" alt="image-20220921115123253"></p>
+<p>SecVpc创建1个路由表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">路由表名称					 备注</span><br><span class="line">SecVpc-Mgt-route-table		默认路由指向IGW，用于互联网访问防火墙的管理接口</span><br></pre></td></tr></table></figure>
+
+
+<p>SecVpc-Mgt-route-table关联两个管理子网。防火墙的数据接口不需要单独的路由表，因为数据接口主要是和GWLB通过GENVEN隧道通信，当然为数据接口网段单独创建一个路由表也可以，不用添加任何特殊路由。<img src="/img/AWS-GWLB-FortiGate-1/image-20220921115634502.png" alt="image-20220921115634502"></p>
+<p>管理网络的默认路由指向IGW，为了之后从公网连接到防火墙进行初始化。其他路由之后再设置。<img src="/img/AWS-GWLB-FortiGate-1/image-20220921152230406.png" alt="image-20220921152230406"></p>
+<h3 id="4-2-创建实例"><a href="#4-2-创建实例" class="headerlink" title="4.2 创建实例"></a>4.2 创建实例</h3><h4 id="4-2-1-创建FortiGate实例"><a href="#4-2-1-创建FortiGate实例" class="headerlink" title="4.2.1 创建FortiGate实例"></a>4.2.1 创建FortiGate实例</h4><p>在Marketplace搜索<code>Fortigate</code>关键词，这里图形化界面只提供最新的<code>7.2.2</code>版本选择。要想使用其他版本，可以使用AWS CLI或者CloudFormation启动。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029161939329.png" alt="image-20221029161939329"></p>
+<p>实例命名为Fortigate1，实例类型保持默认。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029162116208.png" alt="image-20221029162116208"></p>
+<p>选择放置在SecVpc，主网卡在<code>SecVpc-GWLB1-Subnet</code>网段，用于防火墙转发数据流量。安全组放行来自本VPC的所有流量，如果要精确放行，可以放行UDP 6081 GENEVE的流量。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029163540589.png" alt="image-20221029163540589"></p>
+<p>再添加一块网卡，放置在AZ1的管理网段。<img src="/img/AWS-GWLB-FortiGate-1/image-20221030165324131.png" alt="image-20221030165324131"></p>
+<p>在User data里面为防火墙创建一个测试账号（可选），Fortigate启动之后默认用户名为<code>admin</code>，密码为实例ID，但是需要重置密码。我觉得重置密码太麻烦，所以这里添加一个测试用户。</p>
+<p>另外因为需要通过<code>port2</code>来对防火墙进行管理，所以禁用<code>port1</code>的默认路由，让默认路由从<code>port2</code>出去。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">config system admin</span><br><span class="line">    edit &quot;labuser&quot;</span><br><span class="line">        set accprofile &quot;super_admin&quot;</span><br><span class="line">        set vdom &quot;root&quot;</span><br><span class="line">        set password FSr1Lliu1qiang2long3DemoZJG5</span><br><span class="line">    next</span><br><span class="line">end</span><br><span class="line">config system interface</span><br><span class="line">    edit &quot;port1&quot;</span><br><span class="line">        set defaultgw disable</span><br><span class="line">        set allowaccess ping https ssh fgfm probe-response</span><br><span class="line">    next</span><br><span class="line">    edit &quot;port2&quot;</span><br><span class="line">        set mode dhcp</span><br><span class="line">        set allowaccess ping https ssh fgfm probe-response</span><br><span class="line">        set defaultgw enable</span><br><span class="line">    next</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p><img src="/img/AWS-GWLB-FortiGate-1/image-20221029193353505.png" alt="image-20221029193353505"></p>
+<p>申请两个弹性IP，用于关联防火墙的管理接口。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029164111215.png" alt="image-20221029164111215"></p>
+<p>关联Fortigate1的管理接口，注意不要选错接口了。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029193424400.png" alt="image-20221029193424400"></p>
+<p>一样的步骤，关联Fortigate2，查看防火墙关联的弹性IP。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029164127928.png" alt="image-20221029164127928"></p>
+<h4 id="4-2-2-创建APP实例"><a href="#4-2-2-创建APP实例" class="headerlink" title="4.2.2 创建APP实例"></a>4.2.2 创建APP实例</h4><p>创建App1，主要用于后续搭建一个HTTP服务，从公网访问测试，这里使用Amazon Linux AMI，保持默认的实例大小即可。<img src="/img/AWS-GWLB-FortiGate-1/image-20220921150935832.png" alt="image-20220921150935832"></p>
+<p>实例放置在<code>AppVpc-App1-Subnet</code>子网，开启自动分配公网IP，安全组放行TCP 8843，后续的HTTP使用8443端口。还可以放行ICMP，便于测试。<img src="/img/AWS-GWLB-FortiGate-1/image-20220921150942179.png" alt="image-20220921150942179"></p>
+<p>创建App2实例，这里使用Window AMI，为了启动速度快一些，这里使用了<code>t3.large</code>的实例类型。App2实例可以用于从公网RDP测试，也可以做为客户端使用浏览器测试互联网访问流量监测。<img src="/img/AWS-GWLB-FortiGate-1/image-20220921150947193.png" alt="image-20220921150947193"></p>
+<p>实例放置在<code>AppVpc-App2-Subnet</code>子网，允许自动获取公网IP地址，安全组保持默认放行3389即可。<img src="/img/AWS-GWLB-FortiGate-1/image-20220921150951645.png" alt="image-20220921150951645"></p>
+<h3 id="4-3-创建GWLB并关联FortiGate"><a href="#4-3-创建GWLB并关联FortiGate" class="headerlink" title="4.3 创建GWLB并关联FortiGate"></a>4.3 创建GWLB并关联FortiGate</h3><p>创建Gateway Load Balancer。<img src="/img/AWS-GWLB-FortiGate-1/image-20220921163436613.png" alt="image-20220921163436613"></p>
+<p>指定两台防火墙数据接口所在的子网，GWLB会在这两个子网创建两个弹性接口，GENEVE流量实际从这个弹性接口转发。在这个界面创建侦听组。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029200311957.png" alt="image-20221029200311957"></p>
+<p>实例类型的target会侦听实例的主网卡，防火墙主网卡为port1。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029200317879.png" alt="image-20221029200317879"></p>
+<p>防火墙主接口开启了TCP 443服务，所以使用这个端口来做健康监测。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029200328405.png" alt="image-20221029200328405"></p>
+<p>将两台防火墙注册到侦听组上。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029200333502.png" alt="image-20221029200333502"></p>
+<p>回到创建GWLB的界面，调用刚才创建的侦听组。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029200338130.png" alt="image-20221029200338130"></p>
+<p>启用GWLB的跨区域负载均衡。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029200345664.png" alt="image-20221029200345664"></p>
+<p>确认防火墙的健康检查正常。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029200709620.png" alt="image-20221029200709620"></p>
+<h3 id="4-4-创建Endpoint-Service及Endpoint"><a href="#4-4-创建Endpoint-Service及Endpoint" class="headerlink" title="4.4 创建Endpoint Service及Endpoint"></a>4.4 创建Endpoint Service及Endpoint</h3><p>创建Endpoint Service关联GWLB，测试环境取消勾选<code>Acceptance required</code>，这样当Endpoint发起连接时，不需要再手动确认一次。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029201052078.png" alt="image-20221029201052078"></p>
+<p>记录Endpoint Service name。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029201155632.png" alt="image-20221029201155632"></p>
+<p>AppVpc创建endpoint，填写刚才记录的Endpoint Service name，放置到<code>AppVpc-GWLBe1-Subnet</code>子网。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029201718704.png" alt="image-20221029201718704"></p>
+<p>继续创建endpoint，放置到<code>AppVpc-GWLBe2-Subnet</code>子网。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029201959380.png" alt="image-20221029201959380"></p>
+<p>查看创建的两个endpoint，记录endpoint ID，后续修改路由表需要用到。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029202426360.png" alt="image-20221029202426360"></p>
+<p>记录GWLB弹性接口的IP，之后防火墙的配置需要用到这个IP地址。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029202432030.png" alt="image-20221029202432030"></p>
+<h3 id="4-5-配置路由表"><a href="#4-5-配置路由表" class="headerlink" title="4.5 配置路由表"></a>4.5 配置路由表</h3><p>修改IGW关联的路由表，控制去往App网段的流量分别送到两个endpoint上去。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029203817148.png" alt="image-20221029203817148"></p>
+<p>修改App1所在子网的路由，默认路由指向Endpoint1。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029203825201.png" alt="image-20221029203825201"></p>
+<p>修改App2所在子网的路由，默认路由指向Endpoint2。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029203829312.png" alt="image-20221029203829312"></p>
+<p>修改endpoint所在子网的路由，默认路由指向IGW。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029203834257.png" alt="image-20221029203834257"></p>
+<h3 id="4-6-配置FortiGate"><a href="#4-6-配置FortiGate" class="headerlink" title="4.6 配置FortiGate"></a>4.6 配置FortiGate</h3><h4 id="4-6-1-登录FortiGate"><a href="#4-6-1-登录FortiGate" class="headerlink" title="4.6.1 登录FortiGate"></a>4.6.1 登录FortiGate</h4><p>登录Fortigate1，Fortigate启动之后默认用户名为<code>admin</code>，密码为实例ID。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029194914827.png" alt="image-20221029194914827"></p>
+<p>默认密码为实例ID信息。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029194919342.png" alt="image-20221029194919342"></p>
+<p>首次登陆需要修改密码。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029194923447.png" alt="image-20221029194923447"></p>
+<p>登录Fortigate2，因为在User Data里面创建了新的用户，可以直接使用用户名<code>labuser</code>，密码为<code>FSr1Lliu1qiang2long3DemoZJG5</code>登录。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029194943606.png" alt="image-20221029194943606"></p>
+<h4 id="4-6-2-Fortigate1图形化配置"><a href="#4-6-2-Fortigate1图形化配置" class="headerlink" title="4.6.2 Fortigate1图形化配置"></a>4.6.2 Fortigate1图形化配置</h4><p>Fortigate启用VDOM模式。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029220538580.png" alt="image-20221029220538580"></p>
+<p>修改root VDOM的类型。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029220600720.png" alt="image-20221029220600720"></p>
+<p>修改为<code>Admin</code>模式，用于对防火墙进行管理。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029220607547.png" alt="image-20221029220607547"></p>
+<p>新建一个<code>FG-traffic</code>VDOM，类型为<code>Traffic</code>模式，用于转发数据流量。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029220613028.png" alt="image-20221029220613028"></p>
+<p>修改<code>port1</code>关联的VDOM信息。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029222533078.png" alt="image-20221029222533078"></p>
+<p>关联到<code>FG-traffic</code>VDOM上。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029222602779.png" alt="image-20221029222602779"></p>
+<p>进入防火墙命令行模式，配置geneve接口信息（目前图形化不支持此配置）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">config system geneve</span><br><span class="line">    edit &quot;geneve1&quot;</span><br><span class="line">        set interface &quot;port1&quot;</span><br><span class="line">        set type ppp</span><br><span class="line">        set remote-ip 10.20.10.32</span><br><span class="line">    next</span><br><span class="line">    edit &quot;geneve2&quot;</span><br><span class="line">        set interface &quot;port1&quot;</span><br><span class="line">        set type ppp</span><br><span class="line">        set remote-ip 10.20.30.8</span><br><span class="line">    next</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p><img src="/img/AWS-GWLB-FortiGate-1/image-20221029222636973.png" alt="image-20221029222636973"></p>
+<p>查看创建的geneve接口信息。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029220637915.png" alt="image-20221029220637915"></p>
+<p>创建防火墙策略，放行所有进出geneve1的流量。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029222853729.png" alt="image-20221029222853729"></p>
+<p>同样的步骤，放行所有进出geneve2接口的所有流量。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029220648831.png" alt="image-20221029220648831"></p>
+<p>设置日志信息，开启所有的<code>Local Traffic Log</code>。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029220653602.png" alt="image-20221029220653602"></p>
+<p>配置静态路由，默认路由从两个geneve接口出去，另外设置去往本VPC CIDR网段从port1出去，网关为数据接口所在子网的网关。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029220708297.png" alt="image-20221029220708297"></p>
+<p>因为前面配置了等价默认路由，可能造成从geneve1接口进的流量从geneve2出去。所以配置一下配置策略路由，让从geneve1进的流量从geneve1出去，从geneve2进的流量从geneve2出去。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029220911653.png" alt="image-20221029220911653"></p>
+<p>查看策略路由配置。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029220717615.png" alt="image-20221029220717615"></p>
+<h4 id="4-6-3-Fortigate2命令行配置"><a href="#4-6-3-Fortigate2命令行配置" class="headerlink" title="4.6.3 Fortigate2命令行配置"></a>4.6.3 Fortigate2命令行配置</h4><p>配置激活multi-vdom模式，防火墙需要重新登录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">config system global</span><br><span class="line">    set vdom-mode multi-vdom</span><br><span class="line">    set timezone 08</span><br><span class="line">    end</span><br><span class="line">y</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p><img src="/img/AWS-GWLB-FortiGate-1/image-20221029233112317.png" alt="image-20221029233112317"></p>
+<p>继续刷其他配置，注意配置替换GWLB的私有IP地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line">end</span><br><span class="line">config vdom</span><br><span class="line">    edit root</span><br><span class="line">    config system settings</span><br><span class="line">        set vdom-type admin</span><br><span class="line">    end</span><br><span class="line">y</span><br><span class="line">end</span><br><span class="line">config vdom</span><br><span class="line">    edit FG-traffic</span><br><span class="line">    config system settings</span><br><span class="line">        set vdom-type traffic</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">config global</span><br><span class="line">    config system interface</span><br><span class="line">        edit &quot;port1&quot;</span><br><span class="line">            set vdom &quot;FG-traffic&quot;</span><br><span class="line">            set defaultgw disable</span><br><span class="line">            set allowaccess ping https ssh fgfm probe-response</span><br><span class="line">        next</span><br><span class="line">        edit &quot;port2&quot;</span><br><span class="line">            set vdom &quot;root&quot;</span><br><span class="line">            set mode dhcp</span><br><span class="line">            set allowaccess ping https ssh fgfm probe-response</span><br><span class="line">            set defaultgw enable</span><br><span class="line">        next</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">config vdom</span><br><span class="line">edit FG-traffic</span><br><span class="line">config system geneve</span><br><span class="line">    edit &quot;geneve1&quot;</span><br><span class="line">        set interface &quot;port1&quot;</span><br><span class="line">        set type ppp</span><br><span class="line">        set remote-ip 10.20.30.8</span><br><span class="line">    next</span><br><span class="line">    edit &quot;geneve2&quot;</span><br><span class="line">        set interface &quot;port1&quot;</span><br><span class="line">        set type ppp</span><br><span class="line">        set remote-ip 10.20.10.32</span><br><span class="line">    next</span><br><span class="line">end</span><br><span class="line">config firewall policy</span><br><span class="line">    edit 1</span><br><span class="line">        set name &quot;1&quot;</span><br><span class="line">        set srcintf &quot;geneve1&quot;</span><br><span class="line">        set dstintf &quot;geneve1&quot;</span><br><span class="line">        set srcaddr &quot;all&quot;</span><br><span class="line">        set dstaddr &quot;all&quot;</span><br><span class="line">        set action accept</span><br><span class="line">        set schedule &quot;always&quot;</span><br><span class="line">        set service &quot;ALL&quot;</span><br><span class="line">        set logtraffic all</span><br><span class="line">        set logtraffic-start enable</span><br><span class="line">    next</span><br><span class="line">    edit 2</span><br><span class="line">        set name &quot;2&quot;</span><br><span class="line">        set srcintf &quot;geneve2&quot;</span><br><span class="line">        set dstintf &quot;geneve2&quot;</span><br><span class="line">        set srcaddr &quot;all&quot;</span><br><span class="line">        set dstaddr &quot;all&quot;</span><br><span class="line">        set action accept</span><br><span class="line">        set schedule &quot;always&quot;</span><br><span class="line">        set service &quot;ALL&quot;</span><br><span class="line">        set logtraffic all</span><br><span class="line">        set logtraffic-start enable</span><br><span class="line">    next</span><br><span class="line">end</span><br><span class="line">config log setting</span><br><span class="line">    set local-in-allow enable</span><br><span class="line">    set local-in-deny-unicast enable</span><br><span class="line">    set local-in-deny-broadcast enable</span><br><span class="line">    set local-out enable</span><br><span class="line">    next</span><br><span class="line">end</span><br><span class="line">config router static</span><br><span class="line">    edit 1</span><br><span class="line">        set device &quot;geneve1&quot;</span><br><span class="line">    next</span><br><span class="line">    edit 2</span><br><span class="line">        set device &quot;geneve2&quot;</span><br><span class="line">    next</span><br><span class="line">    edit 3</span><br><span class="line">        set dst 10.20.0.0 255.255.0.0</span><br><span class="line">        set gateway 10.20.30.1</span><br><span class="line">        set device &quot;port1&quot;</span><br><span class="line">    next</span><br><span class="line">end</span><br><span class="line">config router policy</span><br><span class="line">    edit 1</span><br><span class="line">        set input-device &quot;geneve1&quot;</span><br><span class="line">        set gateway 10.20.30.8</span><br><span class="line">        set output-device &quot;geneve1&quot;</span><br><span class="line">    next</span><br><span class="line">    edit 2</span><br><span class="line">        set input-device &quot;geneve2&quot;</span><br><span class="line">        set gateway 10.20.10.32</span><br><span class="line">        set output-device &quot;geneve2&quot;</span><br><span class="line">    next</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="五、访问测试"><a href="#五、访问测试" class="headerlink" title="五、访问测试"></a>五、访问测试</h2><h3 id="5-1-App1-HTTP访问测试"><a href="#5-1-App1-HTTP访问测试" class="headerlink" title="5.1 App1 HTTP访问测试"></a>5.1 App1 HTTP访问测试</h3><p>通过SSH连接到App1上，安装HTTP服务，修改端口为8443。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install -y httpd</span><br><span class="line">sed -i.bak &#39;s&#x2F;Listen 80&#x2F;Listen 8443&#x2F;g&#39; &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf</span><br><span class="line">echo &quot;&lt;h2&gt;Hello World from $(hostname -f)&lt;&#x2F;h2&gt;&quot; &gt; &#x2F;var&#x2F;www&#x2F;html&#x2F;index.html</span><br><span class="line">systemctl start httpd.service</span><br><span class="line">systemctl enable httpd.service</span><br></pre></td></tr></table></figure>
+
+
+<p>访问EC2的公网8443端口测试，在浏览器界面可以使用<code>CTRL+F5</code>多强制刷新几次。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029233652230.png" alt="image-20221029233652230"></p>
+<p>查看防火墙的日志信息。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029233822358.png" alt="image-20221029233822358"></p>
+<h3 id="5-2-App2-Windows访问测试"><a href="#5-2-App2-Windows访问测试" class="headerlink" title="5.2 App2 Windows访问测试"></a>5.2 App2 Windows访问测试</h3><p>通过RDP连接到App2上。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029234520051.png" alt="image-20221029234520051"></p>
+<p>防火墙查看日志信息。<img src="/img/AWS-GWLB-FortiGate-1/image-20221029234527146.png" alt="image-20221029234527146"></p>
+<h3 id="5-3-防火墙冗余测试"><a href="#5-3-防火墙冗余测试" class="headerlink" title="5.3 防火墙冗余测试"></a>5.3 防火墙冗余测试</h3><p><strong>防火墙抓包</strong></p>
+<p>FortiGate防火墙可以通过<u>Debug packet flow</u>[7]来查看防火墙对数据包执行的动作，这个抓包方法一般用于排错，输出的信息比较多。也可以通过自带的<u>sniffer工具</u>[8]单纯的抓包，输出的信息比较简洁。</p>
+<p><strong>Debug packet flow</strong></p>
+<p>例如：这里首先暂停了之前的抓包进程，然后抓取地址包含114.114.114.114的10个报文。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">diagnose debug flow trace stop</span><br><span class="line"></span><br><span class="line">diagnose debug enable</span><br><span class="line">diagnose debug flow filter addr 114.114.114.114</span><br><span class="line">diagnose debug flow show function-name enable</span><br><span class="line">diagnose debug flow trace start 10</span><br></pre></td></tr></table></figure>
+<p>也可以通过协议来进行过滤，这里只查看<code>icmp</code>协议的报文。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">diagnose debug flow trace stop</span><br><span class="line"></span><br><span class="line">diagnose debug enable</span><br><span class="line">diagnose debug flow filter proto 1</span><br><span class="line">diagnose debug flow show function-name enable</span><br><span class="line">diagnose debug flow trace start 10</span><br></pre></td></tr></table></figure>
+<p>运行的效果如下：<img src="/img/AWS-GWLB-FortiGate-1/image-20221029235013924.png" alt="image-20221029235013924"></p>
+<p><strong>自带sniffer工具抓包</strong></p>
+<p>例如，这里抓取来自port1端口，端口号为6081的报文，其实就是GENVEN报文。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FGT-GWLB-1 (FG-traffic) # diagnose sniffer packet port1 &#39;port 6081&#39;</span><br></pre></td></tr></table></figure>
+<p>例如，这里抓取来所有的icmp报文。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FGT-GWLB-1 (FG-traffic) # diagnose sniffer packet any icmp 4</span><br></pre></td></tr></table></figure>
+<p>抓包命令结果如下：<img src="/img/AWS-GWLB-FortiGate-1/image-20221029235212480.png" alt="image-20221029235212480"></p>
+<p>可以利用sniff抓包来确认流量目前走哪一台防火墙，然后stop这个防火墙实例，查看流量多长时间能够切换成功，测试防火墙的高可用切换。注意，如果是已经建立的会话，切换时间会长一点，如果是新建会话，切换时间会快一点。<img src="/img/AWS-GWLB-FortiGate-1/image-20221025233825647.png" alt="image-20221025233825647"></p>
+<h2 id="六、清理实验环境步骤"><a href="#六、清理实验环境步骤" class="headerlink" title="六、清理实验环境步骤"></a>六、清理实验环境步骤</h2><p>到上面其实实验已经做完了，既然是实验，肯定是需要清空实验环境的。这个实验有一些依赖调用，有时候不太好删除，另外如果漏删除了EIP和卷，还会持续产生费用。</p>
+<p>按照下面步骤可以彻底清空前面所有操作创建的资源，不会有依赖报错。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1. 终止所有实例。</span><br><span class="line">2. 解除AppVpc的4个路由表关联的子网和IGW。</span><br><span class="line">3. 删除AppVpc的4个路由表。</span><br><span class="line">4. 删除2个Endpoint。</span><br><span class="line">5. 删除Endpoint Service。</span><br><span class="line">6. 删除AppVpc。</span><br><span class="line">7. 删除GWLB。</span><br><span class="line">8. 删除SecVpc。</span><br><span class="line">9. 删除Target Group。</span><br><span class="line">10. 释放申请的2个EIP。</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="七、参考文档"><a href="#七、参考文档" class="headerlink" title="七、参考文档"></a>七、参考文档</h2><ul>
+<li><p>[1] 亚马逊云科技(中国区)网关负载均衡服务集成FortiGate安全网关扩展安全服务性能：<a target="_blank" rel="noopener" href="https://aws.amazon.com/cn/blogs/china/gateway-load-balancing-services-integrate-fortigate-security-gateways/">https://aws.amazon.com/cn/blogs/china/gateway-load-balancing-services-integrate-fortigate-security-gateways/</a></p>
+</li>
+<li><p>[2] FortiGate 6.4.10 Split-Task VDOM Mode：<a target="_blank" rel="noopener" href="https://docs.fortinet.com/document/fortigate/6.4.10/administration-guide/758820/split-task-vdom-mode">https://docs.fortinet.com/document/fortigate/6.4.10/administration-guide/758820/split-task-vdom-mode</a></p>
+</li>
+<li><p>[3] FortiGate 7.2 VDOM overview：<a target="_blank" rel="noopener" href="https://docs.fortinet.com/document/fortigate/7.2.2/administration-guide/597696/vdom-overview">https://docs.fortinet.com/document/fortigate/7.2.2/administration-guide/597696/vdom-overview</a></p>
+</li>
+<li><p>[4] RFC 8926 Geneve: Generic Network Virtualization Encapsulation：<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc8926">https://www.rfc-editor.org/rfc/rfc8926</a></p>
+</li>
+<li><p>[5] New – VPC Ingress Routing – Simplifying Integration of Third-Party Appliances：<a target="_blank" rel="noopener" href="https://aws.amazon.com/cn/blogs/aws/new-vpc-ingress-routing-simplifying-integration-of-third-party-appliances">https://aws.amazon.com/cn/blogs/aws/new-vpc-ingress-routing-simplifying-integration-of-third-party-appliances</a></p>
+</li>
+<li><p>[6] FortiGate VDOM Configuration: Complete Guide：<a target="_blank" rel="noopener" href="https://networkinterview.com/fortigate-vdom-configuration/">https://networkinterview.com/fortigate-vdom-configuration/</a></p>
+</li>
+<li><p>[7] FortiGate / FortiOS 7.2.1 Administration Guide Debugging the packet flow：<a target="_blank" rel="noopener" href="https://docs.fortinet.com/document/fortigate/7.2.1/administration-guide/054688/debugging-the-packet-flow">https://docs.fortinet.com/document/fortigate/7.2.1/administration-guide/054688/debugging-the-packet-flow</a></p>
+</li>
+<li><p>[8] Troubleshooting Tip: Using the FortiOS built-in packet sniffer：<a target="_blank" rel="noopener" href="https://community.fortinet.com/t5/FortiGate/Troubleshooting-Tip-Using-the-FortiOS-built-in-packet-sniffer/ta-p/194222">https://community.fortinet.com/t5/FortiGate/Troubleshooting-Tip-Using-the-FortiOS-built-in-packet-sniffer/ta-p/194222</a></p>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            非商业转载请注明出处，商业转载请联系作者获得授权。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/AWS-VPC-%E6%B5%81%E9%87%8F%E9%9B%86%E4%B8%AD%E6%A3%80%E6%B5%8B%E7%B3%BB%E5%88%97-4-%E5%88%A9%E7%94%A8CloudFormation%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2AWS-GWLB%E9%9B%86%E6%88%90FortiGate%E9%98%B2%E7%81%AB%E5%A2%99.html" class="pre-post btn btn-default" title='AWS VPC 流量集中检测系列--(4)利用CloudFormation自动化部署AWS GWLB集成FortiGate防火墙'>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            AWS VPC 流量集中检测系列--(4)利用CloudFormation自动化部署AWS GWLB集成FortiGate防火墙</span>
+    </a>
+    
+    
+    <a href="/AWS-%E5%A6%82%E4%BD%95%E6%9F%A5%E6%89%BEEC2%E5%AE%9E%E4%BE%8B%E7%89%B9%E5%AE%9A%E7%89%88%E6%9C%AC%E7%9A%84AMI-ID.html" class="next-post btn btn-default" title='AWS 如何查找EC2实例特定版本的AMI ID'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            AWS 如何查找EC2实例特定版本的AMI ID</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'stf5rGD17bcrWN1mvUT4pu8C-gzGzoHsz',
+    appKey: 'r5qpzBWMAzt2hDAcDftecM1R',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: false,
+    avatar: 'mm',
+    meta: 'nick'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh-CN'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%83%8C%E6%99%AF"><span class="toc-text">一、背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Fortigate-VDOM"><span class="toc-text">二、Fortigate VDOM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83%E4%BB%8B%E7%BB%8D"><span class="toc-text">三、实验环境介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81-%E9%85%8D%E7%BD%AE%E9%83%A8%E7%BD%B2"><span class="toc-text">四、 配置部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-VPC-%E9%85%8D%E7%BD%AE"><span class="toc-text">4.1 VPC 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-1-%E5%88%9B%E5%BB%BAVPC"><span class="toc-text">4.1.1 创建VPC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-2-%E5%88%9B%E5%BB%BAIGW%E5%85%B3%E8%81%94VPC"><span class="toc-text">4.1.2 创建IGW关联VPC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-3-%E5%88%9B%E5%BB%BA%E5%AD%90%E7%BD%91"><span class="toc-text">4.1.3 创建子网</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-4-%E5%88%9B%E5%BB%BA%E8%B7%AF%E7%94%B1%E8%A1%A8"><span class="toc-text">4.1.4 创建路由表</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%88%9B%E5%BB%BA%E5%AE%9E%E4%BE%8B"><span class="toc-text">4.2 创建实例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-1-%E5%88%9B%E5%BB%BAFortiGate%E5%AE%9E%E4%BE%8B"><span class="toc-text">4.2.1 创建FortiGate实例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-2-%E5%88%9B%E5%BB%BAAPP%E5%AE%9E%E4%BE%8B"><span class="toc-text">4.2.2 创建APP实例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%88%9B%E5%BB%BAGWLB%E5%B9%B6%E5%85%B3%E8%81%94FortiGate"><span class="toc-text">4.3 创建GWLB并关联FortiGate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E5%88%9B%E5%BB%BAEndpoint-Service%E5%8F%8AEndpoint"><span class="toc-text">4.4 创建Endpoint Service及Endpoint</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-%E9%85%8D%E7%BD%AE%E8%B7%AF%E7%94%B1%E8%A1%A8"><span class="toc-text">4.5 配置路由表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6-%E9%85%8D%E7%BD%AEFortiGate"><span class="toc-text">4.6 配置FortiGate</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-6-1-%E7%99%BB%E5%BD%95FortiGate"><span class="toc-text">4.6.1 登录FortiGate</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-6-2-Fortigate1%E5%9B%BE%E5%BD%A2%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="toc-text">4.6.2 Fortigate1图形化配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-6-3-Fortigate2%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE"><span class="toc-text">4.6.3 Fortigate2命令行配置</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E8%AE%BF%E9%97%AE%E6%B5%8B%E8%AF%95"><span class="toc-text">五、访问测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-App1-HTTP%E8%AE%BF%E9%97%AE%E6%B5%8B%E8%AF%95"><span class="toc-text">5.1 App1 HTTP访问测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-App2-Windows%E8%AE%BF%E9%97%AE%E6%B5%8B%E8%AF%95"><span class="toc-text">5.2 App2 Windows访问测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E9%98%B2%E7%81%AB%E5%A2%99%E5%86%97%E4%BD%99%E6%B5%8B%E8%AF%95"><span class="toc-text">5.3 防火墙冗余测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%B8%85%E7%90%86%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83%E6%AD%A5%E9%AA%A4"><span class="toc-text">六、清理实验环境步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">七、参考文档</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2022
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>

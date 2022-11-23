@@ -1,0 +1,420 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
+    <!--SEO-->
+
+<meta name="keywords" content="AWS,CloudFormation" />
+
+
+<meta name="description" content="B站视频链接：​ ​​https://www.bilibili.com/video/BV1Wd4y1i7PE/?spm_id_from=333.999.0.0​​​
+微信公众号：自刘地
+学习AW..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    AWS CloudFormation 系列--(1)快速入门 |
+    
+    LiuQianglong&#39;s Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='LiuQianglong'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        LiuQianglong&#39;s Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Network/"><i class="fa "></i>
+                                Network</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/AWS/"><i class="fa "></i>
+                                AWS</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Python/"><i class="fa "></i>
+                                Python</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="AWS CloudFormation 系列--(1)快速入门">
+            
+            AWS CloudFormation 系列--(1)快速入门
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/AWS/">AWS</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/AWS/" rel="tag">AWS</a> <a class="tag-none-link" href="/tags/CloudFormation/" rel="tag">CloudFormation</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2022/10/07</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <p><strong>B站视频链接</strong>：​ ​​<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Wd4y1i7PE/?spm_id_from=333.999.0.0%E2%80%8B%E2%80%8B%E2%80%8B">https://www.bilibili.com/video/BV1Wd4y1i7PE/?spm_id_from=333.999.0.0​​​</a></p>
+<p><strong>微信公众号</strong>：自刘地<br><img src="/img/wechat.jpg" alt="自刘地"></p>
+<p>学习AWS CloudFormation服务，需要具备一定的AWS基础知识，比如在AWS Console上创建过VPC和EC2等资源，因为这个服务就是用代码的方式来创建资源，如果你不会通过图形化的方式创建，那么会很难理解代码。</p>
+<h2 id="一、为什么需要AWS-CloudFormation服务"><a href="#一、为什么需要AWS-CloudFormation服务" class="headerlink" title="一、为什么需要AWS CloudFormation服务"></a>一、为什么需要AWS CloudFormation服务</h2><p>利用AWS CloudFormation服务，可以让你通过代码的方式来创建AWS资源，这是AWS的基础架构即代码服务(IaC)。</p>
+<p>为什么不在AWS Console界面来创建、删除资源，而是通过代码的方式来操作资源，主要有下面几个优势：</p>
+<ol>
+<li>容易分享AWS环境给他人。通过代码的方式分享你的AWS环境，可以确保每次部署都是完全相同的，不用担心一些误操作引起的环境差异。当你需要学习一个新的服务时，经常会看到别人已经搭建好了所有的测试环境，并且分享了CloudFormation的代码，学会看这些代码能帮你提高学习效率。例如学习GWLB时看到<u>这篇文档</u>[参考链接1]，节约了很多部署环境的时间。</li>
+<li>可以「批量」操作AWS资源。在AWS CloudFormation代码里面，定义的VPC和EC2等这些资源，形成了一个堆栈(stack)，创建或者删除一堆栈，就会自动创建或删除堆栈里面定义的所有资源。这个特点太方便学习做实验了，需要时，一键创建所有实验环境，做完后，一键打扫战场。避免漏删资源而扣费。</li>
+<li>可以做版本控制。因为AWS CloudFormation都是代码文件，所以可以使用Git来进行版本控制。</li>
+</ol>
+<h2 id="二、AWS-CloudFormation-模板格式"><a href="#二、AWS-CloudFormation-模板格式" class="headerlink" title="二、AWS CloudFormation 模板格式"></a>二、AWS CloudFormation 模板格式</h2><p>CloudFormation 模板就是你需要写的代码文件，模板是<code>JSON</code>或<code>YAML</code>格式的文本文件，你可以指定任何的扩展名称，例如.txt，后缀名并不会影响内容的读取。</p>
+<p>下面是在模板里面定义创建一个VPC，分别用JSON和YAML格式来展现。JSON和YAML格式是可以相互转换的，但是<strong>YAML支持注释功能</strong>，所以我更习惯使用YAML格式来写模板，之后的CloudFormation模板的代码我都会使用YAML格式来写。</p>
+<p>通过<code>JSON</code>格式来创建一个VPC的代码，不用关心代码里面的字段，后面会讲解。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&quot;MyTestVpc&quot; : &#123;</span><br><span class="line">   &quot;Type&quot; : &quot;AWS::EC2::VPC&quot;,</span><br><span class="line">   &quot;Properties&quot; : &#123;</span><br><span class="line">      &quot;CidrBlock&quot; : &quot;10.0.0.0/16&quot;,</span><br><span class="line">      &quot;EnableDnsSupport&quot; : &quot;true&quot;,</span><br><span class="line">      &quot;EnableDnsHostnames&quot; : &quot;true&quot;,</span><br><span class="line">      &quot;Tags&quot; : [ </span><br><span class="line">         &#123;<span class="attr">&quot;Key&quot;</span> : <span class="string">&quot;Name&quot;</span>, <span class="attr">&quot;Value&quot;</span> : <span class="string">&quot;MyTestVpc&quot;</span>&#125; </span><br><span class="line">      ]</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过<code>YAML</code>格式来创建一个VPC的代码。YAML格式写起来更加简单，你可以写单引号、双引号、不写引号，都是一样的。我一般不写引号，除非字符较多，会通过引号来分隔字符。YAML和Python语法一样，不同的层级，通过缩进来区分。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建VPC</span></span><br><span class="line"><span class="attr">MyTestVpc:</span></span><br><span class="line">  <span class="attr">Type:</span> <span class="string">AWS::EC2::VPC</span></span><br><span class="line">  <span class="attr">Properties:</span></span><br><span class="line">    <span class="attr">CidrBlock:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line">    <span class="attr">EnableDnsSupport:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">EnableDnsHostnames:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">Tags:</span></span><br><span class="line">     <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">       <span class="attr">Value:</span> <span class="string">MyTestVpc</span></span><br></pre></td></tr></table></figure>
+<h2 id="三、AWS-CloudFormation-模板字段"><a href="#三、AWS-CloudFormation-模板字段" class="headerlink" title="三、AWS CloudFormation 模板字段"></a>三、AWS CloudFormation 模板字段</h2><p>下面是CloudFormation模板的所有字段，这是快速入门，只介绍最重要的一个字段，其他参考大家可以自己看文档*<u>模板格式</u>*[参考链接2]，以后在其他文章中会陆续介绍这些参数。</p>
+<p><code>Resources</code>：这是<strong>唯一的必选字段</strong>，定义模板要创建哪些资源，例如创建VPC、EC2等，模板的主要作用就是定义资源，模板里面其他字段都可以省略，但是必须定义资源字段。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">AWSTemplateFormatVersion:</span> <span class="string">&quot;version date&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Description:</span></span><br><span class="line">  <span class="string">String</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Metadata:</span></span><br><span class="line">  <span class="string">template</span> <span class="string">metadata</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Parameters:</span></span><br><span class="line">  <span class="string">set</span> <span class="string">of</span> <span class="string">parameters</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Rules:</span></span><br><span class="line">  <span class="string">set</span> <span class="string">of</span> <span class="string">rules</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Mappings:</span></span><br><span class="line">  <span class="string">set</span> <span class="string">of</span> <span class="string">mappings</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Conditions:</span></span><br><span class="line">  <span class="string">set</span> <span class="string">of</span> <span class="string">conditions</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Transform:</span></span><br><span class="line">  <span class="string">set</span> <span class="string">of</span> <span class="string">transforms</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Resources:</span></span><br><span class="line">  <span class="string">set</span> <span class="string">of</span> <span class="string">resources</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Outputs:</span></span><br><span class="line">  <span class="string">set</span> <span class="string">of</span> <span class="string">outputs</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="四、AWS-CloudFormation-资源字段属性"><a href="#四、AWS-CloudFormation-资源字段属性" class="headerlink" title="四、AWS CloudFormation 资源字段属性"></a>四、AWS CloudFormation 资源字段属性</h2><h3 id="4-1、实战案例"><a href="#4-1、实战案例" class="headerlink" title="4.1、实战案例"></a>4.1、实战案例</h3><p>首先来看最重要的<code>Resources</code>字段，这个字段下面会有很多属性，而且不同的服务类型，属性参数并不一样。这些属性不需要你刻意去记忆， 主要还是明确需求之后，去查看文档<u><em>资源和属性类型参考</em></u>[参考链接3]。</p>
+<p>这里通过一个实际的需求来看如何写CloudFormation的模板：创建一个VPC，内部创建一个EC2实例并关联安全组，实例通过IGW访问互联网。</p>
+<p><img src="/img/CloudFormation-1/image-20220918225135044.png" alt="image-20220918225135044"></p>
+<h3 id="4-2、创建VPC"><a href="#4-2、创建VPC" class="headerlink" title="4.2、创建VPC"></a>4.2、创建VPC</h3><p>创建一个VPC，查询VPC这个资源有哪些属性字段，<u><em>AWS::EC2::VPC</em></u>[参考链接4]</p>
+<p><code>MyTestVpc</code>是我起的一个名字，称为逻辑ID，注意命名不能有中横线和下划线。</p>
+<p><code>AWS::EC2::VPC</code>表示创建的资源类型。资源类型标识符采用这个格式：<code>service-provider::service-name::data-type-name</code>。</p>
+<p><code>10.0.0.0/16</code>是为VPC分配的CIDR地址段，这是一个必选属性。创建一个资源时，脑海里面可以回顾AWS Console的操作，一般控制台界面必选的参数，在CloudFormation模板里面也会是必选。如果你需要修改某些特殊属性，但是不知道属性名称，那就需要查看文档了。</p>
+<p><code>Tags</code>标签参数应该不会陌生，因为可以添加多个标签，<code>-</code>表示列表，可以添加多个标签。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个VPC</span></span><br><span class="line">  <span class="attr">MyTestVpc:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::VPC</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">CidrBlock:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line">      <span class="attr">EnableDnsSupport:</span> <span class="string">&#x27;true&#x27;</span></span><br><span class="line">      <span class="attr">EnableDnsHostnames:</span> <span class="string">&#x27;true&#x27;</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">       <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">         <span class="attr">Value:</span> <span class="string">MyTestVpc</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="4-3、创建IGW并关联到VPC"><a href="#4-3、创建IGW并关联到VPC" class="headerlink" title="4.3、创建IGW并关联到VPC"></a>4.3、创建IGW并关联到VPC</h3><p>创建IGW并且关联到VPC：<u><em>AWS::EC2::InternetGateway</em></u>[参考链接5]</p>
+<p>这里创建了一个IGW并且关联到了上面创建的VPC。将IGW关联到VPC时，用到了<code>Ref</code>这个函数。*<u>Ref内部函数</u><em>[参考链接6]可以返回指定的</em>参数<em>或</em>资源*的值。例如你需要查看<u><em>AWS::EC2::VPC</em></u>[参考链接4]就可以知道，它返回的是<code>VpcId</code>信息。</p>
+<p>这里使用了Ref函数的短格式写法，可以写在一行<code>!Ref logicalName</code>，第二部分会专门介绍各种函数的用法。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建IGW</span></span><br><span class="line">  <span class="attr">MyTestIgw:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::InternetGateway&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">          <span class="attr">Value:</span> <span class="string">my-test-igw</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># IGW 关联VPC</span></span><br><span class="line">  <span class="attr">MyTestAttachIgw:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::VPCGatewayAttachment&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">InternetGatewayId:</span> <span class="type">!Ref</span> <span class="string">MyTestIgw</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="4-4、创建子网"><a href="#4-4、创建子网" class="headerlink" title="4.4、创建子网"></a>4.4、创建子网</h3><p>在VPC里面创建子网：<u><em>AWS::EC2::Subnet</em></u>[参考链接7]</p>
+<p>这里子网需要指定<code>VpcId</code>，可以使用Ref内部函数来获取这个信息。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在VPC内创建子网</span></span><br><span class="line">  <span class="attr">MyTestVpcSubnet:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Subnet</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">CidrBlock:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">      <span class="attr">AvailabilityZone:</span> <span class="string">cn-northwest-1a</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">        <span class="attr">Value:</span> <span class="string">my-test-vpc-public-subnet</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="4-5、路由表操作"><a href="#4-5、路由表操作" class="headerlink" title="4.5、路由表操作"></a>4.5、路由表操作</h3><p>在VPC内创建路由表并关联到子网，路由表设置默认路由指向IGW：AWS::EC2::RouteTable、AWS::EC2::Route、AWS::EC2::SubnetRouteTableAssociation</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># VPC内创建路由表</span></span><br><span class="line">  <span class="attr">MyTestPublicRouteTable:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::RouteTable&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">IpsecTsVpc</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">          <span class="attr">Value:</span> <span class="string">my-test-public-route-table</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 路由表关联子网</span></span><br><span class="line">  <span class="attr">MyTestRouteTableAssociation:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::SubnetRouteTableAssociation&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">RouteTableId:</span> <span class="type">!Ref</span> <span class="string">MyTestPublicRouteTable</span></span><br><span class="line">      <span class="attr">SubnetId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpcSubnet</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 路由表设置默认路由指向IGW</span></span><br><span class="line">  <span class="attr">MyTestInternetRoute:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::Route&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">     <span class="attr">RouteTableId:</span> <span class="type">!Ref</span> <span class="string">MyTestPublicRouteTable</span></span><br><span class="line">     <span class="attr">DestinationCidrBlock:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br><span class="line">     <span class="attr">GatewayId:</span> <span class="type">!Ref</span> <span class="string">MyTestIgw</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="4-6、创建安全组"><a href="#4-6、创建安全组" class="headerlink" title="4.6、创建安全组"></a>4.6、创建安全组</h3><p>在VPC内创建一个安全组：AWS::EC2::SecurityGroup</p>
+<p>安全组里面数字<code>-1</code>表示允许所有。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在VPC内创建一个安全组</span></span><br><span class="line">  <span class="attr">MyTestVpcSg:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::SecurityGroup</span></span><br><span class="line">    <span class="attr">DependsOn:</span> <span class="string">MyTestVpc</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">GroupDescription:</span> <span class="string">SG</span> <span class="string">to</span> <span class="string">test</span> <span class="string">ping</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">SecurityGroupIngress:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">IpProtocol:</span> <span class="string">tcp</span></span><br><span class="line">        <span class="attr">FromPort:</span> <span class="number">22</span></span><br><span class="line">        <span class="attr">ToPort:</span> <span class="number">22</span></span><br><span class="line">        <span class="attr">CidrIp:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">IpProtocol:</span> <span class="string">icmp</span></span><br><span class="line">        <span class="attr">FromPort:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">ToPort:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">CidrIp:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">IpProtocol:</span> <span class="string">tcp</span></span><br><span class="line">        <span class="attr">FromPort:</span> <span class="number">8443</span></span><br><span class="line">        <span class="attr">ToPort:</span> <span class="number">8443</span></span><br><span class="line">        <span class="attr">CidrIp:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="4-7、创建EC2实例"><a href="#4-7、创建EC2实例" class="headerlink" title="4.7、创建EC2实例"></a>4.7、创建EC2实例</h3><p>创建一个EC2实例：AWS::EC2::Instance</p>
+<p>指定了EC2的AMI ID，可以通过控制台查询AMI ID。需要确认账号下存在<code>MyCN-CloudFormation-Test-Key</code>这个密钥对信息。设置实例类型为<code>t3.small</code>。另外接口设置自动获取公网IP地址、因为是第一个主接口，所以编号为<code>0</code>、接口关联之前创建的安全组、接口放置之前创建的子网内。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个EC2实例</span></span><br><span class="line">  <span class="attr">MyTestEc2Instance:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Instance</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">ImageId:</span> <span class="string">ami-003a3de8892ecbc45</span></span><br><span class="line">      <span class="attr">KeyName:</span> <span class="string">MyCN-CloudFormation-Test-Key</span></span><br><span class="line">      <span class="attr">InstanceType:</span> <span class="string">t3.small</span></span><br><span class="line">      <span class="attr">NetworkInterfaces:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">AssociatePublicIpAddress:</span> <span class="literal">true</span></span><br><span class="line">          <span class="attr">DeviceIndex:</span> <span class="number">0</span></span><br><span class="line">          <span class="attr">GroupSet:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">Ref:</span> <span class="string">MyTestVpcSg</span></span><br><span class="line">          <span class="attr">SubnetId:</span>  <span class="type">!Ref</span> <span class="string">MyTestVpcSubnet</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="五、AWS-控制台创建堆栈-stack"><a href="#五、AWS-控制台创建堆栈-stack" class="headerlink" title="五、AWS 控制台创建堆栈(stack)"></a>五、AWS 控制台创建堆栈(stack)</h2><p>要将模板的代码实例化，就需要创建堆栈，可以通过AWS控制台、AWS CLI、API，来创建创建、更新、删除堆栈。模板里面所有的资源可以作为一个<strong>堆栈</strong>进行管理。</p>
+<p>前面的内容单独解释每个资源如何创建，现在将这些资源都写到一个模板里面。这个模板中创建了一个VPC，VPC内部创建一个IGW，创建子网并将默认路由指向IGW。最后创建了一个EC2放置在公有子网里面，允许获取公网IP地址。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Resources:</span></span><br><span class="line"><span class="comment"># 创建一个VPC</span></span><br><span class="line">  <span class="attr">MyTestVpc:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::VPC</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">CidrBlock:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line">      <span class="attr">EnableDnsSupport:</span> <span class="string">&#x27;true&#x27;</span></span><br><span class="line">      <span class="attr">EnableDnsHostnames:</span> <span class="string">&#x27;true&#x27;</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">       <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">         <span class="attr">Value:</span> <span class="string">MyTestVpc</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建IGW</span></span><br><span class="line">  <span class="attr">MyTestIgw:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::InternetGateway&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">          <span class="attr">Value:</span> <span class="string">my-test-igw</span></span><br><span class="line">          </span><br><span class="line"><span class="comment"># IGW 关联VPC</span></span><br><span class="line">  <span class="attr">MyTestAttachIgw:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::VPCGatewayAttachment&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">InternetGatewayId:</span> <span class="type">!Ref</span> <span class="string">MyTestIgw</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在VPC内创建子网</span></span><br><span class="line">  <span class="attr">MyTestVpcSubnet:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Subnet</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">CidrBlock:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">      <span class="attr">AvailabilityZone:</span> <span class="string">cn-northwest-1a</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">        <span class="attr">Value:</span> <span class="string">my-test-vpc-public-subnet</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># VPC内创建路由表</span></span><br><span class="line">  <span class="attr">MyTestPublicRouteTable:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::RouteTable&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">Tags:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">Key:</span> <span class="string">Name</span></span><br><span class="line">          <span class="attr">Value:</span> <span class="string">my-test-public-route-table</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 路由表关联子网</span></span><br><span class="line">  <span class="attr">MyTestRouteTableAssociation:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::SubnetRouteTableAssociation&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">RouteTableId:</span> <span class="type">!Ref</span> <span class="string">MyTestPublicRouteTable</span></span><br><span class="line">      <span class="attr">SubnetId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpcSubnet</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 路由表设置默认路由指向IGW</span></span><br><span class="line">  <span class="attr">MyTestInternetRoute:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&quot;AWS::EC2::Route&quot;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">     <span class="attr">RouteTableId:</span> <span class="type">!Ref</span> <span class="string">MyTestPublicRouteTable</span></span><br><span class="line">     <span class="attr">DestinationCidrBlock:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br><span class="line">     <span class="attr">GatewayId:</span> <span class="type">!Ref</span> <span class="string">MyTestIgw</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在VPC内创建一个安全组</span></span><br><span class="line">  <span class="attr">MyTestVpcSg:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::SecurityGroup</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">GroupDescription:</span> <span class="string">SG</span> <span class="string">to</span> <span class="string">test</span> <span class="string">ping</span></span><br><span class="line">      <span class="attr">VpcId:</span> <span class="type">!Ref</span> <span class="string">MyTestVpc</span></span><br><span class="line">      <span class="attr">SecurityGroupIngress:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">IpProtocol:</span> <span class="string">tcp</span></span><br><span class="line">        <span class="attr">FromPort:</span> <span class="number">22</span></span><br><span class="line">        <span class="attr">ToPort:</span> <span class="number">22</span></span><br><span class="line">        <span class="attr">CidrIp:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">IpProtocol:</span> <span class="string">icmp</span></span><br><span class="line">        <span class="attr">FromPort:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">ToPort:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">CidrIp:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">IpProtocol:</span> <span class="string">tcp</span></span><br><span class="line">        <span class="attr">FromPort:</span> <span class="number">8443</span></span><br><span class="line">        <span class="attr">ToPort:</span> <span class="number">8443</span></span><br><span class="line">        <span class="attr">CidrIp:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span></span><br><span class="line">        </span><br><span class="line"><span class="comment"># 创建一个EC2实例</span></span><br><span class="line">  <span class="attr">MyTestEc2Instance:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::EC2::Instance</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">ImageId:</span> <span class="string">ami-003a3de8892ecbc45</span></span><br><span class="line">      <span class="attr">KeyName:</span> <span class="string">MyCN-CloudFormation-Test-Key</span></span><br><span class="line">      <span class="attr">InstanceType:</span> <span class="string">t3.small</span></span><br><span class="line">      <span class="attr">NetworkInterfaces:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">AssociatePublicIpAddress:</span> <span class="literal">true</span></span><br><span class="line">          <span class="attr">DeviceIndex:</span> <span class="number">0</span></span><br><span class="line">          <span class="attr">GroupSet:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">Ref:</span> <span class="string">MyTestVpcSg</span></span><br><span class="line">          <span class="attr">SubnetId:</span>  <span class="type">!Ref</span> <span class="string">MyTestVpcSubnet</span></span><br></pre></td></tr></table></figure>
+
+
+<p>进入AWS CloudFormation控制台，点击创建堆栈，选择使用新资源创建。</p>
+<p><img src="/img/CloudFormation-1/image-20220331212913966.png" alt="image-20220331212913966"></p>
+<p>选择模板已就绪，上传准备的yaml文件，文件最大支持1MB，AWS会自动创建一个S3桶来存储模板文件。你也可以将模板文件上传到上s3，然后指定s3的路径来调用模板。</p>
+<p><img src="/img/CloudFormation-1/image-20220331212926921.png" alt="image-20220331212926921"></p>
+<p>通过Designer你可以以图形化的方式来创建、查看和修改模板。我觉得这个Designer做的并不是很直观，仅供参考一下吧。</p>
+<p><img src="/img/CloudFormation-1/image-20220331214009552.png" alt="image-20220331214009552"></p>
+<p>最后设置堆栈的名称，注意堆栈名称不能有下划线，可以有中横线。</p>
+<p><img src="/img/CloudFormation-1/image-20220331214151421.png" alt="image-20220331214151421"></p>
+<p>通过【事件】可以查看堆栈创建的进度，如果堆栈创建失败，通过事件输出信息，可以非常容易的定位错误原因。</p>
+<p><img src="/img/CloudFormation-1/image-20220331214355860.png" alt="image-20220331214355860"></p>
+<p>例如这里我故意将子网的AZ信息写成<code>cn-northwest-1</code>，少写了一个<code>a</code>。可以通过【事件】来查看报错信息，状态原因非常明确的说明了错误原因，你可以快速的根据“逻辑ID”来定位是哪个资源有错误，因为逻辑ID就是模板内的资源名称。</p>
+<p><img src="/img/CloudFormation-1/image-20220331215123625.png" alt="image-20220331215123625"></p>
+<p>另外，当堆栈创建失败的时候，堆栈会自动回滚，将前面所有创建的资源都会删除，全都删除完成后，堆栈状态为<code>ROLLBACK_COMPLETE</code>，此时可以删除堆栈重新在创建一次。</p>
+<p><img src="/img/CloudFormation-1/image-20220331215350827.png" alt="image-20220331215350827"></p>
+<p>将AZ信息修改正确后重新部署成功。</p>
+<p><img src="/img/CloudFormation-1/image-20220919175257481.png" alt="image-20220919175257481"></p>
+<p>查看创建的VPC<img src="/img/CloudFormation-1/image-20220919175450103.png" alt="image-20220919175450103"></p>
+<p>查看创建的EC2和安全组<img src="/img/CloudFormation-1/image-20220919175457827.png" alt="image-20220919175457827"></p>
+<p>目前已经了解了AWS CloudFormation是如何工作的，有了一个快速了解，后续会继续介绍CloudFormation的内部函数。</p>
+<h2 id="六、参考文档"><a href="#六、参考文档" class="headerlink" title="六、参考文档"></a>六、参考文档</h2><ul>
+<li><p><strong>[1] aws-gateway-load-balancer-code-samples：</strong><a target="_blank" rel="noopener" href="https://github.com/aws-samples/aws-gateway-load-balancer-code-samples/tree/main/aws-cloudformation/centralized_architecture">https://github.com/aws-samples/aws-gateway-load-balancer-code-samples/tree/main/aws-cloudformation/centralized_architecture</a></p>
+</li>
+<li><p><strong>[2] AWS 模板格式：</strong><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/template-anatomy.html">https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/template-anatomy.html</a></p>
+</li>
+<li><p><strong>[3] AWS 资源和属性类型参考：</strong><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html</a></p>
+</li>
+<li><p><strong>[4] AWS CloudFormation AWS::EC2::VPC</strong>：<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html">https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html</a></p>
+</li>
+<li><p><strong>[5] AWS CloudFormation AWS::EC2::InternetGateway：</strong><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internetgateway.html">https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internetgateway.html</a></p>
+</li>
+<li><p><strong>[6] AWS Ref 内部函数：</strong><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html">https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html</a></p>
+</li>
+<li><p><strong>[7] AWS CloudFormation AWS::EC2::Subnet：</strong><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html">https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html</a></p>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            非商业转载请注明出处，商业转载请联系作者获得授权。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/CloudFormation%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E8%BF%9B%E9%98%B6-2-%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0%E5%8F%8A%E5%AD%97%E6%AE%B5.html" class="pre-post btn btn-default" title='AWS CloudFormation 系列--(2)常用函数及字段'>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            AWS CloudFormation 系列--(2)常用函数及字段</span>
+    </a>
+    
+    
+    <a href="/Cisco-StackWise-%E7%AE%80%E4%BB%8B.html" class="next-post btn btn-default" title='Cisco StackWise 简介'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            Cisco StackWise 简介</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'stf5rGD17bcrWN1mvUT4pu8C-gzGzoHsz',
+    appKey: 'r5qpzBWMAzt2hDAcDftecM1R',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: false,
+    avatar: 'mm',
+    meta: 'nick'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh-CN'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81AWS-CloudFormation%E6%9C%8D%E5%8A%A1"><span class="toc-text">一、为什么需要AWS CloudFormation服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81AWS-CloudFormation-%E6%A8%A1%E6%9D%BF%E6%A0%BC%E5%BC%8F"><span class="toc-text">二、AWS CloudFormation 模板格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81AWS-CloudFormation-%E6%A8%A1%E6%9D%BF%E5%AD%97%E6%AE%B5"><span class="toc-text">三、AWS CloudFormation 模板字段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81AWS-CloudFormation-%E8%B5%84%E6%BA%90%E5%AD%97%E6%AE%B5%E5%B1%9E%E6%80%A7"><span class="toc-text">四、AWS CloudFormation 资源字段属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1%E3%80%81%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B"><span class="toc-text">4.1、实战案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2%E3%80%81%E5%88%9B%E5%BB%BAVPC"><span class="toc-text">4.2、创建VPC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3%E3%80%81%E5%88%9B%E5%BB%BAIGW%E5%B9%B6%E5%85%B3%E8%81%94%E5%88%B0VPC"><span class="toc-text">4.3、创建IGW并关联到VPC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4%E3%80%81%E5%88%9B%E5%BB%BA%E5%AD%90%E7%BD%91"><span class="toc-text">4.4、创建子网</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5%E3%80%81%E8%B7%AF%E7%94%B1%E8%A1%A8%E6%93%8D%E4%BD%9C"><span class="toc-text">4.5、路由表操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6%E3%80%81%E5%88%9B%E5%BB%BA%E5%AE%89%E5%85%A8%E7%BB%84"><span class="toc-text">4.6、创建安全组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-7%E3%80%81%E5%88%9B%E5%BB%BAEC2%E5%AE%9E%E4%BE%8B"><span class="toc-text">4.7、创建EC2实例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81AWS-%E6%8E%A7%E5%88%B6%E5%8F%B0%E5%88%9B%E5%BB%BA%E5%A0%86%E6%A0%88-stack"><span class="toc-text">五、AWS 控制台创建堆栈(stack)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">六、参考文档</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2022
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>

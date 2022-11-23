@@ -1,0 +1,387 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
+    <!--SEO-->
+
+<meta name="keywords" content="AWS,EC2 AMI" />
+
+
+<meta name="description" content="B站视频链接：https://www.bilibili.com/video/BV1884y1q7qM/微信公众号：自刘地
+一、背景在我的CloudFormation代码里面，经常会使用到特定版本..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    AWS 如何查找EC2实例特定版本的AMI ID |
+    
+    LiuQianglong&#39;s Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='LiuQianglong'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        LiuQianglong&#39;s Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Network/"><i class="fa "></i>
+                                Network</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/AWS/"><i class="fa "></i>
+                                AWS</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Python/"><i class="fa "></i>
+                                Python</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="AWS 如何查找EC2实例特定版本的AMI ID">
+            
+            AWS 如何查找EC2实例特定版本的AMI ID
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/AWS/">AWS</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/AWS/" rel="tag">AWS</a> <a class="tag-none-link" href="/tags/EC2-AMI/" rel="tag">EC2 AMI</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2022/10/23</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <p><strong>B站视频链接：</strong><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1884y1q7qM/">https://www.bilibili.com/video/BV1884y1q7qM/</a><br><strong>微信公众号：</strong>自刘地<br><img src="/img/wechat.jpg" alt="自刘地"></p>
+<h2 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h2><p>在我的CloudFormation代码里面，经常会使用到特定版本的实例。但是在AWS控制台启动EC2实例时，AWS只会提供特定版本的EC2镜像，用户并不能自由选择特定的版本进行启动。要启动特定版本的EC2只能通过AWS CLI或者AWS CloudFormation在代码里面指定<code>ami-id</code>信息然后启动。这里分享一下如何寻找特定版本的ami-id信息。</p>
+<h2 id="二、获取AWS控制台提供的镜像ami-id"><a href="#二、获取AWS控制台提供的镜像ami-id" class="headerlink" title="二、获取AWS控制台提供的镜像ami-id"></a>二、获取AWS控制台提供的镜像ami-id</h2><p>对于控制台界面能够选择的实例，比较好查找对应的ami-id信息，找到这个ami-id是第一步，后续查找实例的其他版本需要用到这个ami-id。所以先看一下如何获取图形化能选择的实例ami-id。</p>
+<p>AWS控制台界面可以通过四种途径启动EC2，分别是：</p>
+<ol>
+<li>快速启动（Quickstart AMIs）</li>
+<li>我的AMI（My AMIs）</li>
+<li>亚马逊云科技Marketplace（AWS Marketplace AMIs）</li>
+<li>社区AMI（Community AMIs）。</li>
+</ol>
+<p>目前AWS 中国区和AWS Global区域启动EC2的界面所有区别。对于第一、二和四种类型，在控制台界面可以直接看到ami-id信息。但是对于第三种在Marketplace上的实例，两种控制台界面获取ami-id的方法有所区别。</p>
+<p>快速启动（QUickstart AMIs）界面获取ami-id信息<img src="/img/AWS-EC2-AMI-ID/image-20221023162305407.png" alt="image-20221023162305407"></p>
+<p>我的AMI（My AMIs）界面获取ami-id信息。<img src="/img/AWS-EC2-AMI-ID/image-20221023162342186.png" alt="image-20221023162342186"></p>
+<p>社区AMI（Community AMIs）界面获取ami-id信息。<img src="/img/AWS-EC2-AMI-ID/image-20221023162424372.png" alt="image-20221023162424372"></p>
+<p>对于AWS Global区域查看AWS Marketplace AMIs，在选择镜像后，准备启动时就可以看到ami-id信息，并不需要真的启动EC2就能获取ami-id信息。<img src="/img/AWS-EC2-AMI-ID/image-20221023161702882.png" alt="image-20221023161702882"></p>
+<p>对于AWS 中国区域查看AWS Marketplace AMIs，需要启动EC2之后，选中对应实例，才能看到对应的ami-id信息。<img src="/img/AWS-EC2-AMI-ID/image-20221023163440007.png" alt="image-20221023163440007"></p>
+<h2 id="三、查询历史版本ami-id"><a href="#三、查询历史版本ami-id" class="headerlink" title="三、查询历史版本ami-id"></a>三、查询历史版本ami-id</h2><p>现在已经了解如何通过AWS控制台界面来获取实例的ami-id信息。要获取实例其他版本的ami-id，需要使用<code>aws cli</code>，并配置好凭证信息（请参考往期文章《AWS CloudFormation系列–(3)Python 操作CloudFormation》介绍了如何使用 AWS CLI以及配置凭证信息）。</p>
+<p>这里通过一个案例，来看如何获取实例特定版本的ami-id信息，例如想要获取Fortigate 6.4.10版本的ami-id信息。</p>
+<p>AWS控制台当前提供的Fortigate版本是7.0.7，通过上面的方法，获取到7.0.7版本的ami-id是<code>ami-0f2b0162d497c9988</code>。</p>
+<p>下面需要使用<code>aws ec2 describe-images</code>[1]命令来查看这个ami-id的详细信息。</p>
+<p>使用<code>--region</code>参数，指定只查看Tokyo区域的的镜像。使用<code>--image-ids</code>，指定ami-id信息。命令可以在有凭证的主机上运行，也可以在<code>AWS CloudShell</code>上操作。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">aws ec2 describe-images \</span><br><span class="line">    --region ap-northeast-1 \</span><br><span class="line">    --image-ids ami-0f2b0162d497c9988</span><br></pre></td></tr></table></figure>
+<p>AWS Gloabl区域提供CloudShell服务，进入之后可以直接配置AWS CLI，拥有和图形化界面用户相同的权限。<img src="/img/AWS-EC2-AMI-ID/image-20221023165409193.png" alt="image-20221023165409193"></p>
+<p>输出结果主要关注<code>Description</code>字段，里面的信息可以作为下一次过滤的字段，例如里面有FortiGate、AWSONDEMAND、7.0.7等关键词。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">[cloudshell-user@ip-10-0-179-71 ~]$ aws ec2 describe-images \</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">     --region ap-northeast-1 \</span></span><br><span class="line"><span class="bash">&gt;     --image-ids ami-0f2b0162d497c9988</span></span><br><span class="line">&#123;</span><br><span class="line">    &quot;Images&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;ProductCodes&quot;: [</span><br><span class="line">                &#123;</span><br><span class="line">                    &quot;ProductCodeId&quot;: &quot;2wqkpek696qhdeo7lbbjncqli&quot;,</span><br><span class="line">                    &quot;ProductCodeType&quot;: &quot;marketplace&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            &quot;Description&quot;: &quot;FortiGate-VM64-AWSONDEMAND build0367 (7.0.7) GA&quot;,</span><br><span class="line">            &quot;VirtualizationType&quot;: &quot;hvm&quot;,</span><br><span class="line">            &quot;Hypervisor&quot;: &quot;xen&quot;,</span><br><span class="line">            &quot;ImageOwnerAlias&quot;: &quot;aws-marketplace&quot;,</span><br><span class="line">            &quot;EnaSupport&quot;: true,</span><br><span class="line">            &quot;SriovNetSupport&quot;: &quot;simple&quot;,</span><br><span class="line">            &quot;ImageId&quot;: &quot;ami-0f2b0162d497c9988&quot;,</span><br><span class="line">            &quot;State&quot;: &quot;available&quot;,</span><br><span class="line">            &quot;BlockDeviceMappings&quot;: [</span><br><span class="line">                &#123;</span><br><span class="line">                    &quot;DeviceName&quot;: &quot;/dev/sda1&quot;,</span><br><span class="line">                    &quot;Ebs&quot;: &#123;</span><br><span class="line">                        &quot;SnapshotId&quot;: &quot;snap-04c5af4435c4672a3&quot;,</span><br><span class="line">                        &quot;DeleteOnTermination&quot;: true,</span><br><span class="line">                        &quot;VolumeType&quot;: &quot;gp2&quot;,</span><br><span class="line">                        &quot;VolumeSize&quot;: 2,</span><br><span class="line">                        &quot;Encrypted&quot;: false</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                &#123;</span><br><span class="line">                    &quot;DeviceName&quot;: &quot;/dev/sdb&quot;,</span><br><span class="line">                    &quot;Ebs&quot;: &#123;</span><br><span class="line">                        &quot;Encrypted&quot;: false,</span><br><span class="line">                        &quot;DeleteOnTermination&quot;: true,</span><br><span class="line">                        &quot;VolumeType&quot;: &quot;gp2&quot;,</span><br><span class="line">                        &quot;VolumeSize&quot;: 30</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            &quot;Architecture&quot;: &quot;x86_64&quot;,</span><br><span class="line">            &quot;ImageLocation&quot;: &quot;aws-marketplace/FortiGate-VM64-AWSONDEMAND build0367 (7.0.7) GA-3124a694-441c-4ff1-8bf7-4d153be424a6&quot;,</span><br><span class="line">            &quot;RootDeviceType&quot;: &quot;ebs&quot;,</span><br><span class="line">            &quot;OwnerId&quot;: &quot;679593333241&quot;,</span><br><span class="line">            &quot;RootDeviceName&quot;: &quot;/dev/sda1&quot;,</span><br><span class="line">            &quot;CreationDate&quot;: &quot;2022-10-20T15:56:18.000Z&quot;,</span><br><span class="line">            &quot;Public&quot;: true,</span><br><span class="line">            &quot;ImageType&quot;: &quot;machine&quot;,</span><br><span class="line">            &quot;Name&quot;: &quot;FortiGate-VM64-AWSONDEMAND build0367 (7.0.7) GA-3124a694-441c-4ff1-8bf7-4d153be424a6&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>有了上面三个关键词之后，只需要替换版本信息，就可以进行精确的过滤查找了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">aws ec2 describe-images \</span><br><span class="line">    --region ap-northeast-1 \</span><br><span class="line">    --filters &quot;Name=description,Values=*FortiGate*AWSONDEMAND*6.4.10*&quot; \</span><br><span class="line">    --query &#x27;Images[*].&#123;Description:Description,ImageId:ImageId,Architecture:Architecture&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<p><code>--filters</code>：通过filters字段可以过滤特定字段里面的关键词，前面通过查询特定的ami-id信息，就是为了了解有哪些可以作为关键词进行查找的，这个关键字一般要经过多次尝试。</p>
+<p><code>AWSONDEMAND</code>：这个关键词表示AWS推荐的实例，一般是PAYG（pay as you go）类型的授权。如果不添加这个关键词，会返回两个6.4.10版本的ami-id，不包含AWSONDEMAND关键词的BYOL类型的License。</p>
+<p><code>--query</code>：这个参数可以控制返回哪些字段信息，简化输出结果。</p>
+<p>输出结果如下，加了三个关键词，控制只输出描述信息、ami-id信息，还有系统架构信息。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[cloudshell-user@ip-10-0-179-71 ~]$ aws ec2 describe-images \</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">     --region ap-northeast-1 \</span></span><br><span class="line"><span class="bash">&gt;     --filters <span class="string">&quot;Name=description,Values=*FortiGate*AWSONDEMAND*6.4.10*&quot;</span> \</span></span><br><span class="line"><span class="bash">&gt;     --query <span class="string">&#x27;Images[*].&#123;Description:Description,ImageId:ImageId,Architecture:Architecture&#125;&#x27;</span></span></span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;Description&quot;: &quot;FortiGate-VM64-AWSONDEMAND build2000 (6.4.10) GA&quot;,</span><br><span class="line">        &quot;ImageId&quot;: &quot;ami-0abf1a002258e8077&quot;,</span><br><span class="line">        &quot;Architecture&quot;: &quot;x86_64&quot;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+
+<p>还可以通<code>--output</code>参数，来指定输出的文本格式，默认是json类型，这里输出文本类型。而且只查看ami-id信息，会输出非常简洁的结果。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">aws ec2 describe-images \</span><br><span class="line">    --region ap-northeast-1 \</span><br><span class="line">    --filters &quot;Name=description,Values=*FortiGate*AWSONDEMAND*6.4.10*&quot; \</span><br><span class="line">    --query &#x27;Images[*].[ImageId]&#x27; \</span><br><span class="line">    --output text</span><br><span class="line">    </span><br><span class="line">ami-0abf1a002258e8077</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="四、实战案例"><a href="#四、实战案例" class="headerlink" title="四、实战案例"></a>四、实战案例</h2><h3 id="4-1-查询Cisco-ASAv-9-14-4-ami-id"><a href="#4-1-查询Cisco-ASAv-9-14-4-ami-id" class="headerlink" title="4.1 查询Cisco ASAv 9.14.4 ami-id"></a>4.1 查询Cisco ASAv 9.14.4 ami-id</h3><p>已知东京区域Cisco ASAv 9.18.1版本的ami-id是<code>ami-058c3870fc61fdc32</code>，请查询9.14.4版本的ami-id信息。</p>
+<p>首先查看这个ami-id的详细信息，主要是查看Description字段里面可以提取的关键词。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">aws ec2 describe-images \</span><br><span class="line">   --region ap-northeast-1 \</span><br><span class="line">   --image-ids ami-058c3870fc61fdc32</span><br></pre></td></tr></table></figure>
+<p>输出结果摘要如下，可以看到关键词是<code>asav9-18-1</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">&quot;Description&quot;: &quot;[Copied ami-00ce522a548e6bc01 from us-east-1] asav9-18-1-ENA&quot;,</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>进一步查询asav9-14-4版本的信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">aws ec2 describe-images \</span><br><span class="line">    --region ap-northeast-1 \</span><br><span class="line">    --filters &quot;Name=description,Values=*asav9-14-4*&quot; \</span><br><span class="line">    --query &#x27;Images[*].&#123;Description:Description,ImageId:ImageId&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+
+<p>输出结果如下，可以看到有两个ami-id信息，而且从描述来看也没法区分哪个是BYOL的授权，哪个是PAYG（pay as you go）类型的授权。这种情况根据我的个人经验（不一定准确），这个输出结果的顺序与AWS控制台当前版本的顺序大概率是一致的，所以可以先猜测第二个ami-id是PAYG类型的授权。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;Description&quot;: &quot;[Copied ami-03e7d9c4b42328a0b from us-east-1] asav9-14-4-ENA&quot;,</span><br><span class="line">        &quot;ImageId&quot;: &quot;ami-0aed364da25893e71&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;Description&quot;: &quot;[Copied ami-03e7d9c4b42328a0b from us-east-1] asav9-14-4-ENA&quot;,</span><br><span class="line">        &quot;ImageId&quot;: &quot;ami-0f46125dd0064a704&quot;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>如果需要进一步确认，可以使用命令行快速在默认VPC使用这个ami-id启动一台EC2确认一下。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aws ec2 run-instances --image-id ami-0f46125dd0064a704 --count 1 --instance-type c5.xlarge --key-name Global_Tokyo_KeyPair --security-group-ids sg-cbd442b7 --subnet-id subnet-ee03eca6</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="4-2-查询Palo-Alto-Bundle2-10-2-2-ami-id"><a href="#4-2-查询Palo-Alto-Bundle2-10-2-2-ami-id" class="headerlink" title="4.2 查询Palo Alto Bundle2 10.2.2 ami-id"></a>4.2 查询Palo Alto Bundle2 10.2.2 ami-id</h3><p>已知东京区域Palo Alto PAN-OS 10.0.11-h1 Bundle 2版本的ami-id是<code>ami-05587f4db3c1c966b</code>，请查询10.2.2版本的ami-id信息。</p>
+<p>直接输出这个ami-id的描述信息，获取关键词信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">aws ec2 describe-images \</span><br><span class="line">    --region ap-northeast-1 \</span><br><span class="line">    --image-ids ami-05587f4db3c1c966b \</span><br><span class="line">    --query &#39;Images[*].[Description]&#39; \</span><br><span class="line">    --output text</span><br><span class="line">    </span><br><span class="line">[Copied ami-0588942bc26617f1d from us-east-1] PA-VM-AWS-10.0.11-h1</span><br></pre></td></tr></table></figure>
+<p>输入关键词词<code>PA-VM-AWS-10.2.2-h1</code>进行查找，这个结果非常清晰。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">aws ec2 describe-images \</span><br><span class="line">    --region ap-northeast-1 \</span><br><span class="line">    --filters &quot;Name=description,Values=*PA-VM-AWS-10.2.2-h1*&quot; \</span><br><span class="line">    --query &#x27;Images[*].[ImageId]&#x27; \</span><br><span class="line">    --output text</span><br><span class="line">    </span><br><span class="line">ami-0af0b709bb9eb7d08</span><br></pre></td></tr></table></figure>
+<h2 id="五、参考文档"><a href="#五、参考文档" class="headerlink" title="五、参考文档"></a>五、参考文档</h2><ul>
+<li>[1] AWS CLI describe-images：<a target="_blank" rel="noopener" href="https://awscli.amazonaws.com/v2/documentation/api/2.1.29/reference/ec2/describe-images.html">https://awscli.amazonaws.com/v2/documentation/api/2.1.29/reference/ec2/describe-images.html</a></li>
+<li>[2] AWS CLI describe-instances –query：<a target="_blank" rel="noopener" href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/describe-instances.html">https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/describe-instances.html</a></li>
+<li>[3] Python Searches across all AWS AMI Images in all regions：<a target="_blank" rel="noopener" href="https://github.com/hutchris/amisearch">https://github.com/hutchris/amisearch</a></li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            非商业转载请注明出处，商业转载请联系作者获得授权。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/AWS-VPC-%E6%B5%81%E9%87%8F%E9%9B%86%E4%B8%AD%E6%A3%80%E6%B5%8B%E7%B3%BB%E5%88%97-3-AWS-GWLB%E9%9B%86%E6%88%90FortiGate%E9%98%B2%E7%81%AB%E5%A2%99.html" class="pre-post btn btn-default" title='AWS VPC 流量集中检测系列--(3)AWS GWLB集成FortiGate防火墙'>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            AWS VPC 流量集中检测系列--(3)AWS GWLB集成FortiGate防火墙</span>
+    </a>
+    
+    
+    <a href="/AWS-VPC-%E6%B5%81%E9%87%8F%E9%9B%86%E4%B8%AD%E6%A3%80%E6%B5%8B%E7%B3%BB%E5%88%97-2-%E5%88%A9%E7%94%A8CloudFormation%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2AWS-GWLB%E9%9B%86%E6%88%90Palo-Alto%E9%98%B2%E7%81%AB%E5%A2%99.html" class="next-post btn btn-default" title='AWS VPC 流量集中检测系列--(2)利用CloudFormation自动化部署AWS GWLB集成Palo Alto防火墙'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            AWS VPC 流量集中检测系列--(2)利用CloudFormation自动化部署AWS GWLB集成Palo Alto防火墙</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'stf5rGD17bcrWN1mvUT4pu8C-gzGzoHsz',
+    appKey: 'r5qpzBWMAzt2hDAcDftecM1R',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: false,
+    avatar: 'mm',
+    meta: 'nick'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh-CN'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%83%8C%E6%99%AF"><span class="toc-text">一、背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%8E%B7%E5%8F%96AWS%E6%8E%A7%E5%88%B6%E5%8F%B0%E6%8F%90%E4%BE%9B%E7%9A%84%E9%95%9C%E5%83%8Fami-id"><span class="toc-text">二、获取AWS控制台提供的镜像ami-id</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%9F%A5%E8%AF%A2%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%ACami-id"><span class="toc-text">三、查询历史版本ami-id</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B"><span class="toc-text">四、实战案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%9F%A5%E8%AF%A2Cisco-ASAv-9-14-4-ami-id"><span class="toc-text">4.1 查询Cisco ASAv 9.14.4 ami-id</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E6%9F%A5%E8%AF%A2Palo-Alto-Bundle2-10-2-2-ami-id"><span class="toc-text">4.2 查询Palo Alto Bundle2 10.2.2 ami-id</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">五、参考文档</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2022
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
