@@ -1,0 +1,439 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
+    <!--SEO-->
+
+<meta name="keywords" content="Cisco,Python,Cisco Security,openVuln API" />
+
+
+<meta name="description" content="利用openVuln API自动化查询思科产品漏洞B站视频链接：https://www.bilibili.com/video/BV1ZG411P7cf/?spm_id_from=333.999...." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    利用openVuln API自动化查询思科产品漏洞 |
+    
+    LiuQianglong&#39;s Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='LiuQianglong'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        LiuQianglong&#39;s Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Network/"><i class="fa "></i>
+                                Network</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/AWS/"><i class="fa "></i>
+                                AWS</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Python/"><i class="fa "></i>
+                                Python</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="利用openVuln API自动化查询思科产品漏洞">
+            
+            利用openVuln API自动化查询思科产品漏洞
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/Network/">Network</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/Cisco/" rel="tag">Cisco</a> <a class="tag-none-link" href="/tags/Cisco-Security/" rel="tag">Cisco Security</a> <a class="tag-none-link" href="/tags/Python/" rel="tag">Python</a> <a class="tag-none-link" href="/tags/openVuln-API/" rel="tag">openVuln API</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2022/12/20</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="利用openVuln-API自动化查询思科产品漏洞"><a href="#利用openVuln-API自动化查询思科产品漏洞" class="headerlink" title="利用openVuln API自动化查询思科产品漏洞"></a>利用openVuln API自动化查询思科产品漏洞</h1><p><strong>B站视频链接：</strong><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1ZG411P7cf/?spm_id_from=333.999.0.0">https://www.bilibili.com/video/BV1ZG411P7cf/?spm_id_from=333.999.0.0</a><br><strong>微信公众号：</strong>自刘地</p>
+<p><img src="/img/openVuln/wechat.jpg"></p>
+<h2 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h2><p>安全自动化是目前一个比较热门的话题，网络安全问题往往是由软件自身的安全漏洞被利用导致，所以及时修复已知安全漏洞，是抵御网络攻击非常重要的一环。这个文档介绍一下，如何利用思科openVuln API，自动化的查询特定思科产品的安全漏洞，并且通过Excel的方式展现这些漏洞信息。</p>
+<p>先看一下最后代码输出的Excel截图，代码可以根据提供的<strong>软件版本</strong>、<strong>CVE编号</strong>、<strong>产品名称</strong>来查询漏洞信息，每次查询的漏洞信息会存储为一个CSV文件，最后将所有的CSV信息合并到一个Excel文件中，每个Excel Sheet就是一个CSV文件中的信息，Excel列宽会根据内容自动调整。<img src="/img/openVuln/image-20221206155308324.png" alt="image-20221206155308324"></p>
+<p>除了利用API的方式查询，另外也可以通过思科提供的图形化界面来查询漏洞信息，可以登录<a target="_blank" rel="noopener" href="https://tools.cisco.com/security/center/publicationListing.x%E7%BD%91%E7%AB%99%E6%9F%A5%E8%AF%A2%E6%80%9D%E7%A7%91%E8%AE%BE%E5%A4%87%E7%9A%84%E6%BC%8F%E6%B4%9E%E4%BF%A1%E6%81%AF%E3%80%82![image-20221206004226273](/img/openVuln/image-20221206004226273.png)">https://tools.cisco.com/security/center/publicationListing.x网站查询思科设备的漏洞信息。![image-20221206004226273](/img/openVuln/image-20221206004226273.png)</a></p>
+<p>也可以查询特定版本的漏洞信息，链接：<a target="_blank" rel="noopener" href="https://tools.cisco.com/security/center/softwarechecker.x![image-20221206004913323](/img/openVuln/image-20221206004913323.png)">https://tools.cisco.com/security/center/softwarechecker.x![image-20221206004913323](/img/openVuln/image-20221206004913323.png)</a></p>
+<p>例如这里查询<code>IOS 15.2(7)E2</code>的漏洞信息。<img src="/img/openVuln/image-20221206004921527.png" alt="image-20221206004921527"></p>
+<h2 id="二、Cisco-PSIRT-openVuln-API-简介"><a href="#二、Cisco-PSIRT-openVuln-API-简介" class="headerlink" title="二、Cisco PSIRT openVuln API 简介"></a>二、Cisco PSIRT openVuln API 简介</h2><p>思科产品安全事件响应小组（Cisco Product Security Incident Response Team，<strong>PSIRT</strong>）是一个专门的全球团队，负责接收、调查和公开报告与思科产品和网络有关的安全漏洞信息 [1]。</p>
+<p>思科PSIRT团队提供了<code>openVuln API</code>[2]，允许用户查询思科产品的漏洞信息，漏洞信息支持多种格式的行业安全标准：</p>
+<ul>
+<li><p><strong>CVE</strong>：通用漏洞枚举（Common Vulnerability Enumeration），它就像是所有公开漏洞的字典表，对已公开的漏洞进行统一编号。由Mitre公司（非盈利机构）建立与维护，网址：<a target="_blank" rel="noopener" href="https://cve.org/">https://cve.org/</a></p>
+</li>
+<li><p><strong>CWE</strong>：常见弱点枚举 (Common Weakness Enumeration) 是MITRE公司继CVE之后的又一个安全漏洞词典，主要针对开发社区和安全从业人员社区，列出了架构、设计、代码或实施中可能出现的常见软件和硬件弱点，这些弱点可能导致可利用的安全漏洞 [3] ，网址：<a target="_blank" rel="noopener" href="https://cwe.mitre.org/">https://cwe.mitre.org</a></p>
+</li>
+<li><p><strong>CVSS</strong>：通用漏洞评分系统 (Common Vulnerability Scoring System) 提供了一种评估漏洞严重性的方法，企业在修复漏洞时，可以根据这个优先级来修复。CVSS现在的版本是V3.1，漏洞评分为0<del>10分，漏洞分为4个等级：`LOW(0.1</del>3.9)<code>、</code>MEDIUM(4.0<del>6.9)<code>、</code>HIGH(7.0</del>8.9)<code>、</code>CRITICAL(9.0~10.0)` [4]，网址：<a target="_blank" rel="noopener" href="https://first.org/cvss">https://first.org/cvss</a></p>
+</li>
+<li><p><strong>CSAF</strong>：通用安全咨询框架 (Common Security Advisory Framework) 是结构化机器可读漏洞相关咨询的规范。CSAF 是通用漏洞报告框架 (CVRF) 的新名称和替代品。网址：<a target="_blank" rel="noopener" href="https://csaf.io/">https://csaf.io/</a></p>
+</li>
+</ul>
+<h2 id="三、获取思科openVuln-API访问凭证"><a href="#三、获取思科openVuln-API访问凭证" class="headerlink" title="三、获取思科openVuln API访问凭证"></a>三、获取思科openVuln API访问凭证</h2><p>思科openVuln API使用<code>OAuth2</code>进行认证，所以需要认证获得授权之后才能查询。</p>
+<p>登录思科网站，创建凭证信息，网址<a target="_blank" rel="noopener" href="https://apiconsole.cisco.com/apps/myapps![image-20221205142053019](/img/openVuln/image-20221205142053019.png)">https://apiconsole.cisco.com/apps/myapps![image-20221205142053019](/img/openVuln/image-20221205142053019.png)</a></p>
+<p>创建一个应用名称，选择OAuth2.0的凭证类型，这里我选择客户端凭证。<img src="/img/openVuln/image-20221205142105693.png" alt="image-20221205142105693"></p>
+<p>勾选Cisco PSIRT openVuln API的权限，注意这个API的速率限制，每秒5次请求，每分钟30次请求。<img src="/img/openVuln/image-20221205142117035.png" alt="image-20221205142117035"></p>
+<p>创建完成。<img src="/img/openVuln/image-20221205142131223.png" alt="image-20221205142131223"></p>
+<p>查看产生的凭证信息，记录这个信息，KEY：<code>djshucbvmpu4cmcsgufwt36w</code>，CLIENT SECRET：<code>TVJxz72ADUBKdb7ySjTzzcQp</code>，注意不要泄露这个凭证信息（我会在演示完后销毁这个凭证）。<img src="/img/openVuln/image-20221205142142208.png" alt="image-20221205142142208"></p>
+<h2 id="四、测试访问openVuln-API"><a href="#四、测试访问openVuln-API" class="headerlink" title="四、测试访问openVuln API"></a>四、测试访问openVuln API</h2><h3 id="4-1-通过Postman软件测试"><a href="#4-1-通过Postman软件测试" class="headerlink" title="4.1 通过Postman软件测试"></a>4.1 通过Postman软件测试</h3><p>在Postman软件中选择配置<code>OAuth 2.0</code>的凭证信息，设置Token名称，设置凭证类型为<code>Client Credentials</code>，令牌URL为<code>https://cloudsso.cisco.com/as/token.oauth2</code>，Client ID为<code>djshucbvmpu4cmcsgufwt36w</code>，Client Secret：<code>TVJxz72ADUBKdb7ySjTzzcQp</code>，填写完信息之后，点击产生新的Token信息，然后使用这个Token。<img src="/img/openVuln/image-20221205144102631.png" alt="image-20221205144102631"></p>
+<p>在软件中发起HTTP GET请求，通过CVE信息查询受影响的产品 [5]，HTTP GET测试URL为：<a target="_blank" rel="noopener" href="https://api.cisco.com/security/advisories/v2/cve/CVE-2021-44228![image-20221205144109107](/img/openVuln/image-20221205144109107.png)">https://api.cisco.com/security/advisories/v2/cve/CVE-2021-44228![image-20221205144109107](/img/openVuln/image-20221205144109107.png)</a></p>
+<h3 id="4-2-通过Terminal运行测试"><a href="#4-2-通过Terminal运行测试" class="headerlink" title="4.2 通过Terminal运行测试"></a>4.2 通过Terminal运行测试</h3><p>通过<code>pip3 install openVulnQuery</code>安装<code>openVulnQuery</code>模块 [6]后，可以在Linux terminal使用命令行测试。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# pip3 install openVulnQuery</span><br></pre></td></tr></table></figure>
+
+
+<p>安装之后创建一个凭证文件，输入<code>CLIENT_ID</code>和<code>CLIENT_SECRET</code>信息。</p>
+<p>也可以将这个凭证信息配置在环境变量中，例如：<code>export CLIENT_ID=&quot;djshucbvmpu4cmcsgufwt36w&quot;</code>，export <code>CLIENT_SECRET=&quot;TVJxz72ADUBKdb7ySjTzzcQp&quot;</code>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# vim Credentials.json</span><br><span class="line">&#123;</span><br><span class="line">    &quot;CLIENT_ID&quot;: &quot;djshucbvmpu4cmcsgufwt36w&quot;,</span><br><span class="line">    &quot;CLIENT_SECRET&quot;: &quot;TVJxz72ADUBKdb7ySjTzzcQp&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>调用凭证信息，查询2022年8月份所有<code>critical</code>级别的漏洞。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# openVulnQuery --config Credentials.json --severity critical --first_published 2022-08-01:2022-08-30</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;advisory_id&quot;: &quot;cisco-sa-sb-mult-vuln-CbVp4SUR&quot;,</span><br><span class="line">        &quot;advisory_title&quot;: &quot;Cisco Small Business RV Series Routers Vulnerabilities&quot;,</span><br><span class="line">        &quot;bug_ids&quot;: [</span><br><span class="line">            &quot;CSCwb58268&quot;,</span><br><span class="line">            &quot;CSCwb58273&quot;,</span><br><span class="line">            &quot;CSCwb98961&quot;,</span><br><span class="line">            &quot;CSCwb98964&quot;,</span><br><span class="line">            &quot;CSCwc00210&quot;</span><br><span class="line">        ],</span><br><span class="line">        &quot;cves&quot;: [</span><br><span class="line">            &quot;CVE-2022-20827&quot;,</span><br><span class="line">            &quot;CVE-2022-20841&quot;,</span><br><span class="line">            &quot;CVE-2022-20842&quot;</span><br><span class="line">        ],</span><br><span class="line">        &quot;cvrfUrl&quot;: &quot;https://tools.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-sb-mult-vuln-CbVp4SUR/cvrf/cisco-sa-sb-mult-vuln-CbVp4SUR_cvrf.xml&quot;,</span><br><span class="line">        &quot;cvss_base_score&quot;: &quot;9.8&quot;,</span><br><span class="line">        &quot;cwe&quot;: [</span><br><span class="line">            &quot;CWE-120&quot;,</span><br><span class="line">            &quot;CWE-77&quot;,</span><br><span class="line">            &quot;CWE-78&quot;</span><br><span class="line">        ],</span><br><span class="line">        &quot;first_published&quot;: &quot;2022-08-03T23:00:00&quot;,</span><br><span class="line">        &quot;ips_signatures&quot;: [</span><br><span class="line">            &quot;NA&quot;</span><br><span class="line">        ],</span><br><span class="line">        &quot;last_updated&quot;: &quot;2022-08-03T23:00:00&quot;,</span><br><span class="line">        &quot;product_names&quot;: [</span><br><span class="line">            &quot;Cisco Small Business RV Series Router Firmware &quot;</span><br><span class="line">        ],</span><br><span class="line">        &quot;publication_url&quot;: &quot;https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sb-mult-vuln-CbVp4SUR&quot;,</span><br><span class="line">        &quot;sir&quot;: &quot;Critical&quot;,</span><br><span class="line">        &quot;summary&quot;: &quot;&lt;p&gt;Multiple vulnerabilities in Cisco&amp;nbsp;Small Business RV160, RV260, RV340, and RV345 Series Routers could allow an unauthenticated, remote attacker to execute arbitrary code or cause a denial of service (DoS) condition on an affected device.&lt;/p&gt;\n&lt;p&gt;For more information about these vulnerabilities, see the&amp;nbsp;&lt;a href=\&quot;#ds\&quot;&gt;Details&lt;/a&gt;&amp;nbsp;section of this advisory.&lt;/p&gt;\n&lt;p&gt;Cisco&amp;nbsp;has released software updates that address these vulnerabilities. There are no workarounds that address these vulnerabilities.&lt;/p&gt;\n&lt;p&gt;This advisory is available at the following link:&lt;br&gt;&lt;a href=\&quot;https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sb-mult-vuln-CbVp4SUR\&quot;&gt;https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sb-mult-vuln-CbVp4SUR&lt;/a&gt;&lt;/p&gt;&quot;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h3 id="4-3-将OpenVulnQuery做为库-Library-测试"><a href="#4-3-将OpenVulnQuery做为库-Library-测试" class="headerlink" title="4.3 将OpenVulnQuery做为库(Library)测试"></a>4.3 将OpenVulnQuery做为库(Library)测试</h3><p>创建一个python测试脚本，填入<code>client_id</code>和<code>client_secret</code>。这里查询特<code>IOS 15.2(7)E5</code>这个版本漏洞信息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]<span class="comment"># vim prist_demo.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> openVulnQuery <span class="keyword">import</span> query_client</span><br><span class="line">query_client = query_client.OpenVulnQueryClient(client_id=<span class="string">&quot;djshucbvmpu4cmcsgufwt36w&quot;</span>, client_secret=<span class="string">&quot;TVJxz72ADUBKdb7ySjTzzcQp&quot;</span>)</span><br><span class="line">advisories = query_client.get_by_ios(adv_format=<span class="string">&#x27;default&#x27;</span>, ios_version=<span class="string">&#x27;15.2(7)E5&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> advisories:</span><br><span class="line">    print(<span class="string">f&#x27;advisory_id:<span class="subst">&#123;x.advisory_id&#125;</span>&#x27;</span>)</span><br><span class="line">    print(<span class="string">f&#x27;sir:<span class="subst">&#123;x.sir&#125;</span>&#x27;</span>)</span><br><span class="line">    print(<span class="string">f&#x27;first_published:<span class="subst">&#123;x.first_published&#125;</span>&#x27;</span>)</span><br><span class="line">    print(<span class="string">f&#x27;last_updated:<span class="subst">&#123;x.last_updated&#125;</span>&#x27;</span>)</span><br><span class="line">    print(<span class="string">f&#x27;cves:<span class="subst">&#123;x.cves&#125;</span>&#x27;</span>)</span><br><span class="line">    print(<span class="string">f&#x27;bug_ids:<span class="subst">&#123;x.bug_ids&#125;</span>&#x27;</span>)</span><br><span class="line">    print(<span class="string">f&#x27;cvss_base_score:<span class="subst">&#123;x.cvss_base_score&#125;</span>&#x27;</span>)</span><br><span class="line">    print(<span class="string">f&#x27;advisory_title:<span class="subst">&#123;x.advisory_title&#125;</span>&#x27;</span>)</span><br><span class="line">    print(<span class="string">f&#x27;publication_url:<span class="subst">&#123;x.publication_url&#125;</span>&#x27;</span>)</span><br><span class="line">    print(<span class="string">f&#x27;cwe:<span class="subst">&#123;x.cwe&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(f&#x27;product_names:&#123;x.product_names&#125;&#x27;)</span></span><br><span class="line">    <span class="comment"># print(f&#x27;summary:&#123;x.summary&#125;&#x27;)</span></span><br><span class="line">    print(<span class="string">&#x27;-&#x27;</span>*<span class="number">30</span>)</span><br></pre></td></tr></table></figure>
+<p>下面是所有可以获取的字段信息，可以根据需求自行过滤。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">advisory_id</span><br><span class="line">advisory_title</span><br><span class="line">bug_ids</span><br><span class="line">csafUrl</span><br><span class="line">cves</span><br><span class="line">cvrfUrl</span><br><span class="line">cvss_base_score</span><br><span class="line">cwe</span><br><span class="line">filter</span><br><span class="line">first_published</span><br><span class="line">ips_signatures</span><br><span class="line">last_updated</span><br><span class="line">platforms</span><br><span class="line">product_names</span><br><span class="line">publication_url</span><br><span class="line">sir</span><br><span class="line">summary</span><br></pre></td></tr></table></figure>
+
+
+<p>运行测试脚本的输出信息。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# python3 prist_demo.py</span><br><span class="line">advisory_id:cisco-sa-ssh-excpt-dos-FzOBQTnk</span><br><span class="line">sir:High</span><br><span class="line">first_published:2022-09-28T16:00:00</span><br><span class="line">last_updated:2022-09-28T16:00:00</span><br><span class="line">cves:[&#x27;CVE-2022-20920&#x27;]</span><br><span class="line">bug_ids:[&#x27;CSCvx63027&#x27;]</span><br><span class="line">cvss_base_score:7.7</span><br><span class="line">advisory_title:Cisco IOS and IOS XE Software SSH Denial of Service  Vulnerability</span><br><span class="line">publication_url:https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-ssh-excpt-dos-FzOBQTnk</span><br><span class="line">cwe:[&#x27;CWE-755&#x27;]</span><br><span class="line">------------------------------</span><br><span class="line">advisory_id:cisco-sa-ikev2-ebFrwMPr</span><br><span class="line">sir:High</span><br><span class="line">first_published:2021-09-22T16:00:00</span><br><span class="line">last_updated:2021-09-22T16:00:00</span><br><span class="line">cves:[&#x27;CVE-2021-1620&#x27;]</span><br><span class="line">bug_ids:[&#x27;CSCvw25564&#x27;]</span><br><span class="line">cvss_base_score:7.7</span><br><span class="line">advisory_title:Cisco IOS and IOS XE Software IKEv2 AutoReconnect Feature Denial of Service Vulnerability</span><br><span class="line">publication_url:https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-ikev2-ebFrwMPr</span><br><span class="line">cwe:[&#x27;CWE-563&#x27;]</span><br><span class="line">------------------------------</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="五、Python最终代码"><a href="#五、Python最终代码" class="headerlink" title="五、Python最终代码"></a>五、Python最终代码</h2><h3 id="5-1-使用openVulnQuery-API-2-0"><a href="#5-1-使用openVulnQuery-API-2-0" class="headerlink" title="5.1 使用openVulnQuery API 2.0"></a>5.1 使用openVulnQuery API 2.0</h3><p>思科PSIRT在2022年8月1日发布了新的API接口，并通告旧的API接口将会下线。但是目前通过pip install安装的Python库使用的是旧API接口，如果想要在Python代码中使用新的API接口，可以在pip install安装模块后，从Github下载最新的代码，替换整个<code>_library</code>目录中的所有内容。下面演示一下这个过程。</p>
+<p>首先正常安装<code>openVulnQuery</code>模块。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# pip3 install openVulnQuery</span><br></pre></td></tr></table></figure>
+
+
+<p>安装之后，查询<code>openVulnQuery</code>模块的安装目录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 _library]# find / -name &quot;advisory.py&quot;</span><br><span class="line">/usr/local/lib64/python3.6/site-packages/openVulnQuery/_library/advisory.py</span><br></pre></td></tr></table></figure>
+
+
+<p>可以查看目录中的<code>config.py</code>文件，关注最后一行的API_URL信息，新的API_URL链接为：<code>API_URL = &quot;https://api.cisco.com/security/advisories/v2&quot;</code>。所以可以确认通过pip install安装的模块，使用的是旧的API接口。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 _library]# more /usr/local/lib64/python3.6/site-packages/openVulnQuery/_library/config.py</span><br><span class="line"><span class="meta">#</span><span class="bash"> There are four prerequisites needed before a user can initiate the API service calls and obtain access to the underlying Cisco security vulnerability information</span></span><br><span class="line">.</span><br><span class="line"><span class="meta">#</span><span class="bash">  - Sign-in with your CCO ID</span></span><br><span class="line"><span class="meta">#</span><span class="bash">  - Register a client application to create a “unique client identifier” that will identify your client application to the Cisco Token services. Registration crea</span></span><br><span class="line">tes the client credentials along with name assignment, description, and subscribes the client application to one or more of the OAuth v2.0 grant types requested fo</span><br><span class="line">r their client  application.</span><br><span class="line"><span class="meta">#</span><span class="bash">  - Get Access Tokens - utilize Cisco<span class="string">&#x27;s Token services to acquire an OAuth v2.0 access-token(s).</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">  - Make API Calls</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Enter your client ID and client secret below.</span></span><br><span class="line"></span><br><span class="line">CLIENT_ID = &quot;&quot;</span><br><span class="line">CLIENT_SECRET = &quot;&quot;</span><br><span class="line"></span><br><span class="line">REQUEST_TOKEN_URL = &quot;https://cloudsso.cisco.com/as/token.oauth2&quot;</span><br><span class="line">API_URL = &quot;https://api.cisco.com/security/advisories&quot;</span><br></pre></td></tr></table></figure>
+
+
+<p>从Github下载最新的代码。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# git clone https://github.com/CiscoPSIRT/openVulnQuery.git</span><br><span class="line">正克隆到 &#x27;openVulnQuery&#x27;...</span><br><span class="line">remote: Enumerating objects: 294, done.</span><br><span class="line">remote: Counting objects: 100% (121/121), done.</span><br><span class="line">remote: Compressing objects: 100% (94/94), done.</span><br><span class="line">remote: Total 294 (delta 58), reused 44 (delta 24), pack-reused 173</span><br><span class="line">接收对象中: 100% (294/294), 152.18 KiB | 763.00 KiB/s, 完成.</span><br><span class="line">处理 delta 中: 100% (129/129), 完成.</span><br></pre></td></tr></table></figure>
+
+
+<p>将Github中<code>_library</code>目录的所有文件拷贝到原有的<code>_library</code>目录中，并覆盖原有文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp -r /root/openVulnQuery/openVulnQuery/_library/ /usr/local/lib64/python3.6/site-packages/openVulnQuery/</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="5-2-Python查询思路"><a href="#5-2-Python查询思路" class="headerlink" title="5.2 Python查询思路"></a>5.2 Python查询思路</h3><p>这个代码的主要目的是：根据提供的<strong>软件版本</strong>、<strong>CVE编号</strong>、<strong>产品名称</strong>来查询漏洞信息，并将所有漏洞信息整合到Excel中。</p>
+<p>首先是根据什么信息来查询漏洞，最准确的是根据系统加版本来查询，可以明确的获取当前版本的所有漏洞信息。但是可惜的是，并不是所有思科产品都支持这个查询方式，只有下面这些系统可以通过软件版本的方式查询。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Cisco IOS Software (ios)</span><br><span class="line">Cisco IOS XE Software (iosxe)</span><br><span class="line">Cisco NX-OS Software (nxos)</span><br><span class="line">Cisco NX-OS Software in ACI mode (aci)</span><br><span class="line">Cisco Adaptive Security Appliance (ASA) Software (asa)</span><br><span class="line">Cisco Firepower Threat Defense (FTD) Software (ftd)</span><br><span class="line">Cisco Secure Firewall Management Center (FMC) Software (fmc)</span><br><span class="line">Cisco Firepower eXtensible Operating System (FXOS) (fxos)</span><br></pre></td></tr></table></figure>
+
+
+<p>其他不支持软件版本方式查询的系统，可以通过产品名称来查询，例如<code>WLC</code>、<code>ISE</code>等。如果你想了解产品的全称，可以访问<code>https://tools.cisco.com/security/center/productBoxData.x?prodType=CISCO</code>获取思科的所有产品名称。</p>
+<p>通过CVE编号查询受影响的产品，也是一个比较实用的查询方式。例如最近突发了一个<code>Log4j2</code>漏洞，已知CVE编号是<code>CVE-2021-44228</code>，想了解有哪些思科产品受到影响，可以通过这种方式来查询，列出所有受到影响的产品。</p>
+<p>查询完成后，就是用什么样的格式来输出这些信息。我将每个查询的结果生成一个CSV文件，因为CSV是一个纯文本文件，所以可以直接使用文本编辑器查看。但是如果查询很多产品的漏洞后，想在一个文件中查看，Excel是更加合适的格式。Excel可以将每个CSV文件作为一个<code>Sheet</code>，这样查看起来更加清晰。所有代码最终会输出两类文件，一类是基于每次查询产生的CSV文件，一个是所有CSV合并起来的Excel文件。另外将CSV合并到Excel时，默认列的宽度默认较小，可以根据列的内容动态的来调整Excel列宽，这样可读性更好。</p>
+<h3 id="5-3-Python-最终代码"><a href="#5-3-Python-最终代码" class="headerlink" title="5.3 Python 最终代码"></a>5.3 Python 最终代码</h3><p>创建一个文件夹，用于存放查询结果的CSV文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# mkdir cisco_vuln_csv_folder</span><br></pre></td></tr></table></figure>
+
+
+<p>安装这次代码所需的Python模块<code>pandas</code>，<code>openpyxl</code>，<code>XlsxWriter</code>，<code>openVulnQuery</code>。</p>
+<p>注意<code>openVulnQuery</code>模块已经在5.1部分替换了最新的代码文件，使用了API 2.0接口。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# pip3 install pandas openpyxl XlsxWriter</span><br></pre></td></tr></table></figure>
+
+
+<p>创建Python代码文件，请自行替换<code>client_id</code>和<code>client_secret</code>。处于安全性考虑，账号信息可以放到另外的配置文件中来调用，这里为了简化代码，我直接放在源文件中了。另外这个代码也有很多重复性的部分可以优化，这里只是给大家提供一个思路，可以根据需要自行修改。如果有想要更好的查询方式，也欢迎联系我 :)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">client_id = <span class="string">&quot;djshucbvmpu4cmcsgufwt36w&quot;</span></span><br><span class="line">client_secret = <span class="string">&quot;TVJxz72ADUBKdb7ySjTzzcQp&quot;</span></span><br><span class="line">csv_folder = <span class="string">r&#x27;./cisco_vuln_csv_folder/&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cisco_ver_vuln_csv</span>(<span class="params">ostype=<span class="string">&#x27;ios&#x27;</span>, version=<span class="string">&#x27;None&#x27;</span></span>):</span></span><br><span class="line">    <span class="keyword">from</span> openVulnQuery <span class="keyword">import</span> query_client</span><br><span class="line">    query_client = query_client.OpenVulnQueryClient(client_id=client_id, client_secret=client_secret)</span><br><span class="line">    <span class="keyword">if</span> ostype == <span class="string">&#x27;ios&#x27;</span>:</span><br><span class="line">        advisories = query_client.get_by_ios(adv_format=<span class="string">&#x27;default&#x27;</span>, ios_version=version)</span><br><span class="line">    <span class="keyword">elif</span> ostype == <span class="string">&#x27;iosxe&#x27;</span>:</span><br><span class="line">        advisories = query_client.get_by_ios_xe(adv_format=<span class="string">&#x27;default&#x27;</span>, ios_version=version)</span><br><span class="line">    <span class="keyword">elif</span> ostype == <span class="string">&#x27;asa&#x27;</span>:</span><br><span class="line">        advisories = query_client.get_by_asa(adv_format=<span class="string">&#x27;default&#x27;</span>, asa_version=version)</span><br><span class="line">    <span class="keyword">elif</span> ostype == <span class="string">&#x27;fmc&#x27;</span>:</span><br><span class="line">        advisories = query_client.get_by_fmc(adv_format=<span class="string">&#x27;default&#x27;</span>, fmc_version=version)</span><br><span class="line">    <span class="keyword">elif</span> ostype == <span class="string">&#x27;ftd&#x27;</span>:</span><br><span class="line">        advisories = query_client.get_by_ftd(adv_format=<span class="string">&#x27;default&#x27;</span>, ftd_version=version)</span><br><span class="line">    <span class="keyword">elif</span> ostype == <span class="string">&#x27;fxos&#x27;</span>:</span><br><span class="line">        advisories = query_client.get_by_fxos(adv_format=<span class="string">&#x27;default&#x27;</span>, fxos_version=version)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">&#x27;请输入以下支持的OS类型：ios|iosxe|asa|fmc|ftd|fxos&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    headers = [<span class="string">&#x27;advisory_title&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;sir&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;cvss_base_score&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;first_published&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;last_updated&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;publication_url&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;cves&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;advisory_id&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;bug_ids&#x27;</span>,</span><br><span class="line">               ]</span><br><span class="line"></span><br><span class="line">    csvfile = <span class="built_in">open</span>(csv_folder + ostype+<span class="string">&#x27;_&#x27;</span>+version+<span class="string">&#x27;.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    advisories_info = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> advisories:</span><br><span class="line">        advisories_info.append(&#123;<span class="string">&#x27;advisory_title&#x27;</span>: x.advisory_title,</span><br><span class="line">                                <span class="string">&#x27;sir&#x27;</span>: x.sir,</span><br><span class="line">                                <span class="string">&#x27;cvss_base_score&#x27;</span>: x.cvss_base_score,</span><br><span class="line">                                <span class="string">&#x27;first_published&#x27;</span>: x.first_published,</span><br><span class="line">                                <span class="string">&#x27;last_updated&#x27;</span>: x.last_updated,</span><br><span class="line">                                <span class="string">&#x27;publication_url&#x27;</span>: x.publication_url,</span><br><span class="line">                                <span class="string">&#x27;cves&#x27;</span>: x.cves,</span><br><span class="line">                                <span class="string">&#x27;advisory_id&#x27;</span>: x.advisory_id,</span><br><span class="line">                                <span class="string">&#x27;bug_ids&#x27;</span>: x.bug_ids</span><br><span class="line">                                &#125;)</span><br><span class="line"></span><br><span class="line">    c = csv.DictWriter(csvfile, fieldnames=headers)</span><br><span class="line">    c.writeheader()</span><br><span class="line">    c.writerows(advisories_info)</span><br><span class="line">    csvfile.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cisco_product_vuln_csv</span>(<span class="params">product_name=<span class="string">&#x27;wlc&#x27;</span></span>):</span></span><br><span class="line">    <span class="keyword">from</span> openVulnQuery <span class="keyword">import</span> query_client</span><br><span class="line">    query_client = query_client.OpenVulnQueryClient(client_id=client_id, client_secret=client_secret)</span><br><span class="line">    advisories = query_client.get_by_product(adv_format=<span class="string">&#x27;default&#x27;</span>, product_name=product_name)</span><br><span class="line"></span><br><span class="line">    headers = [<span class="string">&#x27;advisory_title&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;sir&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;cvss_base_score&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;first_published&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;last_updated&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;publication_url&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;cves&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;advisory_id&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;bug_ids&#x27;</span>,</span><br><span class="line">               ]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> product_name == <span class="string">&#x27;Cisco Identity Services Engine Software&#x27;</span>:</span><br><span class="line">        csvfile = <span class="built_in">open</span>(csv_folder + <span class="string">&#x27;product_ISE.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="keyword">elif</span> product_name == <span class="string">&#x27;Cisco Unified Communications Manager&#x27;</span>:</span><br><span class="line">        csvfile = <span class="built_in">open</span>(csv_folder + <span class="string">&#x27;product_CUCM.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        csvfile = <span class="built_in">open</span>(csv_folder + <span class="string">&#x27;product&#x27;</span>+<span class="string">&#x27;_&#x27;</span>+product_name+<span class="string">&#x27;.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    advisories_info = []</span><br><span class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> advisories:</span><br><span class="line">        advisories_info.append(&#123;<span class="string">&#x27;advisory_title&#x27;</span>: x.advisory_title,</span><br><span class="line">                                <span class="string">&#x27;sir&#x27;</span>: x.sir,</span><br><span class="line">                                <span class="string">&#x27;cvss_base_score&#x27;</span>: x.cvss_base_score,</span><br><span class="line">                                <span class="string">&#x27;first_published&#x27;</span>: x.first_published,</span><br><span class="line">                                <span class="string">&#x27;last_updated&#x27;</span>: x.last_updated,</span><br><span class="line">                                <span class="string">&#x27;publication_url&#x27;</span>: x.publication_url,</span><br><span class="line">                                <span class="string">&#x27;cves&#x27;</span>: x.cves,</span><br><span class="line">                                <span class="string">&#x27;advisory_id&#x27;</span>: x.advisory_id,</span><br><span class="line">                                <span class="string">&#x27;bug_ids&#x27;</span>: x.bug_ids</span><br><span class="line">                                &#125;)</span><br><span class="line"></span><br><span class="line">    c = csv.DictWriter(csvfile, fieldnames=headers)</span><br><span class="line">    c.writeheader()</span><br><span class="line">    c.writerows(advisories_info)</span><br><span class="line">    csvfile.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cisco_cve_vuln_csv</span>(<span class="params">cve_id=<span class="string">&#x27;CVE-2021-44228&#x27;</span></span>):</span></span><br><span class="line">    <span class="keyword">from</span> openVulnQuery <span class="keyword">import</span> query_client</span><br><span class="line">    query_client = query_client.OpenVulnQueryClient(client_id=client_id, client_secret=client_secret)</span><br><span class="line">    advisories = query_client.get_by_cve(adv_format=<span class="string">&#x27;default&#x27;</span>, cve_id=cve_id)</span><br><span class="line"></span><br><span class="line">    headers = [<span class="string">&#x27;advisory_title&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;sir&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;cvss_base_score&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;first_published&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;last_updated&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;publication_url&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;cves&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;advisory_id&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;bug_ids&#x27;</span>,</span><br><span class="line">               ]</span><br><span class="line"></span><br><span class="line">    csvfile = <span class="built_in">open</span>(csv_folder + cve_id + <span class="string">&#x27;.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    advisories_info = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> advisories:</span><br><span class="line">        advisories_info.append(&#123;<span class="string">&#x27;advisory_title&#x27;</span>: x.advisory_title,</span><br><span class="line">                                <span class="string">&#x27;sir&#x27;</span>: x.sir,</span><br><span class="line">                                <span class="string">&#x27;cvss_base_score&#x27;</span>: x.cvss_base_score,</span><br><span class="line">                                <span class="string">&#x27;first_published&#x27;</span>: x.first_published,</span><br><span class="line">                                <span class="string">&#x27;last_updated&#x27;</span>: x.last_updated,</span><br><span class="line">                                <span class="string">&#x27;publication_url&#x27;</span>: x.publication_url,</span><br><span class="line">                                <span class="string">&#x27;cves&#x27;</span>: x.cves,</span><br><span class="line">                                <span class="string">&#x27;advisory_id&#x27;</span>: x.advisory_id,</span><br><span class="line">                                <span class="string">&#x27;bug_ids&#x27;</span>: x.bug_ids</span><br><span class="line">                                &#125;)</span><br><span class="line"></span><br><span class="line">    c = csv.DictWriter(csvfile, fieldnames=headers)</span><br><span class="line">    c.writeheader()</span><br><span class="line">    c.writerows(advisories_info)</span><br><span class="line">    csvfile.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">import</span> time</span><br><span class="line">    cisco_ver_vuln_csv(ostype=<span class="string">&#x27;ios&#x27;</span>, version=<span class="string">&#x27;15.2(7)E5&#x27;</span>)</span><br><span class="line">    cisco_ver_vuln_csv(ostype=<span class="string">&#x27;iosxe&#x27;</span>, version=<span class="string">&#x27;17.8.1&#x27;</span>)</span><br><span class="line">    cisco_ver_vuln_csv(ostype=<span class="string">&#x27;asa&#x27;</span>, version=<span class="string">&#x27;9.18.1&#x27;</span>)</span><br><span class="line">    cisco_ver_vuln_csv(ostype=<span class="string">&#x27;fmc&#x27;</span>, version=<span class="string">&#x27;7.0.2&#x27;</span>)</span><br><span class="line">    time.sleep(<span class="number">3</span>)</span><br><span class="line">    cisco_ver_vuln_csv(ostype=<span class="string">&#x27;ftd&#x27;</span>, version=<span class="string">&#x27;7.2.0&#x27;</span>)</span><br><span class="line">    cisco_ver_vuln_csv(ostype=<span class="string">&#x27;fxos&#x27;</span>, version=<span class="string">&#x27;2.12.0.31&#x27;</span>)</span><br><span class="line">    cisco_cve_vuln_csv(cve_id=<span class="string">&#x27;CVE-2021-44228&#x27;</span>)</span><br><span class="line">    time.sleep(<span class="number">3</span>)</span><br><span class="line">    cisco_product_vuln_csv(product_name=<span class="string">&#x27;WLC&#x27;</span>)</span><br><span class="line">    cisco_product_vuln_csv(product_name=<span class="string">&#x27;Cisco Identity Services Engine Software&#x27;</span>)</span><br><span class="line">    cisco_product_vuln_csv(product_name=<span class="string">&#x27;Cisco Unified Communications Manager&#x27;</span>)</span><br><span class="line">    cisco_product_vuln_csv(product_name=<span class="string">&#x27;Cisco TelePresence&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 多个CSV文件合并为一个excel</span></span><br><span class="line">    csv_folder_name = <span class="string">r&quot;./cisco_vuln_csv_folder&quot;</span></span><br><span class="line">    writer = pd.ExcelWriter(<span class="string">&#x27;my_cisco_vuln.xlsx&#x27;</span>)</span><br><span class="line">    csv_file_list = os.listdir(csv_folder_name)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> csv_name <span class="keyword">in</span> csv_file_list:</span><br><span class="line">        csv_data = pd.read_csv(csv_folder_name + <span class="string">&#x27;/&#x27;</span> + csv_name, encoding=<span class="string">&#x27;UTF-8&#x27;</span>)</span><br><span class="line">        csv_data.to_excel(writer, csv_name, index=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">        df = pd.DataFrame(data=csv_data)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> column <span class="keyword">in</span> df:</span><br><span class="line">            column_width = <span class="built_in">max</span>(df[column].astype(<span class="built_in">str</span>).<span class="built_in">map</span>(<span class="built_in">len</span>).<span class="built_in">max</span>(), <span class="built_in">len</span>(column))</span><br><span class="line">            col_idx = df.columns.get_loc(column)</span><br><span class="line">            writer.sheets[csv_name].set_column(col_idx, col_idx, column_width)</span><br><span class="line">    writer.save()</span><br><span class="line">    print(<span class="string">&#x27;Excel文件已经创建完成&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+<p>运行代码测试。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# python3 cisco_psirt_vuln.py</span><br><span class="line">Excel文件已经创建完成</span><br></pre></td></tr></table></figure>
+
+
+<p>查看输出的CSV文件和Excel文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# ls cisco_vuln_csv_folder/</span><br><span class="line"> asa_9.18.1.csv   ftd_7.2.0.csv       &#x27;ios_15.2(7)E5.csv&#x27;  &#x27;product_Cisco TelePresence.csv&#x27;   product_ISE.csv</span><br><span class="line"> fmc_7.0.2.csv    fxos_2.12.0.31.csv   iosxe_17.8.1.csv     product_CUCM.csv                  product_WLC.csv</span><br><span class="line"></span><br><span class="line">[root@centos8 ~]# ls my_cisco_vuln.xlsx</span><br><span class="line">my_cisco_vuln.xlsx</span><br></pre></td></tr></table></figure>
+
+
+<p>打开Excel文件查看，通过软件版本方式的查询结果是非常准确的，对应的软件版本一定有这些漏洞。<img src="/img/openVuln/image-20221206155308324.png" alt="image-20221206155308324"></p>
+<p>通过产品名称的方式查询，会返回这个产品已知的所有漏洞信息，需要人工进一步的去判断，所关注的版本是否收到影响。不过可以根据<code>first_publishded</code>字段查看漏洞的发布时间，如果当前运行的版本是2020年发布的，那么也没有必要查看之前时间发布的漏洞。<img src="/img/openVuln/image-20221205233815929.png" alt="image-20221205233815929"></p>
+<h2 id="六、运行代码可能遇见的报错"><a href="#六、运行代码可能遇见的报错" class="headerlink" title="六、运行代码可能遇见的报错"></a>六、运行代码可能遇见的报错</h2><p>当未安装<code>XlsxWriter</code>模块时会遇见下面报错，可以通过安装这个模块解决，<code>pip3 install XlsxWriter</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# python3 cisco_psirt_vuln.py</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;cisco_prist_vuln.py&quot;, line 129, in &lt;module&gt;</span><br><span class="line">    writer.sheets[csv_name].set_column(col_idx, col_idx, column_width)</span><br><span class="line">AttributeError: &#39;Worksheet&#39; object has no attribute &#39;set_column&#39;</span><br></pre></td></tr></table></figure>
+
+
+<p>如果使用了旧的API，可能遇见下面报错。因为通过pip install安装的<code>openVulnQuery</code>模块，使用的是旧的API，其中没有<code>get_by_asa</code>这个方法。解决方法参考5.1部分，使用最新的Github代码，代码链接<a target="_blank" rel="noopener" href="https://github.com/CiscoPSIRT/openVulnQuery">https://github.com/CiscoPSIRT/openVulnQuery</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# python3 cisco_psirt_vuln.py</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;cisco_psirt_vuln.py&quot;, line 105, in &lt;module&gt;</span><br><span class="line">    cisco_ver_vuln_csv(ostype&#x3D;&#39;asa&#39;, version&#x3D;&#39;9.18.1&#39;)</span><br><span class="line">  File &quot;cisco_psirt_vuln.py&quot;, line 18, in cisco_ver_vuln_csv</span><br><span class="line">    advisories &#x3D; query_client.get_by_asa(adv_format&#x3D;&#39;default&#39;, asa_version&#x3D;version)</span><br><span class="line">AttributeError: &#39;OpenVulnQueryClient&#39; object has no attribute &#39;get_by_asa&#39;</span><br></pre></td></tr></table></figure>
+
+
+<p>当网络不稳定，或者API超过限制速率时，可能遇见下面报错。可以尝试更换主机的网络环境，或者等1分钟后再测试。API速率限制是每秒5次请求，每分钟30次请求。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">requests.exceptions.ConnectionError: HTTPSConnectionPool(host=&#x27;cloudsso.cisco.com&#x27;, port=443): Max retries exceeded with url: /as/token.oauth2?client_id=djshucbvmpu4cmcsgufwt36w&amp;client_secret=TVJxz72ADUBKdb7ySjTzzcQp (Caused by NewConnectionError(&#x27;&lt;urllib3.connection.VerifiedHTTPSConnection object at 0x7fc2bcea1c88&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable&#x27;,))</span><br><span class="line"></span><br><span class="line">requests.exceptions.ConnectionError: HTTPSConnectionPool(host=&#x27;cloudsso.cisco.com&#x27;, port=443): Max retries exceeded with url: /as/token.oauth2?client_id=djshucbvmpu4cmcsgufwt36w&amp;client_secret=TVJxz72ADUBKdb7ySjTzzcQp (Caused by NewConnectionError(&#x27;&lt;urllib3.connection.HTTPSConnection object at 0x00000214AA2EFA88&gt;: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。&#x27;))</span><br><span class="line"></span><br><span class="line">requests.exceptions.ProxyError: HTTPSConnectionPool(host=&#x27;api.cisco.com&#x27;, port=443): Max retries exceeded with url: /security/advisories/v2/OSType/ios?version=15.2%287%29E5 (Caused by ProxyError(&#x27;Cannot connect to proxy.&#x27;, ConnectionResetError(10054, &#x27;远程主机强迫关闭了一个现有的连接。&#x27;, None, 10054, None)))</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="七、参考文档"><a href="#七、参考文档" class="headerlink" title="七、参考文档"></a>七、参考文档</h2><ul>
+<li>[1] Cisco Product Security Incident Response Team：<a target="_blank" rel="noopener" href="https://www.cisco.com/c/dam/en_us/about/doing_business/trust-center/docs/cisco-psirt-infographic.pdf">https://www.cisco.com/c/dam/en_us/about/doing_business/trust-center/docs/cisco-psirt-infographic.pdf</a></li>
+<li>[2] PSIRT openVuln API：<a target="_blank" rel="noopener" href="https://developer.cisco.com/docs/psirt/#!overview/overview">https://developer.cisco.com/docs/psirt/#!overview/overview</a></li>
+<li>[3] 道高一丈，且看CWE4.2的新特性：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/340011094">https://zhuanlan.zhihu.com/p/340011094</a></li>
+<li>[4] 揭开CVSS的神秘面纱：<a target="_blank" rel="noopener" href="https://codeant.valiantsec.cn/industry_detail?id=8042e0c9345c46efbe182698150f84a9">https://codeant.valiantsec.cn/industry_detail?id=8042e0c9345c46efbe182698150f84a9</a></li>
+<li>[5] Cisco PSIRT openVuln API Query by CVE ID：<a target="_blank" rel="noopener" href="https://developer.cisco.com/docs/psirt/#!api-reference/query-by-cve-id">https://developer.cisco.com/docs/psirt/#!api-reference/query-by-cve-id</a></li>
+<li>[6] Github CiscoPSIRT/openVulnQuery <a target="_blank" rel="noopener" href="https://github.com/CiscoPSIRT/openVulnQuery">https://github.com/CiscoPSIRT/openVulnQuery</a></li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            非商业转载请注明出处，商业转载请联系作者获得授权。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/AWS-GWLB%E5%AF%B9%E8%AE%BF%E9%97%AEALB%E6%B5%81%E9%87%8F%E5%81%9A%E5%AE%89%E5%85%A8%E6%A3%80%E6%B5%8B.html" class="next-post btn btn-default" title='AWS GWLB对访问ALB流量做安全检测'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            AWS GWLB对访问ALB流量做安全检测</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'stf5rGD17bcrWN1mvUT4pu8C-gzGzoHsz',
+    appKey: 'r5qpzBWMAzt2hDAcDftecM1R',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: false,
+    avatar: 'mm',
+    meta: 'nick'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh-CN'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A9%E7%94%A8openVuln-API%E8%87%AA%E5%8A%A8%E5%8C%96%E6%9F%A5%E8%AF%A2%E6%80%9D%E7%A7%91%E4%BA%A7%E5%93%81%E6%BC%8F%E6%B4%9E"><span class="toc-text">利用openVuln API自动化查询思科产品漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%83%8C%E6%99%AF"><span class="toc-text">一、背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Cisco-PSIRT-openVuln-API-%E7%AE%80%E4%BB%8B"><span class="toc-text">二、Cisco PSIRT openVuln API 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%8E%B7%E5%8F%96%E6%80%9D%E7%A7%91openVuln-API%E8%AE%BF%E9%97%AE%E5%87%AD%E8%AF%81"><span class="toc-text">三、获取思科openVuln API访问凭证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%B5%8B%E8%AF%95%E8%AE%BF%E9%97%AEopenVuln-API"><span class="toc-text">四、测试访问openVuln API</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E9%80%9A%E8%BF%87Postman%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95"><span class="toc-text">4.1 通过Postman软件测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E9%80%9A%E8%BF%87Terminal%E8%BF%90%E8%A1%8C%E6%B5%8B%E8%AF%95"><span class="toc-text">4.2 通过Terminal运行测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%B0%86OpenVulnQuery%E5%81%9A%E4%B8%BA%E5%BA%93-Library-%E6%B5%8B%E8%AF%95"><span class="toc-text">4.3 将OpenVulnQuery做为库(Library)测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81Python%E6%9C%80%E7%BB%88%E4%BB%A3%E7%A0%81"><span class="toc-text">五、Python最终代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E4%BD%BF%E7%94%A8openVulnQuery-API-2-0"><span class="toc-text">5.1 使用openVulnQuery API 2.0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-Python%E6%9F%A5%E8%AF%A2%E6%80%9D%E8%B7%AF"><span class="toc-text">5.2 Python查询思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-Python-%E6%9C%80%E7%BB%88%E4%BB%A3%E7%A0%81"><span class="toc-text">5.3 Python 最终代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E8%BF%90%E8%A1%8C%E4%BB%A3%E7%A0%81%E5%8F%AF%E8%83%BD%E9%81%87%E8%A7%81%E7%9A%84%E6%8A%A5%E9%94%99"><span class="toc-text">六、运行代码可能遇见的报错</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">七、参考文档</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2022
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
