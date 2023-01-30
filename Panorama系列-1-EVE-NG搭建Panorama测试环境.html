@@ -1,0 +1,377 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
+    <!--SEO-->
+
+<meta name="keywords" content="Paloalto,Panorama,EVE-NG" />
+
+
+<meta name="description" content="YouTube视频：https://www.youtube.com/@qianglongliu1416/videosB站视频链接：https://www.bilibili.com/video/B..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    Panorama系列--(1)EVE-NG搭建Panorama测试环境 |
+    
+    LiuQianglong&#39;s Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='LiuQianglong'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        LiuQianglong&#39;s Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Network/"><i class="fa "></i>
+                                Network</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/AWS/"><i class="fa "></i>
+                                AWS</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Python/"><i class="fa "></i>
+                                Python</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Panorama系列--(1)EVE-NG搭建Panorama测试环境">
+            
+            Panorama系列--(1)EVE-NG搭建Panorama测试环境
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/Network/">Network</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/EVE-NG/" rel="tag">EVE-NG</a> <a class="tag-none-link" href="/tags/Paloalto/" rel="tag">Paloalto</a> <a class="tag-none-link" href="/tags/Panorama/" rel="tag">Panorama</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2023/01/11</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <p><strong>YouTube视频：</strong><a target="_blank" rel="noopener" href="https://www.youtube.com/@qianglongliu1416/videos">https://www.youtube.com/@qianglongliu1416/videos</a><br><strong>B站视频链接：</strong><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1r8411P7Dg">https://www.bilibili.com/video/BV1r8411P7Dg</a><br><strong>微信公众号：</strong>自刘地<br><img src="/img/wechat.jpg" alt="自刘地"></p>
+<p>这篇文档介绍如何利用EVE-NG搭建Panorama测试环境。</p>
+<h2 id="一、注意事项"><a href="#一、注意事项" class="headerlink" title="一、注意事项"></a>一、注意事项</h2><ul>
+<li>EVE-NG的低版本不支持Panorama镜像，例如<code>2.0.3-86</code>版本就不支持。这里实验环境使用的是版本是<code>5.0.1-13-Community</code>，下载链接：<a target="_blank" rel="noopener" href="https://www.eve-ng.net/index.php/download/#DL-COMM%E3%80%82">https://www.eve-ng.net/index.php/download/#DL-COMM。</a></li>
+<li>Panorama与Paloalto防火墙版本需要保持一致，或者Panorama高于Paloalto防火墙的版本。这里实验环境Panorama与Paloalto都是用<code>10.2.0</code>版本。另外测试时发现Paloalto防火墙<code>10.2.3</code>版本在EVE-NG环境中有Bug，无法正常启动。</li>
+<li>Paloalto防火墙在未激活的情况也可以测试大部分功能，但是Panorama不激活的情况下，无法管理Paloalto防火墙。</li>
+</ul>
+<h2 id="二、下载Panorama与Paloalto镜像"><a href="#二、下载Panorama与Paloalto镜像" class="headerlink" title="二、下载Panorama与Paloalto镜像"></a>二、下载Panorama与Paloalto镜像</h2><p>下载Panorama与Paloalto镜像文件，需要拥有Paloalto账号，登录<a target="_blank" rel="noopener" href="https://support.paloaltonetworks.com/Updates%E5%90%8E%E4%B8%8B%E8%BD%BD%E5%AF%B9%E5%BA%94%E7%9A%84%E9%95%9C%E5%83%8F%E6%96%87%E4%BB%B6%E3%80%82">https://support.paloaltonetworks.com/Updates后下载对应的镜像文件。</a></p>
+<p>下载Paloalto防火墙<code>10.2.0</code>版本的镜像文件。<img src="/img/Panorama-EVE-NG-1/image-20230110180541499.png"></p>
+<p>下载Panorama<code>10.2.0</code>版本的镜像文件。<img src="/img/Panorama-EVE-NG-1/image-20230110180551984.png"></p>
+<h2 id="三、EVE-NG-导入Paloalto与Panorama镜像"><a href="#三、EVE-NG-导入Paloalto与Panorama镜像" class="headerlink" title="三、EVE-NG 导入Paloalto与Panorama镜像"></a>三、EVE-NG 导入Paloalto与Panorama镜像</h2><p>通过WinSCP软件连接EVE-NG，将下载的镜像文件上传到EVE-NG中，这里先存放到临时目录<code>/root/temp</code>中。</p>
+<img src="/img/Panorama-EVE-NG-1/image-20230110201656959.png" alt="image-20230110201656959" style="zoom:50%;" />
+
+
+
+<p>EVE-NG添加Paloalto防火墙的步骤。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># 查看镜像文件</span><br><span class="line">root@eve-ng:~&#x2F;temp# ls</span><br><span class="line">Panorama-KVM-10.2.0.qcow2  PA-VM-KVM-10.2.0.qcow2</span><br><span class="line"></span><br><span class="line"># 创建文件夹</span><br><span class="line">root@eve-ng:~&#x2F;temp# mkdir &#x2F;opt&#x2F;unetlab&#x2F;addons&#x2F;qemu&#x2F;paloalto-10.2.0&#x2F;</span><br><span class="line"></span><br><span class="line"># 进入文件夹</span><br><span class="line">root@eve-ng:~&#x2F;temp# cd &#x2F;opt&#x2F;unetlab&#x2F;addons&#x2F;qemu&#x2F;paloalto-10.2.0&#x2F;</span><br><span class="line"></span><br><span class="line"># 移动镜像文件</span><br><span class="line">root@eve-ng:&#x2F;opt&#x2F;unetlab&#x2F;addons&#x2F;qemu&#x2F;paloalto-10.2.0# mv &#x2F;root&#x2F;temp&#x2F;PA-VM-KVM-10.2.0.qcow2 virtioa.qcow2</span><br><span class="line"></span><br><span class="line"># 查看镜像文件</span><br><span class="line">root@eve-ng:&#x2F;opt&#x2F;unetlab&#x2F;addons&#x2F;qemu&#x2F;paloalto-10.2.0# ls</span><br><span class="line">virtioa.qcow2</span><br><span class="line"></span><br><span class="line"># 修复权限</span><br><span class="line">&#x2F;opt&#x2F;unetlab&#x2F;wrappers&#x2F;unl_wrapper -a fixpermissions</span><br></pre></td></tr></table></figure>
+
+
+<p>EVE-NG添加Panorama的步骤。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># 为panorama镜像创建文件夹</span><br><span class="line">root@eve-ng:~# mkdir &#x2F;opt&#x2F;unetlab&#x2F;addons&#x2F;qemu&#x2F;panorama-10.2.0</span><br><span class="line"></span><br><span class="line"># 进入文件夹</span><br><span class="line">root@eve-ng:~# cd &#x2F;opt&#x2F;unetlab&#x2F;addons&#x2F;qemu&#x2F;panorama-10.2.0&#x2F;</span><br><span class="line"></span><br><span class="line"># 移动镜像文件</span><br><span class="line">mv &#x2F;root&#x2F;temp&#x2F;Panorama-KVM-10.2.0.qcow2 virtioa.qcow2 </span><br><span class="line"></span><br><span class="line"># 为panorama添加日志硬盘</span><br><span class="line">root@eve-ng:&#x2F;opt&#x2F;unetlab&#x2F;addons&#x2F;qemu&#x2F;panorama-10.2.0# &#x2F;opt&#x2F;qemu&#x2F;bin&#x2F;qemu-img create -f qcow2 virtiob.qcow2 100G</span><br><span class="line">Formatting &#39;virtiob.qcow2&#39;, fmt&#x3D;qcow2 size&#x3D;107374182400 encryption&#x3D;off cluster_size&#x3D;65536 lazy_refcounts&#x3D;off refcount_bits&#x3D;16</span><br><span class="line"></span><br><span class="line"># 修复权限</span><br><span class="line">root@eve-ng:&#x2F;opt&#x2F;unetlab&#x2F;addons&#x2F;qemu&#x2F;panorama-10.2.0# &#x2F;opt&#x2F;unetlab&#x2F;wrappers&#x2F;unl_wrapper -a fixpermissions</span><br></pre></td></tr></table></figure>
+
+
+<p>在EVE-NG中查看节点。<img src="/img/Panorama-EVE-NG-1/image-20230109212453086.png"></p>
+<p>创建一个Panorama，CPU为16，RAM为32768（32GB），如果小于这个数值，启动后会有告警提示。</p>
+<p>创建两个Paloalto防火墙，CPU为2，RAM为6144（6GB），如果内存小于5.5GB，将无法启动。</p>
+<p><img src="/img/Panorama-EVE-NG-1/image-20230110202918660.png"></p>
+<p>默认Panorama和防火墙的管理口会通过DHCP获取地址，如果想要手动配置静态IP地址，可以通过如下命令配置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set deviceconfig system type static</span><br><span class="line">set deviceconfig system ip-address 10.1.1.1 netmask 255.255.255.0 default-gateway 10.1.1.254 dns-setting servers primary 114.114.114.114</span><br></pre></td></tr></table></figure>
+
+
+<p>Panorama启动后初始化截图，默认的用户名和密码都是<code>admin</code>。</p>
+<img src="/img/Panorama-EVE-NG-1/image-20230110210337292.png" alt="image-20230110210337292" style="zoom:50%;" />
+
+<p>Paloalto2防火墙启动后初始化截图，默认的用户名和密码都是<code>admin</code>。</p>
+<img src="/img/Panorama-EVE-NG-1/image-20230110211036736.png" alt="image-20230110211036736" style="zoom:50%;" />
+
+
+
+
+
+<h2 id="四、Panorama与Paloalto激活并添加管理"><a href="#四、Panorama与Paloalto激活并添加管理" class="headerlink" title="四、Panorama与Paloalto激活并添加管理"></a>四、Panorama与Paloalto激活并添加管理</h2><p>登录Paloalto网页：<a target="_blank" rel="noopener" href="https://support.paloaltonetworks.com/SupportAccount/FirewallFlexDashboard%EF%BC%8C%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E7%9A%84%E6%8E%88%E6%9D%83%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E3%80%82">https://support.paloaltonetworks.com/SupportAccount/FirewallFlexDashboard，创建一个新的授权配置文件。</a></p>
+<p>CN-Series是各类容器与容器管理平台中的容器版本防火墙。</p>
+<p>Flexible vCPUs会根据系统分配的vCPU和内存，来决定防火墙的型号。</p>
+<p>勾选<code>For Management</code>表示使用Panorama。</p>
+<p><img src="/img/Panorama-EVE-NG-1/image-20230110205428763.png"></p>
+<p>生成Panorama的序列号。<img src="/img/Panorama-EVE-NG-1/image-20230110205935846.png"></p>
+<p>输入序列号，激活Panorama。激活会重启Panorama，需要等待较长时间，如果长时间没有启动成功，可以在EVE-NG中Stop虚拟机，然后重新Start。<img src="/img/Panorama-EVE-NG-1/image-20230110212745017.png"></p>
+<p>在Paloalto1和Paloalto2防火墙上，输入激活码，激活防火墙。激活会重启Paloalto防火墙，需要等待较长时间，如果长时间没有启动成功，可以在EVE-NG中Stop虚拟机，然后重新Start。<img src="/img/Panorama-EVE-NG-1/image-20230110213019556.png"></p>
+<p>Panorama激活成功。<img src="/img/Panorama-EVE-NG-1/image-20230110215044426.png"></p>
+<p>Paloalto防火墙激活成功。<img src="/img/Panorama-EVE-NG-1/image-20230110215053502.png"></p>
+<p>在Panorama上添加Paloalto防火墙，输入两台防火墙的序列号之后，拷贝认证密钥，最后提交配置到Panorama。<img src="/img/Panorama-EVE-NG-1/image-20230110221522873.png"></p>
+<p>在Paloalto1防火墙上添加Panorama的IP地址，以及认证密钥信息，最后提交配置到Paloalto。<img src="/img/Panorama-EVE-NG-1/image-20230110221824948.png"></p>
+<p>在Panorama上查看连接状态。<img src="/img/Panorama-EVE-NG-1/image-20230110225525242.png"></p>
+<h2 id="五、文档链接"><a href="#五、文档链接" class="headerlink" title="五、文档链接"></a>五、文档链接</h2><ul>
+<li>Panorama Administrator’s Guide ：<a target="_blank" rel="noopener" href="https://docs.paloaltonetworks.com/panorama/10-2/panorama-admin">https://docs.paloaltonetworks.com/panorama/10-2/panorama-admin</a></li>
+<li>EVE-NG 下载：<a target="_blank" rel="noopener" href="https://www.eve-ng.net/index.php/download/#DL-COMM">https://www.eve-ng.net/index.php/download/#DL-COMM</a></li>
+<li>EVE-NG导入Paloalto：<a target="_blank" rel="noopener" href="https://www.eve-ng.net/index.php/documentation/howtos/howto-add-palo-alto/">https://www.eve-ng.net/index.php/documentation/howtos/howto-add-palo-alto/</a></li>
+<li>EVE-NG导入Panorama：<a target="_blank" rel="noopener" href="https://www.eve-ng.net/index.php/documentation/howtos/palo-panorama/">https://www.eve-ng.net/index.php/documentation/howtos/palo-panorama/</a></li>
+<li>EVE-NG镜像命名：<a target="_blank" rel="noopener" href="https://www.eve-ng.net/index.php/documentation/qemu-image-namings/">https://www.eve-ng.net/index.php/documentation/qemu-image-namings/</a></li>
+<li>Paloalto下载镜像文件：<a target="_blank" rel="noopener" href="https://support.paloaltonetworks.com/Updates">https://support.paloaltonetworks.com/Updates</a></li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            非商业转载请注明出处，商业转载请联系作者获得授权。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/AWS%E4%B8%8A%E7%BB%93%E5%90%88Router53%E6%9E%84%E5%BB%BA%E6%80%9D%E7%A7%91%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AEVPN%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84.html" class="next-post btn btn-default" title='AWS上结合Router53构建思科远程访问VPN高可用架构'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            AWS上结合Router53构建思科远程访问VPN高可用架构</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'stf5rGD17bcrWN1mvUT4pu8C-gzGzoHsz',
+    appKey: 'r5qpzBWMAzt2hDAcDftecM1R',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: false,
+    avatar: 'mm',
+    meta: 'nick'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh-CN'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-text">一、注意事项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%B8%8B%E8%BD%BDPanorama%E4%B8%8EPaloalto%E9%95%9C%E5%83%8F"><span class="toc-text">二、下载Panorama与Paloalto镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81EVE-NG-%E5%AF%BC%E5%85%A5Paloalto%E4%B8%8EPanorama%E9%95%9C%E5%83%8F"><span class="toc-text">三、EVE-NG 导入Paloalto与Panorama镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81Panorama%E4%B8%8EPaloalto%E6%BF%80%E6%B4%BB%E5%B9%B6%E6%B7%BB%E5%8A%A0%E7%AE%A1%E7%90%86"><span class="toc-text">四、Panorama与Paloalto激活并添加管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%96%87%E6%A1%A3%E9%93%BE%E6%8E%A5"><span class="toc-text">五、文档链接</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2022
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
