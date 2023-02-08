@@ -1,0 +1,446 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="LiuQianglong&#39;s Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://liuqianglong.com">
+    <!--SEO-->
+
+<meta name="keywords" content="AWS,OpenVPN" />
+
+
+<meta name="description" content="YouTube视频：https://youtu.be/sx16UDUOPKg微信公众号：自刘地
+这篇文档介绍利用Shell脚本，快速搭建OpenVPN服务器，为用户提供远程访问VPN。
+Open..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    AWS上快速搭建OpenVPN服务器 |
+    
+    LiuQianglong&#39;s Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="LiuQianglong&#39;s Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?5ded9cc2d3b5dca951b5a7b2ca26747d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='LiuQianglong'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://liuqianglong.com">
+                        LiuQianglong&#39;s Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Network/"><i class="fa "></i>
+                                Network</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/AWS/"><i class="fa "></i>
+                                AWS</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/Python/"><i class="fa "></i>
+                                Python</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="AWS上快速搭建OpenVPN服务器">
+            
+            AWS上快速搭建OpenVPN服务器
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/Network/">Network</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/AWS/" rel="tag">AWS</a> <a class="tag-none-link" href="/tags/OpenVPN/" rel="tag">OpenVPN</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2023/02/09</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <p><strong>YouTube视频：</strong><a target="_blank" rel="noopener" href="https://youtu.be/sx16UDUOPKg">https://youtu.be/sx16UDUOPKg</a><br><strong>微信公众号：</strong>自刘地<br><img src="/img/wechat.jpg" alt="自刘地"></p>
+<p>这篇文档介绍利用Shell脚本，快速搭建OpenVPN服务器，为用户提供远程访问VPN。</p>
+<p>OpenVPN是使用最广泛的开源VPN，开源往往意味着体验不是那么美好。如果通过源码安装OpenVPN，确实会比较繁琐，但是操作过程又具有重复性，所以非常适合使用脚本来操作。</p>
+<h2 id="一、OpenVPN服务器配置"><a href="#一、OpenVPN服务器配置" class="headerlink" title="一、OpenVPN服务器配置"></a>一、OpenVPN服务器配置</h2><h3 id="1-1-启动OpenVPN服务器"><a href="#1-1-启动OpenVPN服务器" class="headerlink" title="1.1 启动OpenVPN服务器"></a>1.1 启动OpenVPN服务器</h3><p>使用Amazon Linux 2 AMI镜像。<img src="/img/openvpn/image-20230205213741524.png"></p>
+<p>使用较小的实例测试即可。<img src="/img/openvpn/image-20230205213746212.png"></p>
+<p>OpenVPN服务器默认使用<code>UDP 1194</code>端口。<img src="/img/openvpn/image-20230205213757385.png"></p>
+<h3 id="1-2-使用脚本配置OpenVPN服务器"><a href="#1-2-使用脚本配置OpenVPN服务器" class="headerlink" title="1.2 使用脚本配置OpenVPN服务器"></a>1.2 使用脚本配置OpenVPN服务器</h3><p>切换到root模式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@ip-172-31-32-219 ~]$ sudo -i</span><br></pre></td></tr></table></figure>
+
+
+<p>下载脚本文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@ip-172-31-32-219 ~]# curl -O https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;angristan&#x2F;openvpn-install&#x2F;master&#x2F;openvpn-install.sh</span><br></pre></td></tr></table></figure>
+
+
+<p>为脚本授权运行权限。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@ip-172-31-32-219 ~]# chmod +x openvpn-install.sh</span><br></pre></td></tr></table></figure>
+
+
+<p>运行脚本，如果虚拟机有多块网卡，需要设置侦听的IP地址。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@ip-172-31-32-219 ~]# ./openvpn-install.sh</span><br><span class="line">Welcome to the OpenVPN installer!</span><br><span class="line">The git repository is available at: https://github.com/angristan/openvpn-install</span><br><span class="line"></span><br><span class="line">I need to ask you a few questions before starting the setup.</span><br><span class="line">You can leave the default options and just press enter if you are ok with them.</span><br><span class="line"></span><br><span class="line">I need to know the IPv4 address of the network interface you want OpenVPN listening to.</span><br><span class="line">Unless your server is behind NAT, it should be your public IPv4 address.</span><br><span class="line">IP address: 172.31.32.219</span><br></pre></td></tr></table></figure>
+
+
+<p>设置公网拨号地址。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">It seems this server is behind NAT. What is its public IPv4 address or hostname?</span><br><span class="line">We need it for the clients to connect to the server.</span><br><span class="line">Public IPv4 address or hostname: 52.83.11.64</span><br></pre></td></tr></table></figure>
+
+
+<p>不启动IPv6。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Checking for IPv6 connectivity...</span><br><span class="line"></span><br><span class="line">Your host does not appear to have IPv6 connectivity.</span><br><span class="line"></span><br><span class="line">Do you want to enable IPv6 support (NAT)? [y/n]: n</span><br></pre></td></tr></table></figure>
+
+
+<p>侦听<code>1194</code>端口。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">What port do you want OpenVPN to listen to?</span><br><span class="line">   1) Default: 1194</span><br><span class="line">   2) Custom</span><br><span class="line">   3) Random [49152-65535]</span><br><span class="line">Port choice [1-3]: 1</span><br></pre></td></tr></table></figure>
+
+
+<p>使用<code>UDP</code>协议。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">What protocol do you want OpenVPN to use?</span><br><span class="line">UDP is faster. Unless it is not available, you shouldn&#x27;t use TCP.</span><br><span class="line">   1) UDP</span><br><span class="line">   2) TCP</span><br><span class="line">Protocol [1-2]: 1</span><br></pre></td></tr></table></figure>
+
+
+<p>设置推送的DNS服务器。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">What DNS resolvers do you want to use with the VPN?</span><br><span class="line">   1) Current system resolvers (from /etc/resolv.conf)</span><br><span class="line">   2) Self-hosted DNS Resolver (Unbound)</span><br><span class="line">   3) Cloudflare (Anycast: worldwide)</span><br><span class="line">   4) Quad9 (Anycast: worldwide)</span><br><span class="line">   5) Quad9 uncensored (Anycast: worldwide)</span><br><span class="line">   6) FDN (France)</span><br><span class="line">   7) DNS.WATCH (Germany)</span><br><span class="line">   8) OpenDNS (Anycast: worldwide)</span><br><span class="line">   9) Google (Anycast: worldwide)</span><br><span class="line">   10) Yandex Basic (Russia)</span><br><span class="line">   11) AdGuard DNS (Anycast: worldwide)</span><br><span class="line">   12) NextDNS (Anycast: worldwide)</span><br><span class="line">   13) Custom</span><br><span class="line">DNS [1-12]: 1</span><br></pre></td></tr></table></figure>
+
+
+<p>不启用压缩算法。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Do you want to use compression? It is not recommended since the VORACLE attack makes use of it.</span><br><span class="line">Enable compression? [y/n]: n</span><br></pre></td></tr></table></figure>
+
+
+<p>使用默认的加密算法。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Do you want to customize encryption settings?</span><br><span class="line">Unless you know what you&#x27;re doing, you should stick with the default parameters provided by the script.</span><br><span class="line">Note that whatever you choose, all the choices presented in the script are safe. (Unlike OpenVPN&#x27;s defaults)</span><br><span class="line">See https://github.com/angristan/openvpn-install#security-and-encryption to learn more.</span><br><span class="line"></span><br><span class="line">Customize encryption settings? [y/n]: n</span><br></pre></td></tr></table></figure>
+
+
+<p>创建VPN用户，设置用户名为<code>demo-user</code>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Okay, that was all I needed. We are ready to setup your OpenVPN server now.</span><br><span class="line">You will be able to generate a client at the end of the installation.</span><br><span class="line">Press any key to continue...</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">Tell me a name for the client.</span><br><span class="line">The name must consist of alphanumeric character. It may also include an underscore or a dash.</span><br><span class="line">Client name: demo-user</span><br></pre></td></tr></table></figure>
+
+
+<p>选择<code>2</code>，设置用户密码。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Do you want to protect the configuration file with a password?</span><br><span class="line">(e.g. encrypt the private key with a password)</span><br><span class="line">   1) Add a passwordless client</span><br><span class="line">   2) Use a password for the client</span><br><span class="line">Select an option [1-2]: 2</span><br></pre></td></tr></table></figure>
+
+
+<p>设置完成后，下载用户配置文件，路径在<code>/home/ec2-user/demo-user.ovpn</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">⚠️ You will be asked for the client password below ⚠️</span><br><span class="line"></span><br><span class="line">* Using SSL: openssl OpenSSL 1.0.2k-fips  26 Jan 2017</span><br><span class="line"></span><br><span class="line">* Using Easy-RSA configuration: &#x2F;etc&#x2F;openvpn&#x2F;easy-rsa&#x2F;vars</span><br><span class="line"></span><br><span class="line">* The preferred location for &#39;vars&#39; is within the PKI folder.</span><br><span class="line">  To silence this message move your &#39;vars&#39; file to your PKI</span><br><span class="line">  or declare your &#39;vars&#39; file with option: --vars&#x3D;&lt;FILE&gt;</span><br><span class="line">Generating a 256 bit EC private key</span><br><span class="line">writing new private key to &#39;&#x2F;etc&#x2F;openvpn&#x2F;easy-rsa&#x2F;pki&#x2F;c2f0af32&#x2F;temp.2428b7bf&#39;</span><br><span class="line">Enter PEM pass phrase:</span><br><span class="line">Verifying - Enter PEM pass phrase:</span><br><span class="line">-----</span><br><span class="line"></span><br><span class="line">Notice</span><br><span class="line">------</span><br><span class="line">Keypair and certificate request completed. Your files are:</span><br><span class="line">req: &#x2F;etc&#x2F;openvpn&#x2F;easy-rsa&#x2F;pki&#x2F;reqs&#x2F;demo-user.req</span><br><span class="line">key: &#x2F;etc&#x2F;openvpn&#x2F;easy-rsa&#x2F;pki&#x2F;private&#x2F;demo-user.key</span><br><span class="line">Using configuration from &#x2F;etc&#x2F;openvpn&#x2F;easy-rsa&#x2F;pki&#x2F;c2f0af32&#x2F;temp.49371c35</span><br><span class="line">Check that the request matches the signature</span><br><span class="line">Signature ok</span><br><span class="line">The Subject&#39;s Distinguished Name is as follows</span><br><span class="line">commonName            :ASN.1 12:&#39;demo-user&#39;</span><br><span class="line">Certificate is to be certified until May 10 12:58:42 2025 GMT (825 days)</span><br><span class="line"></span><br><span class="line">Write out database with 1 new entries</span><br><span class="line">Data Base Updated</span><br><span class="line"></span><br><span class="line">Notice</span><br><span class="line">------</span><br><span class="line">Certificate created at:</span><br><span class="line">* &#x2F;etc&#x2F;openvpn&#x2F;easy-rsa&#x2F;pki&#x2F;issued&#x2F;demo-user.crt</span><br><span class="line"></span><br><span class="line">Notice</span><br><span class="line">------</span><br><span class="line">Inline file created:</span><br><span class="line">* &#x2F;etc&#x2F;openvpn&#x2F;easy-rsa&#x2F;pki&#x2F;inline&#x2F;demo-user.inline</span><br><span class="line">Client demo-user added.</span><br><span class="line"></span><br><span class="line">The configuration file has been written to &#x2F;home&#x2F;ec2-user&#x2F;demo-user.ovpn.</span><br><span class="line">Download the .ovpn file and import it in your OpenVPN client.</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="1-3-修改OpenVPN服务器配置文件"><a href="#1-3-修改OpenVPN服务器配置文件" class="headerlink" title="1.3 修改OpenVPN服务器配置文件"></a>1.3 修改OpenVPN服务器配置文件</h3><p>如果有特殊的需求，可以进一步修改OpenVPN的配置文件，路径为<code>/etc/openvpn/server.conf</code>。</p>
+<p>配置文件默认推送网关到用户电脑，也就是默认所有流量都会走OpenVPN通道，思科将这种模式叫<code>tunnel all</code>模式。这里设置只有访问<code>172.31.25.230</code>主机时，才会走OpenVPN通过，思科将这种模式叫<code>split-tunnel</code>模式。</p>
+<p>另外设置OpenVPN的拨号日志路径，路径为<code>/var/log/openvpn/openvpn.log</code>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">[root@ip-172-31-32-219 ~]# vim /etc/openvpn/server.conf</span><br><span class="line">port 1194</span><br><span class="line">proto udp</span><br><span class="line">dev tun</span><br><span class="line">user nobody</span><br><span class="line">group nobody</span><br><span class="line">persist-key</span><br><span class="line">persist-tun</span><br><span class="line">keepalive 10 120</span><br><span class="line">topology subnet</span><br><span class="line">server 10.8.0.0 255.255.255.0</span><br><span class="line">ifconfig-pool-persist ipp.txt</span><br><span class="line"><span class="meta">#</span><span class="bash">push <span class="string">&quot;dhcp-option DNS 172.31.0.2&quot;</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">push <span class="string">&quot;redirect-gateway def1 bypass-dhcp&quot;</span></span></span><br><span class="line">push &quot;route 172.31.25.230 255.255.255.255&quot;</span><br><span class="line">dh none</span><br><span class="line">ecdh-curve prime256v1</span><br><span class="line">tls-crypt tls-crypt.key</span><br><span class="line">crl-verify crl.pem</span><br><span class="line">ca ca.crt</span><br><span class="line">cert server_NbyleI1QGSvTy34r.crt</span><br><span class="line">key server_NbyleI1QGSvTy34r.key</span><br><span class="line">auth SHA256</span><br><span class="line">cipher AES-128-GCM</span><br><span class="line">ncp-ciphers AES-128-GCM</span><br><span class="line">tls-server</span><br><span class="line">tls-version-min 1.2</span><br><span class="line">tls-cipher TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256</span><br><span class="line">client-config-dir /etc/openvpn/ccd</span><br><span class="line">status /var/log/openvpn/status.log</span><br><span class="line">log /var/log/openvpn/openvpn.log</span><br><span class="line">verb 3</span><br></pre></td></tr></table></figure>
+
+
+<p>修改了下面这些默认配置文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">push <span class="string">&quot;dhcp-option DNS 172.31.0.2&quot;</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">push <span class="string">&quot;redirect-gateway def1 bypass-dhcp&quot;</span></span></span><br><span class="line">push &quot;route 172.31.25.230 255.255.255.255&quot;</span><br><span class="line">log /var/log/openvpn/openvpn.log</span><br></pre></td></tr></table></figure>
+
+
+<p>重启OpenVPN服务。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@ip-172-31-32-219 ~]# systemctl restart openvpn@server.service</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="二、安装OpenVPN-Windows客户端测试"><a href="#二、安装OpenVPN-Windows客户端测试" class="headerlink" title="二、安装OpenVPN Windows客户端测试"></a>二、安装OpenVPN Windows客户端测试</h2><p>OpenVPN Windows客户端下载链接：<a target="_blank" rel="noopener" href="https://openvpn.net/client-connect-vpn-for-windows%EF%BC%8C%E8%BF%99%E4%B8%AA%E9%93%BE%E6%8E%A5%E9%9C%80%E8%A6%81%E3%80%8C%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E3%80%8D%E6%89%8D%E8%83%BD%E8%AE%BF%E9%97%AE%E3%80%82![](/img/openvpn/image-20230205213807660.png)">https://openvpn.net/client-connect-vpn-for-windows，这个链接需要「科学上网」才能访问。![](/img/openvpn/image-20230205213807660.png)</a></p>
+<p>安装客户端之后，打开OpenVPN客户端。点击FILE，将下载的用户配置文件拖拽到虚线方框内。</p>
+<p><img src="/img/openvpn/image-20230205213818240.png"></p>
+<p>点击保存密码，然后输入为用户设置的密码。</p>
+<p><img src="/img/openvpn/image-20230205213827131.png"></p>
+<p>连接成功。</p>
+<p><img src="/img/openvpn/image-20230205213833997.png"></p>
+<p>在客户端上查看路由表，查看到推送的主机路由，流量指向OpenVPN的隧道。测试到AWS内网的服务器连通性。</p>
+<p><img src="/img/openvpn/image-20230205213840661.png"></p>
+<p>查看OpenVPN日志信息。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">[root@ip-172-31-32-219 ~]# more /var/log/openvpn/openvpn.log</span><br><span class="line">Sun Feb  5 13:28:43 2023 OpenVPN 2.4.12 x86_64-redhat-linux-gnu [Fedora EPEL patched] [SSL (OpenSSL)] [LZO] [LZ4] [EPOLL] [PKCS11] [MH/PKTINFO] [AEAD] built on Mar 17</span><br><span class="line"> 2022</span><br><span class="line">Sun Feb  5 13:28:43 2023 library versions: OpenSSL 1.0.2k-fips  26 Jan 2017, LZO 2.06</span><br><span class="line">Sun Feb  5 13:28:43 2023 CRL: loaded 1 CRLs from file crl.pem</span><br><span class="line">Sun Feb  5 13:28:43 2023 ECDH curve prime256v1 added</span><br><span class="line">Sun Feb  5 13:28:43 2023 Outgoing Control Channel Encryption: Cipher &#x27;AES-256-CTR&#x27; initialized with 256 bit key</span><br><span class="line">Sun Feb  5 13:28:43 2023 Outgoing Control Channel Encryption: Using 256 bit message hash &#x27;SHA256&#x27; for HMAC authentication</span><br><span class="line">Sun Feb  5 13:28:43 2023 Incoming Control Channel Encryption: Cipher &#x27;AES-256-CTR&#x27; initialized with 256 bit key</span><br><span class="line">Sun Feb  5 13:28:43 2023 Incoming Control Channel Encryption: Using 256 bit message hash &#x27;SHA256&#x27; for HMAC authentication</span><br><span class="line">Sun Feb  5 13:28:43 2023 TUN/TAP device tun0 opened</span><br><span class="line">Sun Feb  5 13:28:43 2023 TUN/TAP TX queue length set to 100</span><br><span class="line">Sun Feb  5 13:28:43 2023 /sbin/ip link set dev tun0 up mtu 1500</span><br><span class="line">Sun Feb  5 13:28:43 2023 /sbin/ip addr add dev tun0 10.8.0.1/24 broadcast 10.8.0.255</span><br><span class="line">Sun Feb  5 13:28:43 2023 Could not determine IPv4/IPv6 protocol. Using AF_INET</span><br><span class="line">Sun Feb  5 13:28:43 2023 Socket Buffers: R=[212992-&gt;212992] S=[212992-&gt;212992]</span><br><span class="line">Sun Feb  5 13:28:43 2023 UDPv4 link local (bound): [AF_INET][undef]:1194</span><br><span class="line">Sun Feb  5 13:28:43 2023 UDPv4 link remote: [AF_UNSPEC]</span><br><span class="line">Sun Feb  5 13:28:43 2023 GID set to nobody</span><br><span class="line">Sun Feb  5 13:28:43 2023 UID set to nobody</span><br><span class="line">Sun Feb  5 13:28:43 2023 MULTI: multi_init called, r=256 v=256</span><br><span class="line">Sun Feb  5 13:28:43 2023 IFCONFIG POOL: base=10.8.0.2 size=252, ipv6=0</span><br><span class="line">Sun Feb  5 13:28:43 2023 ifconfig_pool_read(), in=&#x27;demo-user,10.8.0.2&#x27;, TODO: IPv6</span><br><span class="line">Sun Feb  5 13:28:43 2023 succeeded -&gt; ifconfig_pool_set()</span><br><span class="line">Sun Feb  5 13:28:43 2023 IFCONFIG POOL LIST</span><br><span class="line">Sun Feb  5 13:28:43 2023 demo-user,10.8.0.2</span><br><span class="line">Sun Feb  5 13:28:43 2023 Initialization Sequence Completed</span><br></pre></td></tr></table></figure>
+
+
+<p>查看OpenVPN用户状态日志。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@ip-172-31-32-219 ~]# more /var/log/openvpn/status.log</span><br><span class="line">OpenVPN CLIENT LIST</span><br><span class="line">Updated,Sun Feb  5 13:41:02 2023</span><br><span class="line">Common Name,Real Address,Bytes Received,Bytes Sent,Connected Since</span><br><span class="line">demo-user,214.251.173.134:51498,6817,2338,Sun Feb  5 13:40:37 2023</span><br><span class="line">ROUTING TABLE</span><br><span class="line">Virtual Address,Common Name,Real Address,Last Ref</span><br><span class="line">10.8.0.2,demo-user,214.251.173.134:51498,Sun Feb  5 13:40:37 2023</span><br><span class="line">GLOBAL STATS</span><br><span class="line">Max bcast/mcast queue length,1</span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="三、添加、删除用户"><a href="#三、添加、删除用户" class="headerlink" title="三、添加、删除用户"></a>三、添加、删除用户</h2><h3 id="3-1-添加用户"><a href="#3-1-添加用户" class="headerlink" title="3.1 添加用户"></a>3.1 添加用户</h3><p>再次运行脚本，系统会识别出来已经安装了OpenVPN服务器，此时选择<code>1</code>，添加用户。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@ip-172-31-32-219 ~]# ./openvpn-install.sh</span><br><span class="line">Welcome to OpenVPN-install!</span><br><span class="line">The git repository is available at: https://github.com/angristan/openvpn-install</span><br><span class="line"></span><br><span class="line">It looks like OpenVPN is already installed.</span><br><span class="line"></span><br><span class="line">What do you want to do?</span><br><span class="line">   1) Add a new user</span><br><span class="line">   2) Revoke existing user</span><br><span class="line">   3) Remove OpenVPN</span><br><span class="line">   4) Exit</span><br><span class="line">Select an option [1-4]: 1</span><br></pre></td></tr></table></figure>
+
+
+<p>选择<code>2</code>，设置用户密码。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Tell me a name for the client.</span><br><span class="line">The name must consist of alphanumeric character. It may also include an underscore or a dash.</span><br><span class="line">Client name: demo-user1</span><br><span class="line"></span><br><span class="line">Do you want to protect the configuration file with a password?</span><br><span class="line">(e.g. encrypt the private key with a password)</span><br><span class="line">   1) Add a passwordless client</span><br><span class="line">   2) Use a password for the client</span><br><span class="line">Select an option [1-2]: 2</span><br></pre></td></tr></table></figure>
+
+
+<p>设置用户密码，然后下载用户配置文件，配置目录为<code>/home/ec2-user/demo-user1.ovpn</code>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">⚠️ You will be asked for the client password below ⚠️</span><br><span class="line"></span><br><span class="line">* Using SSL: openssl OpenSSL 1.0.2k-fips  26 Jan 2017</span><br><span class="line"></span><br><span class="line">* Using Easy-RSA configuration: /etc/openvpn/easy-rsa/vars</span><br><span class="line"></span><br><span class="line">* The preferred location for &#x27;vars&#x27; is within the PKI folder.</span><br><span class="line">  To silence this message move your &#x27;vars&#x27; file to your PKI</span><br><span class="line">  or declare your &#x27;vars&#x27; file with option: --vars=&lt;FILE&gt;</span><br><span class="line">Generating a 256 bit EC private key</span><br><span class="line">writing new private key to &#x27;/etc/openvpn/easy-rsa/pki/c3025421/temp.38bc49b5&#x27;</span><br><span class="line">Enter PEM pass phrase:</span><br><span class="line">Verifying - Enter PEM pass phrase:</span><br><span class="line">-----</span><br><span class="line"></span><br><span class="line">Notice</span><br><span class="line">------</span><br><span class="line">Keypair and certificate request completed. Your files are:</span><br><span class="line">req: /etc/openvpn/easy-rsa/pki/reqs/demo-user1.req</span><br><span class="line">key: /etc/openvpn/easy-rsa/pki/private/demo-user1.key</span><br><span class="line">Using configuration from /etc/openvpn/easy-rsa/pki/c3025421/temp.919573e0</span><br><span class="line">Check that the request matches the signature</span><br><span class="line">Signature ok</span><br><span class="line">The Subject&#x27;s Distinguished Name is as follows</span><br><span class="line">commonName            :ASN.1 12:&#x27;demo-user1&#x27;</span><br><span class="line">Certificate is to be certified until May 10 13:59:00 2025 GMT (825 days)</span><br><span class="line"></span><br><span class="line">Write out database with 1 new entries</span><br><span class="line">Data Base Updated</span><br><span class="line"></span><br><span class="line">Notice</span><br><span class="line">------</span><br><span class="line">Certificate created at:</span><br><span class="line">* /etc/openvpn/easy-rsa/pki/issued/demo-user1.crt</span><br><span class="line"></span><br><span class="line">Notice</span><br><span class="line">------</span><br><span class="line">Inline file created:</span><br><span class="line">* /etc/openvpn/easy-rsa/pki/inline/demo-user1.inline</span><br><span class="line">Client demo-user1 added.</span><br><span class="line"></span><br><span class="line">The configuration file has been written to /home/ec2-user/demo-user1.ovpn.</span><br><span class="line">Download the .ovpn file and import it in your OpenVPN client.</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="3-2-删除用户"><a href="#3-2-删除用户" class="headerlink" title="3.2 删除用户"></a>3.2 删除用户</h3><p>再次运行脚本，系统会识别出来已经安装了OpenVPN服务器，此时选择<code>2</code>，删除用户。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@ip-172-31-32-219 ~]# ./openvpn-install.sh</span><br><span class="line">Welcome to OpenVPN-install!</span><br><span class="line">The git repository is available at: https://github.com/angristan/openvpn-install</span><br><span class="line"></span><br><span class="line">It looks like OpenVPN is already installed.</span><br><span class="line"></span><br><span class="line">What do you want to do?</span><br><span class="line">   1) Add a new user</span><br><span class="line">   2) Revoke existing user</span><br><span class="line">   3) Remove OpenVPN</span><br><span class="line">   4) Exit</span><br><span class="line">Select an option [1-4]: 2</span><br></pre></td></tr></table></figure>
+
+
+<p>选择用户的编号，删除完成。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">Select the existing client certificate you want to revoke</span><br><span class="line">     1) demo-user</span><br><span class="line">     2) demo-user1</span><br><span class="line">Select one client [1-2]: 2</span><br><span class="line"></span><br><span class="line">* Using SSL: openssl OpenSSL 1.0.2k-fips  26 Jan 2017</span><br><span class="line"></span><br><span class="line">* Using Easy-RSA configuration: /etc/openvpn/easy-rsa/vars</span><br><span class="line"></span><br><span class="line">* The preferred location for &#x27;vars&#x27; is within the PKI folder.</span><br><span class="line">  To silence this message move your &#x27;vars&#x27; file to your PKI</span><br><span class="line">  or declare your &#x27;vars&#x27; file with option: --vars=&lt;FILE&gt;</span><br><span class="line"></span><br><span class="line">WARNING</span><br><span class="line">=======</span><br><span class="line">This process is destructive!</span><br><span class="line"></span><br><span class="line">These files will be MOVED to the &#x27;revoked&#x27; storage directory:</span><br><span class="line">* /etc/openvpn/easy-rsa/pki/issued/demo-user1.crt</span><br><span class="line">* /etc/openvpn/easy-rsa/pki/private/demo-user1.key</span><br><span class="line">* /etc/openvpn/easy-rsa/pki/reqs/demo-user1.req</span><br><span class="line"></span><br><span class="line">These files will be DELETED:</span><br><span class="line">All PKCS files for commonName : demo-user1</span><br><span class="line"></span><br><span class="line">The inline credentials files:</span><br><span class="line">* /etc/openvpn/easy-rsa/pki/demo-user1.creds</span><br><span class="line">* /etc/openvpn/easy-rsa/pki/inline/demo-user1.inline</span><br><span class="line"></span><br><span class="line">The duplicate certificate:</span><br><span class="line">* /etc/openvpn/easy-rsa/pki/certs_by_serial/6E6587E0FA65C86B798FA8C1470C1E11.pem</span><br><span class="line"></span><br><span class="line">Using configuration from /etc/openvpn/easy-rsa/pki/89dd4fc4/temp.a7285a95</span><br><span class="line">Revoking Certificate 6E6587E0FA65C86B798FA8C1470C1E11.</span><br><span class="line">Data Base Updated</span><br><span class="line"></span><br><span class="line">Notice</span><br><span class="line">------</span><br><span class="line">                              * IMPORTANT *</span><br><span class="line"></span><br><span class="line">Revocation was successful. You must run &#x27;gen-crl&#x27; and upload a new CRL to your</span><br><span class="line">infrastructure in order to prevent the revoked certificate from being accepted.</span><br><span class="line"></span><br><span class="line">* Using SSL: openssl OpenSSL 1.0.2k-fips  26 Jan 2017</span><br><span class="line"></span><br><span class="line">* Using Easy-RSA configuration: /etc/openvpn/easy-rsa/vars</span><br><span class="line"></span><br><span class="line">* The preferred location for &#x27;vars&#x27; is within the PKI folder.</span><br><span class="line">  To silence this message move your &#x27;vars&#x27; file to your PKI</span><br><span class="line">  or declare your &#x27;vars&#x27; file with option: --vars=&lt;FILE&gt;</span><br><span class="line">Using configuration from /etc/openvpn/easy-rsa/pki/7e330bce/temp.60d72588</span><br><span class="line"></span><br><span class="line">Notice</span><br><span class="line">------</span><br><span class="line">An updated CRL has been created.</span><br><span class="line">CRL file: /etc/openvpn/easy-rsa/pki/crl.pem</span><br><span class="line"></span><br><span class="line">Certificate for client demo-user1 revoked.</span><br></pre></td></tr></table></figure>
+
+
+<p>当删除用户后，如果想要重新创建相同名称的用户，会遇见下面报错：<code>The specified client CN was already found in easy-rsa, please choose another name.</code>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[root@ip-172-31-32-219 ~]# ./openvpn-install.sh</span><br><span class="line">Welcome to OpenVPN-install!</span><br><span class="line">The git repository is available at: https://github.com/angristan/openvpn-install</span><br><span class="line"></span><br><span class="line">It looks like OpenVPN is already installed.</span><br><span class="line"></span><br><span class="line">What do you want to do?</span><br><span class="line">   1) Add a new user</span><br><span class="line">   2) Revoke existing user</span><br><span class="line">   3) Remove OpenVPN</span><br><span class="line">   4) Exit</span><br><span class="line">Select an option [1-4]: 1</span><br><span class="line"></span><br><span class="line">Tell me a name for the client.</span><br><span class="line">The name must consist of alphanumeric character. It may also include an underscore or a dash.</span><br><span class="line">Client name: demo-user1</span><br><span class="line"></span><br><span class="line">Do you want to protect the configuration file with a password?</span><br><span class="line">(e.g. encrypt the private key with a password)</span><br><span class="line">   1) Add a passwordless client</span><br><span class="line">   2) Use a password for the client</span><br><span class="line">Select an option [1-2]: 2</span><br><span class="line"></span><br><span class="line">The specified client CN was already found in easy-rsa, please choose another name.</span><br></pre></td></tr></table></figure>
+
+
+<p>删除用户之后，需要删除吊销的证书信息，才能创建相同的用户名。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/openvpn/easy-rsa/pki/index.txt</span><br><span class="line"></span><br><span class="line">V       250510125604Z           02013C6CBD6C3823EF292FEAA6C1134E        unknown /CN=server_NbyleI1QGSvTy34r</span><br><span class="line">V       250510125842Z           D17A753048CD839A872A7E50FC1262D1        unknown /CN=demo-user</span><br><span class="line">R       250510135900Z   230205140005Z   6E6587E0FA65C86B798FA8C1470C1E11        unknown /CN=demo-user1</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="四、文档链接"><a href="#四、文档链接" class="headerlink" title="四、文档链接"></a>四、文档链接</h2><ul>
+<li>Github 自动安装脚本openvpn-install：<a target="_blank" rel="noopener" href="https://github.com/angristan/openvpn-install">https://github.com/angristan/openvpn-install</a></li>
+<li>OpenVPN community 文档：<a target="_blank" rel="noopener" href="https://openvpn.net/community-resources/how-to/#installing-openvpn">https://openvpn.net/community-resources/how-to/#installing-openvpn</a></li>
+<li>OpenVPN Access Server价格：<a target="_blank" rel="noopener" href="https://openvpn.net/access-server/pricing/">https://openvpn.net/access-server/pricing/</a></li>
+<li>OpenVPN Community Edition 与 OpenVPN Access Server对比：<a target="_blank" rel="noopener" href="https://openvpn.net/blog/openvpn-community-edition-vs-access-server/">https://openvpn.net/blog/openvpn-community-edition-vs-access-server/</a></li>
+<li>OpenVPN server.conf 配置文件含义：<a target="_blank" rel="noopener" href="https://github.com/OpenVPN/openvpn/blob/master/sample/sample-config-files/server.conf">https://github.com/OpenVPN/openvpn/blob/master/sample/sample-config-files/server.conf</a></li>
+<li>Mastering OpenVPN 书籍：<a target="_blank" rel="noopener" href="https://learning.oreilly.com/library/view/mastering-openvpn/9781783553136/">https://learning.oreilly.com/library/view/mastering-openvpn/9781783553136/</a></li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            非商业转载请注明出处，商业转载请联系作者获得授权。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/AWS-%E4%B8%8A%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85Greenbone%E6%BC%8F%E6%89%AB%E5%B7%A5%E5%85%B7.html" class="next-post btn btn-default" title='AWS 上快速安装Greenbone漏扫工具'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            AWS 上快速安装Greenbone漏扫工具</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'stf5rGD17bcrWN1mvUT4pu8C-gzGzoHsz',
+    appKey: 'r5qpzBWMAzt2hDAcDftecM1R',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: false,
+    avatar: 'mm',
+    meta: 'nick'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh-CN'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81OpenVPN%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="toc-text">一、OpenVPN服务器配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%90%AF%E5%8A%A8OpenVPN%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">1.1 启动OpenVPN服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E4%BD%BF%E7%94%A8%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEOpenVPN%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">1.2 使用脚本配置OpenVPN服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E4%BF%AE%E6%94%B9OpenVPN%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">1.3 修改OpenVPN服务器配置文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E8%A3%85OpenVPN-Windows%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B5%8B%E8%AF%95"><span class="toc-text">二、安装OpenVPN Windows客户端测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%B7%BB%E5%8A%A0%E3%80%81%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7"><span class="toc-text">三、添加、删除用户</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7"><span class="toc-text">3.1 添加用户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7"><span class="toc-text">3.2 删除用户</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%96%87%E6%A1%A3%E9%93%BE%E6%8E%A5"><span class="toc-text">四、文档链接</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2022
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
